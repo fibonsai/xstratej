@@ -35,6 +35,9 @@ This document provides instructions and context for AI agents working on the `xt
 
 ## Common Tasks
 
+### Update README.md
+1. Always update README.md file, if necessary.
+
 ### Adding a New Rule
 1.  Extend `RuleStream`.
 2.  Implement the `predicate()` method.
