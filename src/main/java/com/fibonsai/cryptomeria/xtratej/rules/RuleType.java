@@ -67,7 +67,7 @@ public enum RuleType {
         @SuppressWarnings("unchecked")
         public T build() {
             try {
-                return (T) constructor.newInstance(id, properties, (Fifo<ITemporalData>) results);
+                return (T) constructor.newInstance(id, properties, results);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
