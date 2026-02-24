@@ -273,26 +273,14 @@ public class Fifo<T> {
                 timeoutFuture = null;
             }
 
-            Z typeToken = null;
-            for (Z item : currentSlot) {
-                if (item != null) {
-                    typeToken = item;
-                    break;
-                }
-            }
-
+            final Z typeToken = currentSlot.getFirst();
             if (typeToken == null) {
-                log.warn("Cannot create zipped array: all events in slot are null.");
+                log.warn("Cannot create zipped array: first event in slot is null.");
                 discardSlot();
                 return;
             }
-
-            // Implementation of generic array creation as per ZIP.md requirements
             //noinspection unchecked
-            Z[] snapshot = (Z[]) Array.newInstance(typeToken.getClass(), n);
-            for (int i = 0; i < n; i++) {
-                snapshot[i] = currentSlot.get(i);
-            }
+            Z[] snapshot = currentSlot.toArray((Z[]) Array.newInstance(typeToken.getClass(), 0));
 
             slotActive  = false;
             currentSlot = null;
