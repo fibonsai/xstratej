@@ -42,8 +42,15 @@ This document provides instructions and context for AI agents working on the `xt
 1.  Extend `RuleStream`.
 2.  Implement the `predicate()` method.
 3.  Add unit tests in `src/test/java/.../rules/impl/`.
-4.  If the rule requires configuration, use `JsonNode` properties in the constructor or add fluent setter methods.
+4.  Update `RuleType` enum.
+5.  If the rule requires configuration, use `JsonNode` properties in the constructor or add fluent setter methods.
 
 ### Debugging
 *   Check `pom.xml` for dependency versions if you encounter build issues.
 *   Ensure that the `Fifo` streams are properly subscribed to; otherwise, events will not flow.
+
+### Testing
+* Always check the code quality running all tests
+
+### Not commit
+* Never commit changes
