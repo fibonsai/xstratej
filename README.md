@@ -42,13 +42,16 @@ IStrategy myStrategy = new Strategy(
 Rules can be configured using `JsonNode` properties or fluent setters.
 
 ```java
+import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.CrossedRule;
 import tools.jackson.databind.ObjectMapper;
 
 // Example: Create a rule that triggers when a value crosses a threshold
-CrossedRule crossRule = new CrossedRule("CrossAbove100", new ObjectMapper().createObjectNode());
-crossRule.setThreshold(100.0)
-         .setSourceId("price_series");
+CrossedRule crossRule = (CrossedRule) RuleType.Crossed.builder()
+        .setId("CrossAbove100")
+        .build()
+        .setThreshold(100.0)
+        .setSourceId("price_series");
 
 // Add the rule to the strategy
 myStrategy.addIndicatorRule(crossRule);
