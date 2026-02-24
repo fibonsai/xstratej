@@ -1,0 +1,158 @@
+/*
+ *  Copyright (c) 2026 fibonsai.com
+ *  All rights reserved.
+ *
+ *  This source is subject to the Apache License, Version 2.0.
+ *  Please see the LICENSE file for more information.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package com.fibonsai.cryptomeria.xtratej.strategy;
+
+import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.rules.impl.AndRule;
+import com.fibonsai.cryptomeria.xtratej.rules.impl.LimitRule;
+import com.fibonsai.cryptomeria.xtratej.rules.impl.NotRule;
+import com.fibonsai.cryptomeria.xtratej.rules.impl.OrRule;
+import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
+import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
+
+import java.time.Instant;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class StrategyTest {
+
+    private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
+    private final ThreadLocalRandom random = ThreadLocalRandom.current();
+    private final Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
+
+    @Test
+    public void runStrategies() {
+
+        ObjectNode properties1 = nodeFactory.objectNode();
+        LimitRule limit1 = new LimitRule("limit1", properties1);
+        limit1.setMin(2.0).setMax(80.0).setAllSources(true);
+
+        ObjectNode properties2 = nodeFactory.objectNode();
+        LimitRule limit2 = new LimitRule("limit2", properties2);
+        limit2.setMin(0.0).setMax(50.0).setAllSources(true);
+
+        ObjectNode properties3 = nodeFactory.objectNode();
+        LimitRule limit3 = new LimitRule("limit3", properties3);
+        limit3.setLowerSourceId("flux1").setUpperSourceId("flux2").setAllSources(true);
+
+        OrRule orRule1 = new OrRule("orRule1", nodeFactory.nullNode());
+        orRule1.addSourceId(limit1.name()).addSourceId(limit2.name()).setAllSources(false);
+
+        NotRule notRule1 = new NotRule("notRule1", nodeFactory.nullNode());
+        notRule1.addSourceId(limit3.name()).setAllSources(false);
+
+        AndRule andRule1 = new AndRule("andRule1", nodeFactory.nullNode());
+        andRule1.addSourceId(orRule1.name()).addSourceId(notRule1.name()).setAllSources(false);
+
+
+        ObjectNode properties4 = nodeFactory.objectNode();
+        LimitRule limit4 = new LimitRule("limit4", properties4);
+        limit4.setMin(2.0).setMax(80.0).setAllSources(true);
+
+        ObjectNode properties5 = nodeFactory.objectNode();
+        LimitRule limit5 = new LimitRule("limit5", properties5);
+        limit5.setMin(0.0).setMax(50.0).setAllSources(true);
+
+        ObjectNode properties6 = nodeFactory.objectNode();
+        LimitRule limit6 = new LimitRule("limit6", properties6);
+        limit6.setLowerSourceId("flux1").setUpperSourceId("flux2").setAllSources(true);
+
+        OrRule orRule2 = new OrRule("orRule2", nodeFactory.nullNode());
+        orRule2.addSourceId(limit4.name()).addSourceId(limit5.name()).setAllSources(false);
+
+        NotRule notRule2 = new NotRule("notRule2", nodeFactory.nullNode());
+        notRule2.addSourceId(limit6.name()).setAllSources(false);
+
+        AndRule andRule2 = new AndRule("andRule2", nodeFactory.nullNode());
+        andRule2.addSourceId(orRule2.name()).addSourceId(notRule2.name()).setAllSources(false);
+
+        Strategy strategyEnter = new Strategy("enter", "UNDEF", "UNDEF", StrategyType.ENTER);
+        Strategy strategyExit = new Strategy("exit", "UNDEF", "UNDEF", StrategyType.EXIT);
+
+        Fifo<ITemporalData> flux1 = new Fifo<>();
+        Fifo<ITemporalData> flux2 = new Fifo<>();
+        Fifo<ITemporalData> flux3 = new Fifo<>();
+
+        strategyEnter.addIndicator(flux1)
+                    .addIndicator(flux2)
+                    .addIndicator(flux3)
+                    .addIndicatorRule(limit1)
+                    .addIndicatorRule(limit2)
+                    .addIndicatorRule(limit3)
+                    .addLogicRule(andRule1)
+                    .addLogicRule(orRule1)
+                    .addLogicRule(notRule1)
+                    .setAggregatorRule(andRule1.name());
+
+        strategyExit.addIndicator(flux1)
+                    .addIndicator(flux2)
+                    .addIndicator(flux3)
+                    .addIndicatorRule(limit4)
+                    .addIndicatorRule(limit5)
+                    .addIndicatorRule(limit6)
+                    .addLogicRule(andRule2)
+                    .addLogicRule(orRule2)
+                    .addLogicRule(notRule2)
+                    .setAggregatorRule(andRule2.name());
+
+        StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer)
+                .registerStrategy(strategyEnter)
+                .registerStrategy(strategyExit);
+
+        int n = 100;
+        AtomicInteger counter = new AtomicInteger(1);
+        AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
+
+        tradingSignalConsumer.subscribe(_ -> {
+            counter.getAndIncrement();
+            lastUpdate.set(Instant.now().toEpochMilli());
+        });
+
+        boolean allStrategiesActivated = strategyManager.run();
+
+        for (int x=0; x<n; x++) {
+            long timestamp = Instant.now().toEpochMilli();
+            double value = x * 1.0D;
+            Thread.startVirtualThread(() ->
+                flux1.emitNext(new SingleTimeSeries("flux1", new Single[]{ new Single(timestamp, value)})));
+        }
+
+        for (int x=n-1; x>=0; x--) {
+            long timestamp = Instant.now().toEpochMilli();
+            double value = x * 1.0D;
+            Thread.startVirtualThread(() ->
+                flux2.emitNext(new SingleTimeSeries("flux2", new Single[]{ new Single(timestamp, value)})));
+        }
+
+        for (int x=0; x < n; x++) {
+            long timestamp = Instant.now().toEpochMilli();
+            double value = random.nextDouble(0.0, n);
+            Thread.startVirtualThread(() ->
+                flux3.emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
+        }
+
+        assertTrue(allStrategiesActivated);
+        assertTrue(counter.get() > 0);
+    }
+}

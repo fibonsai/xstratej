@@ -1,0 +1,60 @@
+{
+  "strategies": {
+    "enter": {
+      "indicators": {
+        "flux1": {},
+        "flux2": {},
+        "flux3": {}
+      },
+      "rules": {
+        "rule1": {
+          "type": "xxx",
+          "params": {},
+          "from": [
+            "flux1",
+            "flux2"
+          ]
+        },
+        "rule2": {
+          "type": "yyy",
+          "params": {},
+          "from": [
+            "flux2",
+            "flux3"
+          ]
+        },
+        "or1": {
+          "type": "or",
+          "params": {},
+          "from": [
+            "rule1",
+            "rule2"
+          ]
+        },
+        "rule3": {
+          "type": "zzz",
+          "params": {},
+          "from": [
+            "flux1"
+          ]
+        },
+        "not1": {
+          "type": "not",
+          "params": {},
+          "from": [
+            "rule3"
+          ]
+        },
+        "and1": {
+          "type": "and",
+          "params": {},
+          "from": [
+            "or1",
+            "not1"
+          ]
+        }
+      },
+      "from": "and1"
+    }
+  }
+}
