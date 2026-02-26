@@ -24,23 +24,37 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <description>Strategy engine from Fibonsai</description>
-    <url/>
+    <url>https://github.com/fibonsai/xtratej</url>
     <licenses>
-        <license/>
+        <license>
+            <name>Apache 2.0</name>
+        </license>
     </licenses>
-    <developers>
-        <developer/>
-    </developers>
     <scm>
         <connection/>
         <developerConnection/>
         <tag/>
-        <url/>
+        <url>https://github.com/fibonsai/xtratej</url>
     </scm>
+
+    <developers>
+        <developer>
+            <name>Marcelo Teixeira Monteiro (tuxmonteiro)</name>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/fibonsai/xtratej/issues</url>
+    </issueManagement>
+
     <properties>
         <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <argLine/>
     </properties>
 
     <dependencies>
@@ -89,5 +103,37 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.10.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.5</version>
+                <configuration>
+                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
