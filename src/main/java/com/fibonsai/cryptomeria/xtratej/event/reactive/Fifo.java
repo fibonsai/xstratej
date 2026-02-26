@@ -274,6 +274,7 @@ public class Fifo<T> {
 
         /** Cancels the timer, emits the completed slot, then resets state.
          *  Must be called while holding {@link #slotLock}. */
+        @SuppressWarnings("unchecked")
         private void publishSlot() {
             if (timeoutFuture != null) {
                 timeoutFuture.cancel(false);
@@ -286,8 +287,7 @@ public class Fifo<T> {
                 discardSlot();
                 return;
             }
-            //noinspection unchecked
-            Z[] snapshot = currentSlot.toArray((Z[]) Array.newInstance(typeToken.getClass(), 0));
+            Z[] snapshot = currentSlot.toArray((Z[]) Array.newInstance(typeToken.getClass(), 0)); // unckecked, but ok
 
             slotActive  = false;
             currentSlot = List.of();

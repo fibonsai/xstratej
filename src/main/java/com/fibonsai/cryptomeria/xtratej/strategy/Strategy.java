@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -113,6 +113,7 @@ public class Strategy implements IStrategy {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     private void subscribeLogicRules() {
         for (var entry : logicRules.entrySet()) {
             RuleStream rule = entry.getValue();
@@ -130,7 +131,7 @@ public class Strategy implements IStrategy {
                     inputs.add(level1Rule.results());
                 }
             }
-            var inputsArray = inputs.<Fifo<ITemporalData>>toArray(Fifo[]::new);
+            var inputsArray = inputs.<Fifo<ITemporalData>>toArray(Fifo[]::new); // unckecked, but ok
             var zipped = Fifo.zip(inputsArray);
             rule.subscribe(zipped);
             logicsZippedsCounter.getAndIncrement();
@@ -138,10 +139,11 @@ public class Strategy implements IStrategy {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void subscribeIndicators() {
         for (var entry : indicatorRules.entrySet()) {
             RuleStream rule = entry.getValue();
-            var indicatorsArray = indicators.<Fifo<ITemporalData>>toArray(Fifo[]::new);
+            var indicatorsArray = indicators.<Fifo<ITemporalData>>toArray(Fifo[]::new); // unckecked, but ok
             var zipped = Fifo.zip(indicatorsArray);
             rule.subscribe(zipped);
             indicatorsZippedsCounter.getAndIncrement();
