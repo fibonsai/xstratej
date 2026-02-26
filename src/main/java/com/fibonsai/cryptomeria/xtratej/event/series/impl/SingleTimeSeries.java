@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -16,7 +16,6 @@ package com.fibonsai.cryptomeria.xtratej.event.series.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
-import jakarta.annotation.Nonnull;
 
 public class SingleTimeSeries extends TimeSeries {
 
@@ -26,7 +25,6 @@ public class SingleTimeSeries extends TimeSeries {
 
     public SingleTimeSeries(String id, Single[] singles) {
         super(id);
-        if (singles == null) throw new NullPointerException();
         long[] _timestamps = new long[singles.length];
         double[] _values = new double[singles.length];
         for (int x = 0; x < singles.length; x++) {
@@ -51,7 +49,7 @@ public class SingleTimeSeries extends TimeSeries {
         this(id, new Single[0], maxSize);
     }
 
-    public TimeSeries add(@Nonnull Single single) {
+    public TimeSeries add(Single single) {
         writeLock.lock();
         try {
             int newSize;

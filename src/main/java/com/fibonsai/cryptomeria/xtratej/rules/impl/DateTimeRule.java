@@ -14,11 +14,10 @@
 
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
-import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -36,11 +35,11 @@ public class DateTimeRule extends RuleStream {
     private String end = "";
     private String datetimeFormat = "";
 
-    public DateTimeRule(@Nonnull String name, @Nonnull JsonNode properties) {
+    public DateTimeRule(String name, JsonNode properties) {
         this(name, properties, new Fifo<>());
     }
 
-    public DateTimeRule(@Nonnull String name, @Nonnull JsonNode properties, @Nonnull Fifo<ITemporalData> results) {
+    public DateTimeRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
         super(name, properties, results);
         processProperties();
     }
@@ -96,17 +95,17 @@ public class DateTimeRule extends RuleStream {
         };
     }
 
-    public DateTimeRule setBegin(@Nonnull String begin) {
+    public DateTimeRule setBegin(String begin) {
         this.begin = begin;
         return this;
     }
 
-    public DateTimeRule setEnd(@Nonnull String end) {
+    public DateTimeRule setEnd(String end) {
         this.end = end;
         return this;
     }
 
-    public DateTimeRule setDatetimeFormat(@Nonnull String datetimeFormat) {
+    public DateTimeRule setDatetimeFormat(String datetimeFormat) {
         this.datetimeFormat = datetimeFormat;
         return this;
     }

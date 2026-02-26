@@ -14,12 +14,11 @@
 
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
-import jakarta.annotation.Nonnull;
 import org.hipparchus.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +35,11 @@ public class InSlopeRule extends RuleStream {
     private double minSlope = Double.NaN;
     private double maxSlope = Double.NaN;
 
-    public InSlopeRule(@Nonnull String name, @Nonnull JsonNode properties) {
+    public InSlopeRule(String name, JsonNode properties) {
         this(name, properties, new Fifo<>());
     }
 
-    public InSlopeRule(@Nonnull String name, @Nonnull JsonNode properties, @Nonnull Fifo<ITemporalData> results) {
+    public InSlopeRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
         super(name, properties, results);
         processProperties();
     }

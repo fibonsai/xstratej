@@ -14,12 +14,11 @@
 
 package com.fibonsai.cryptomeria.xtratej.rules;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
-import jakarta.annotation.Nonnull;
 import tools.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public abstract class RuleStream {
     protected boolean allSources = true;
     protected final List<String> sourceIds = new ArrayList<>();
 
-    protected RuleStream(@Nonnull String name, @Nonnull JsonNode properties, @Nonnull Fifo<ITemporalData> results) {
+    protected RuleStream(String name, JsonNode properties, Fifo<ITemporalData> results) {
         this.name = name;
         this.properties = properties.properties();
         this.results = results;
@@ -48,7 +47,7 @@ public abstract class RuleStream {
         return name;
     }
 
-    public void subscribe(@Nonnull Fifo<ITemporalData[]> inputs) {
+    public void subscribe(Fifo<ITemporalData[]> inputs) {
         inputs.subscribe(temporalDatas -> {
             BooleanSingle[] booleanSingles = predicate().apply(temporalDatas);
             BooleanSingleTimeSeries resultSeries = new BooleanSingleTimeSeries(name(), booleanSingles);
@@ -73,7 +72,7 @@ public abstract class RuleStream {
 
     protected abstract Function<ITemporalData[], BooleanSingle[]> predicate();
 
-    protected @Nonnull List<Integer> getSourceIndexes(ITemporalData[] temporalData) {
+    protected List<Integer> getSourceIndexes(ITemporalData[] temporalData) {
         List<Integer> sourceIndexes = new ArrayList<>();
         for (int x = 0; x< temporalData.length; x++) {
             if (allSources || (temporalData[x] instanceof TimeSeries series && sourceIds.contains(series.id()))) sourceIndexes.add(x);
@@ -103,7 +102,7 @@ public abstract class RuleStream {
         return this;
     }
 
-    public RuleStream addSourceId(@Nonnull String id) {
+    public RuleStream addSourceId(String id) {
         sourceIds.add(id);
         return this;
     }

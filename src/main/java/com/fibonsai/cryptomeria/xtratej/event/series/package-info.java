@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -12,4 +12,7 @@
  *  limitations under the License.
  */
 
+@NullMarked
 package com.fibonsai.cryptomeria.xtratej.event.series;
+
+import org.jspecify.annotations.NullMarked;

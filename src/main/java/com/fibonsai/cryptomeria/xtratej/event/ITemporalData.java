@@ -14,8 +14,6 @@
 
 package com.fibonsai.cryptomeria.xtratej.event;
 
-import jakarta.annotation.Nonnull;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -25,7 +23,7 @@ public interface ITemporalData extends Comparable<ITemporalData>, Serializable {
     long timestamp();
 
     @Override
-    default int compareTo(@Nonnull ITemporalData o) {
+    default int compareTo(ITemporalData o) {
         return Long.compare(timestamp(), o.timestamp());
     }
 

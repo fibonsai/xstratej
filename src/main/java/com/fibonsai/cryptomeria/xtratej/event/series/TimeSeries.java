@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -15,7 +15,6 @@
 package com.fibonsai.cryptomeria.xtratej.event.series;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import jakarta.annotation.Nonnull;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -31,12 +30,12 @@ public abstract class TimeSeries implements ITemporalData {
 
     protected int maxSize = 1;
 
-    protected TimeSeries(@Nonnull String id) {
+    protected TimeSeries(String id) {
         this.id = id;
     }
 
     public static double[] minmax(double[] array) {
-        if (array == null || array.length == 0) {
+        if (array.length == 0) {
             return new double[0];
         }
         if (array.length == 1) {

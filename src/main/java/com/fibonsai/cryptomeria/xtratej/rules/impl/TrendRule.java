@@ -14,13 +14,12 @@
 
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.EmptyTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
-import jakarta.annotation.Nonnull;
 import org.hipparchus.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +37,11 @@ public class TrendRule extends RuleStream {
     private String sourceId = "";
     private boolean isRising = true;
 
-    public TrendRule(@Nonnull String name, @Nonnull JsonNode properties) {
+    public TrendRule(String name, JsonNode properties) {
         this(name, properties, new Fifo<>());
     }
 
-    public TrendRule(@Nonnull String name, @Nonnull JsonNode properties, @Nonnull Fifo<ITemporalData> results) {
+    public TrendRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
         super(name, properties, results);
         processProperties();
     }
@@ -70,7 +69,7 @@ public class TrendRule extends RuleStream {
             }
 
             TimeSeries timeSeriesComparator = EmptyTimeSeries.INSTANCE;
-            if (sourceId != null && !sourceId.isBlank()) {
+            if (!sourceId.isBlank()) {
                 for (var temporalData : temporalDatas) {
                     if (temporalData instanceof TimeSeries timeSeries && Objects.equals(timeSeries.id(), sourceId)) timeSeriesComparator = timeSeries;
                 }
@@ -98,7 +97,7 @@ public class TrendRule extends RuleStream {
         };
     }
 
-    public TrendRule setSourceId(@Nonnull String sourceId) {
+    public TrendRule setSourceId(String sourceId) {
         this.sourceId = sourceId;
         return this;
     }

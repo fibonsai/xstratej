@@ -14,6 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.reactive;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,11 +180,11 @@ public class Fifo<T> {
         // All fields below are guarded by 'slotLock'.
         private final ReentrantLock slotLock = new ReentrantLock();
 
-        private List<Z> currentSlot;  // partially-filled slot (length == n)
-        private boolean[] slotFilled;       // which indices have been filled
+        private List<@Nullable Z> currentSlot = List.of();  // partially-filled slot (length == n)
+        private boolean[] slotFilled = new boolean[0];       // which indices have been filled
         private int filledCount;
         private boolean slotActive;
-        private ScheduledFuture<?> timeoutFuture;
+        @Nullable private ScheduledFuture<?> timeoutFuture = null;
 
         ZipCoordinator(int n,
                        ConcurrentLinkedQueue<Z>[] queues,
@@ -289,8 +290,8 @@ public class Fifo<T> {
             Z[] snapshot = currentSlot.toArray((Z[]) Array.newInstance(typeToken.getClass(), 0));
 
             slotActive  = false;
-            currentSlot = null;
-            slotFilled  = null;
+            currentSlot = List.of();
+            slotFilled  = new boolean[0];
             filledCount = 0;
 
             // Emit sequentially on a virtual thread to preserve tuple order.
@@ -305,8 +306,8 @@ public class Fifo<T> {
                 timeoutFuture = null;
             }
             slotActive  = false;
-            currentSlot = null;
-            slotFilled  = null;
+            currentSlot = List.of();
+            slotFilled  = new boolean[0];
             filledCount = 0;
         }
 

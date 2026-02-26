@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SuppressWarnings("DataFlowIssue")
 public class TimeSeriesTest {
 
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -369,42 +368,6 @@ public class TimeSeriesTest {
     public void testTimeSeriesId() {
         SingleTimeSeries timeSeries = new SingleTimeSeries("test-id");
         Assertions.assertEquals("test-id", timeSeries.id());
-    }
-
-    @Test
-    public void testAddWithNullSingle() {
-        SingleTimeSeries timeSeries = new SingleTimeSeries("");
-        assertThrows(NullPointerException.class, () -> timeSeries.add(null));
-    }
-
-    @Test
-    public void testAddWithNullCorrelated() {
-        CorrelatedTimeSeries timeSeries = new CorrelatedTimeSeries("");
-        assertThrows(NullPointerException.class, () -> timeSeries.add(null));
-    }
-
-    @Test
-    public void testAddWithNullWeighted() {
-        WeightedTimeSeries timeSeries = new WeightedTimeSeries("");
-        assertThrows(NullPointerException.class, () -> timeSeries.add(null));
-    }
-
-    @Test
-    public void testAddWithNullBand() {
-        BandTimeSeries timeSeries = new BandTimeSeries("");
-        assertThrows(NullPointerException.class, () -> timeSeries.add(null));
-    }
-
-    @Test
-    public void testAddWithNullBar() {
-        BarTimeSeries timeSeries = new BarTimeSeries("");
-        assertThrows(NullPointerException.class, () -> timeSeries.add(null));
-    }
-
-    @Test
-    public void testAddWithNullBooleanSingle() {
-        BooleanSingleTimeSeries timeSeries = new BooleanSingleTimeSeries("");
-        assertThrows(NullPointerException.class, () -> timeSeries.add(null));
     }
 
     @Test

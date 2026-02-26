@@ -13,6 +13,6 @@
  */
 
 @NullMarked
-package com.fibonsai.cryptomeria.xtratej.event.series.impl;
+package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import org.jspecify.annotations.NullMarked;

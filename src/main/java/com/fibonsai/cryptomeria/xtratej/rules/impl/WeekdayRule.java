@@ -14,11 +14,10 @@
 
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
-import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -34,11 +33,11 @@ public class WeekdayRule extends RuleStream {
 
     private final List<String> weekdays = new ArrayList<>();
 
-    public WeekdayRule(@Nonnull String name, @Nonnull JsonNode properties) {
+    public WeekdayRule(String name, JsonNode properties) {
         this(name, properties, new Fifo<>());
     }
 
-    public WeekdayRule(@Nonnull String name, @Nonnull JsonNode properties, @Nonnull Fifo<ITemporalData> results) {
+    public WeekdayRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
         super(name, properties, results);
         processProperties();
     }
@@ -81,7 +80,7 @@ public class WeekdayRule extends RuleStream {
         };
     }
 
-    public WeekdayRule addWeekday(@Nonnull String weekday) {
+    public WeekdayRule addWeekday(String weekday) {
         weekdays.add(weekday);
         return this;
     }
