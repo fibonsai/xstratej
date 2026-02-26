@@ -1,13 +1,27 @@
+/*
+ *  Copyright (c) 2026 fibonsai.com
+ *  All rights reserved.
+ *
+ *  This source is subject to the Apache License, Version 2.0.
+ *  Please see the LICENSE file for more information.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.fibonsai.cryptomeria.xtratej.rules;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.impl.EmptyTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.BooleanNode;
@@ -15,15 +29,18 @@ import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class RuleStreamTest {
 
+    @Mock
     private Fifo<ITemporalData> mockResults;
-    private TestRuleStream ruleStream;
+
     private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
     // Concrete implementation for testing abstract RuleStream
@@ -59,17 +76,11 @@ class RuleStreamTest {
         }
     }
 
-    @BeforeEach
-    void setUp() {
-        //noinspection unchecked
-        mockResults = mock(Fifo.class);
-    }
-
     @Test
     void constructorAndNameMethod() {
         String ruleName = "TestRule";
         JsonNode properties = nodeFactory.objectNode();
-        ruleStream = new TestRuleStream(ruleName, properties, mockResults);
+        TestRuleStream ruleStream = new TestRuleStream(ruleName, properties, mockResults);
 
         assertEquals(ruleName, ruleStream.name());
         assertNotNull(ruleStream.getProperties());
@@ -82,7 +93,7 @@ class RuleStreamTest {
         properties.set("allSources", BooleanNode.TRUE);
         properties.set("sources", nodeFactory.arrayNode().add("source1")); // Should be ignored
 
-        ruleStream = new TestRuleStream("TestRule", properties, mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", properties, mockResults);
         assertTrue(ruleStream.getAllSources());
         assertTrue(ruleStream.getSourceIds().isEmpty());
     }
@@ -96,7 +107,7 @@ class RuleStreamTest {
         sourcesArray.add("sourceB");
         properties.set("sources", sourcesArray);
 
-        ruleStream = new TestRuleStream("TestRule", properties, mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", properties, mockResults);
         assertFalse(ruleStream.getAllSources());
         assertEquals(Arrays.asList("sourceA", "sourceB"), ruleStream.getSourceIds());
     }
@@ -105,7 +116,7 @@ class RuleStreamTest {
     void processProperties_noAllSourcesAndNoSources() {
         ObjectNode properties = nodeFactory.objectNode(); // Empty properties
 
-        ruleStream = new TestRuleStream("TestRule", properties, mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", properties, mockResults);
         assertTrue(ruleStream.getAllSources()); // Default is true
         assertTrue(ruleStream.getSourceIds().isEmpty());
     }
@@ -114,7 +125,7 @@ class RuleStreamTest {
     void getSourceIndexes_allSourcesTrue() {
         ObjectNode properties = nodeFactory.objectNode();
         properties.set("allSources", BooleanNode.TRUE);
-        ruleStream = new TestRuleStream("TestRule", properties, mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", properties, mockResults);
 
         ITemporalData source1 = new SingleTimeSeries("source1");
         ITemporalData source2 = new SingleTimeSeries("source2");
@@ -135,7 +146,7 @@ class RuleStreamTest {
         sourcesArray.add("sourceA");
         sourcesArray.add("sourceC");
         properties.set("sources", sourcesArray);
-        ruleStream = new TestRuleStream("TestRule", properties, mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", properties, mockResults);
 
         ITemporalData sourceA = new SingleTimeSeries("sourceA");
         ITemporalData sourceB = new SingleTimeSeries("sourceB");
@@ -153,10 +164,11 @@ class RuleStreamTest {
     }
 
     @Test
-    void execute_emitsResult() {
+    void execute_emitsResult() throws InterruptedException {
         String ruleName = "TestRule";
         JsonNode properties = nodeFactory.objectNode();
-        ruleStream = new TestRuleStream(ruleName, properties, mockResults);
+        Fifo<ITemporalData> results = new Fifo<>();
+        TestRuleStream ruleStream = new TestRuleStream(ruleName, properties, results);
 
         long timestamp = System.currentTimeMillis();
         BooleanSingle[] expectedBooleanSingles = {new BooleanSingle(timestamp, true)};
@@ -165,12 +177,15 @@ class RuleStreamTest {
         ITemporalData[] temporalDatas = { new SingleTimeSeries.Single(0, 0.0) } ;
         var inputStream = new Fifo<ITemporalData[]>();
         ruleStream.subscribe(inputStream);
+        AtomicReference<ITemporalData> result = new AtomicReference<>(EmptyTimeSeries.INSTANCE);
+        CountDownLatch latch = new CountDownLatch(1);
+        results.onSubscribe(latch::countDown).subscribe(result::set);
+        //noinspection ResultOfMethodCallIgnored
+        latch.await(5, TimeUnit.SECONDS);
+
         inputStream.emitNext(temporalDatas);
 
-        ArgumentCaptor<ITemporalData> captor = ArgumentCaptor.forClass(ITemporalData.class);
-        verify(mockResults, times(1)).emitNext(captor.capture());
-
-        ITemporalData emittedSeries = captor.getValue();
+        ITemporalData emittedSeries = result.get();
         assertNotNull(emittedSeries);
         assertInstanceOf(BooleanSingleTimeSeries.class, emittedSeries);
         BooleanSingleTimeSeries booleanSeries = (BooleanSingleTimeSeries) emittedSeries;
@@ -183,7 +198,7 @@ class RuleStreamTest {
 
     @Test
     void setAllSources() {
-        ruleStream = new TestRuleStream("TestRule", nodeFactory.objectNode(), mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", nodeFactory.objectNode(), mockResults);
         assertTrue(ruleStream.getAllSources()); // Default
 
         ruleStream.setAllSources(false);
@@ -195,7 +210,7 @@ class RuleStreamTest {
 
     @Test
     void addSourceId() {
-        ruleStream = new TestRuleStream("TestRule", nodeFactory.objectNode(), mockResults);
+        TestRuleStream ruleStream = new TestRuleStream("TestRule", nodeFactory.objectNode(), mockResults);
         assertTrue(ruleStream.getSourceIds().isEmpty());
 
         ruleStream.addSourceId("newSource");
