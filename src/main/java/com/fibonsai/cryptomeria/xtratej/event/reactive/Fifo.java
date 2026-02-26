@@ -40,7 +40,12 @@ public class Fifo<T> {
     private Runnable onSubscribe = () -> {};
 
     public Fifo<T> onSubscribe(Runnable onSubscribe) {
-        this.onSubscribe = onSubscribe;
+        writeLock.lock();
+        try {
+            this.onSubscribe = onSubscribe;
+        } finally {
+            writeLock.unlock();
+        }
         return this;
     }
 
