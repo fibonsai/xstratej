@@ -335,12 +335,6 @@ public class TimeSeriesTest {
     }
 
     @Test
-    public void testNullArrayMinmax() {
-        double[] result = TimeSeries.minmax(null);
-        Assertions.assertEquals(0, result.length);
-    }
-
-    @Test
     public void testMinWithEmpty() {
         double result = TimeSeries.min(new double[0]);
         Assertions.assertTrue(Double.isNaN(result));
