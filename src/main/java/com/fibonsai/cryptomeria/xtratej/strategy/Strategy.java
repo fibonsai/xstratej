@@ -38,6 +38,7 @@ public class Strategy implements IStrategy {
     private final Map<String, RuleStream> indicatorRules = new HashMap<>();
     private final Map<String, RuleStream> logicRules = new HashMap<>();
     private Fifo<ITemporalData> aggregatedResults = new Fifo<>();
+    private Runnable onSubscribe = () -> {};
 
     public Strategy(String name, String symbol, String source, StrategyType strategyType) {
         this.name = name;
@@ -149,14 +150,14 @@ public class Strategy implements IStrategy {
     }
 
     @Override
-    public IStrategy subscribe(Consumer<ITemporalData> consumer, Runnable onSubscribe) {
-        aggregatedResults.subscribe(consumer, onSubscribe);
+    public IStrategy onSubscribe(Runnable onSubscribe) {
+        this.onSubscribe = onSubscribe;
         return this;
     }
 
     @Override
     public IStrategy subscribe(Consumer<ITemporalData> consumer) {
-        aggregatedResults.subscribe(consumer);
+        aggregatedResults.onSubscribe(onSubscribe).subscribe(consumer);
         return this;
     }
 }

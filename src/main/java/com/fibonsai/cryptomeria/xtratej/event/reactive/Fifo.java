@@ -36,16 +36,18 @@ public class Fifo<T> {
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     protected final ReentrantReadWriteLock.ReadLock  readLock  = readWriteLock.readLock();
     protected final ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
+    private Runnable onSubscribe = () -> {};
 
-    public void subscribe(Consumer<T> consumer, Runnable onSubscribe) {
-        subscribe(consumer);
-        onSubscribe.run();
+    public Fifo<T> onSubscribe(Runnable onSubscribe) {
+        this.onSubscribe = onSubscribe;
+        return this;
     }
 
     public void subscribe(Consumer<T> consumer) {
         writeLock.lock();
         try {
             consumers.add(consumer);
+            onSubscribe.run();
         } finally {
             writeLock.unlock();
         }
@@ -74,12 +76,16 @@ public class Fifo<T> {
         new Fifo<Object>() {
             @Override
             public void subscribe(Consumer<Object> consumer) {
-                throw new UnsupportedOperationException();
+                if (log.isDebugEnabled()) {
+                    log.debug("subscribing EMPTY {}", this.getClass().getSimpleName());
+                }
             }
 
             @Override
             public void emitNext(Object event) {
-                throw new UnsupportedOperationException();
+                if (log.isDebugEnabled()) {
+                    log.debug("emit object to EMPTY {}", this.getClass().getSimpleName());
+                }
             }
         };
     }

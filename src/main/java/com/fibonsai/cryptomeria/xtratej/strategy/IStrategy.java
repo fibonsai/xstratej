@@ -47,9 +47,7 @@ public interface IStrategy {
 
     StrategyType strategyType();
 
-    IStrategy subscribe(Consumer<ITemporalData> consumer, Runnable onSubscribe);
+    IStrategy onSubscribe(Runnable onSubscribe);
 
-    default IStrategy subscribe(Consumer<ITemporalData> consumer) {
-        return subscribe(consumer, () -> {});
-    }
+    IStrategy subscribe(Consumer<ITemporalData> consumer);
 }

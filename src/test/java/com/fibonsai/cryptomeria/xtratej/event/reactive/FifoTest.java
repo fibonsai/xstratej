@@ -39,10 +39,7 @@ class FifoTest {
         CountDownLatch latch = new CountDownLatch(1);
         List<String> received = new CopyOnWriteArrayList<>();
 
-        reactor.subscribe(e -> {
-            received.add(e);
-            latch.countDown();
-        });
+        reactor.subscribe(e -> { received.add(e); latch.countDown(); });
 
         reactor.emitNext("hello");
 
@@ -59,10 +56,7 @@ class FifoTest {
         List<Integer> received = new CopyOnWriteArrayList<>();
 
         for (int i = 0; i < subscriberCount; i++) {
-            reactor.subscribe(e -> {
-                received.add(e);
-                latch.countDown();
-            });
+            reactor.subscribe(e -> { received.add(e); latch.countDown(); });
         }
 
         reactor.emitNext(42);
@@ -87,10 +81,7 @@ class FifoTest {
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(2);
 
-        zipped.subscribe(arr -> {
-            results.add(arr);
-            latch.countDown();
-        });
+        zipped.subscribe(arr -> { results.add(arr); latch.countDown(); });
 
         // Emit in interleaved order to exercise ordering guarantees.
         r1.emitNext("r1-a");
@@ -122,10 +113,7 @@ class FifoTest {
         // We expect exactly ONE tuple because r3 emits only once.
         CountDownLatch latch = new CountDownLatch(1);
 
-        zipped.subscribe(arr -> {
-            results.add(arr);
-            latch.countDown();
-        });
+        zipped.subscribe(arr -> { results.add(arr); latch.countDown(); });
 
         r1.emitNext("r1-1");
         r2.emitNext("r2-1");
@@ -369,8 +357,7 @@ class FifoTest {
 
         for (int i = 0; i < threads; i++) {
             Thread.startVirtualThread(() -> {
-                reactor.subscribe(_ -> receiveLatch.countDown());
-                subscribeLatch.countDown();
+                reactor.onSubscribe(subscribeLatch::countDown).subscribe(_ -> receiveLatch.countDown());
             });
         }
 

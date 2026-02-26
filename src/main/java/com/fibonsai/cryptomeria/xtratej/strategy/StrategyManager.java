@@ -68,7 +68,7 @@ public class StrategyManager {
 
                 Thread.startVirtualThread(() -> {
                     log.info("Executing {} strategy", strategyName);
-                    strategy.activeRules().subscribe(temporalData -> {
+                    strategy.activeRules().onSubscribe(latch::countDown).subscribe(temporalData -> {
                         var result = switch (temporalData) {
                             case BooleanSingleTimeSeries ts when ts.size() > 0 -> new BooleanSingle(ts.timestamp(), ts.values()[ts.size() - 1]);
                             case BooleanSingle bSingle -> bSingle;
@@ -82,7 +82,7 @@ public class StrategyManager {
                             var tradingSignal = new TradingSignal(timestamp, signalType, strategyName, strategyPair, strategySource);
                             tradingSignalConsumer.emitNext(tradingSignal);
                         }
-                    }, latch::countDown);
+                    });
                 });
             });
             return latch.await(10, TimeUnit.SECONDS);
