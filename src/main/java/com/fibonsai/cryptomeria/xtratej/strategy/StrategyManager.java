@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -64,6 +64,7 @@ public class StrategyManager {
                 final TradingSignal.Signal signalType = switch (strategy.strategyType()) {
                     case ENTER -> TradingSignal.Signal.ENTER;
                     case EXIT -> TradingSignal.Signal.EXIT;
+                    default -> TradingSignal.Signal.UNDEF;
                 };
 
                 Thread.startVirtualThread(() -> {
