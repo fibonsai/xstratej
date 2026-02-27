@@ -34,7 +34,7 @@ public class LimitRule extends RuleStream {
 
     private double min = Double.NEGATIVE_INFINITY;
     private double max = Double.POSITIVE_INFINITY;
-    private String topSourceId = "";
+    private String upperSourceId = "";
     private String lowerSourceId = "";
 
     public LimitRule(String name, JsonNode properties) {
@@ -52,7 +52,7 @@ public class LimitRule extends RuleStream {
         for (var e: properties) {
             if ("min".equals(e.getKey()) && e.getValue().isDouble()) min = e.getValue().asDouble();
             if ("max".equals(e.getKey()) && e.getValue().isDouble()) max = e.getValue().asDouble();
-            if ("topSourceId".equals(e.getKey()) && e.getValue().isString()) topSourceId = e.getValue().asString();
+            if ("upperSourceId".equals(e.getKey()) && e.getValue().isString()) upperSourceId = e.getValue().asString();
             if ("lowerSourceId".equals(e.getKey()) && e.getValue().isString()) lowerSourceId = e.getValue().asString();
         }
     }
@@ -71,11 +71,11 @@ public class LimitRule extends RuleStream {
             boolean result = false;
             long lastTimestamp = 0;
 
-            TimeSeries tsTop = EmptyTimeSeries.INSTANCE;
+            TimeSeries tsUpper = EmptyTimeSeries.INSTANCE;
             TimeSeries tsLower = EmptyTimeSeries.INSTANCE;
             for (var temporalData : temporalDatas) {
                 if (temporalData instanceof TimeSeries timeSeries) {
-                    if (Objects.equals(timeSeries.id(), topSourceId)) tsTop = timeSeries;
+                    if (Objects.equals(timeSeries.id(), upperSourceId)) tsUpper = timeSeries;
                     if (Objects.equals(timeSeries.id(), lowerSourceId)) tsLower = timeSeries;
                 }
             }
@@ -83,19 +83,19 @@ public class LimitRule extends RuleStream {
             loop1:
             for (var temporalData: temporalDatas) {
                 if (temporalData instanceof TimeSeries timeSeries) {
-                    if (Objects.equals(timeSeries.id(), tsTop.id()) || Objects.equals(timeSeries.id(), tsLower.id())) {
+                    if (Objects.equals(timeSeries.id(), tsUpper.id()) || Objects.equals(timeSeries.id(), tsLower.id())) {
                         continue;
                     }
                     if ((allSources || sourceIndexes.contains(count++)) && timeSeries.size() > 0) {
                         lastTimestamp = timeSeries.timestamp();
                         for (int x = timeSeries.size() - 1; x >= 0; x--) {
                             double value = timeSeries.singleDoubleValues()[x];
-                            if (tsTop.size() > 0) {
-                                int topIndex = tsTop.size() - 1 - x;
+                            if (tsUpper.size() > 0) {
+                                int topIndex = tsUpper.size() - 1 - x;
                                 if (topIndex < 0) {
                                     break;
                                 }
-                                if (tsTop.singleDoubleValues()[topIndex] < value) {
+                                if (tsUpper.singleDoubleValues()[topIndex] < value) {
                                     result = false;
                                     break loop1;
                                 }
@@ -133,8 +133,8 @@ public class LimitRule extends RuleStream {
         return this;
     }
 
-    public LimitRule setUpperSourceId(String topSourceId) {
-        this.topSourceId = topSourceId;
+    public LimitRule setUpperSourceId(String upperSourceId) {
+        this.upperSourceId = upperSourceId;
         return this;
     }
 
