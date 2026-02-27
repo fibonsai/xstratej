@@ -6,61 +6,77 @@
       "type": "enter",
       "sources": {
         "flux1": {
-          "type": "nats",
+          "type": "SIMULATED",
           "params": {}
         },
-        "flux2": {},
-        "flux3": {}
+        "flux2": {
+          "type": "SIMULATED",
+          "params": {}
+        },
+        "flux3": {
+          "type": "SIMULATED",
+          "params": {}
+        }
       },
       "rules": {
-        "rule1": {
-          "type": "xxx",
-          "params": {},
+        "limit1": {
+          "type": "Limit",
+          "params": {
+            "min": 2.0,
+            "max": 80.0,
+            "allSources": true
+          },
+          "sources": []
+        },
+        "limit2": {
+          "type": "Limit",
+          "params": {
+            "min": 0.0,
+            "max": 50.0,
+            "allSources": true
+          },
+          "sources": []
+        },
+        "limit3": {
+          "type": "Limit",
+          "params": {
+            "upperSourceId": "flux2",
+            "lowerSourceId": "flux1",
+            "allSources": true
+          },
+          "sources": []
+        },
+        "orRule1": {
+          "type": "Or",
+          "params": {
+            "allSources": false
+          },
           "sources": [
-            "flux1",
-            "flux2"
+            "limit1",
+            "limit2"
           ]
         },
-        "rule2": {
-          "type": "yyy",
-          "params": {},
+        "notRule1": {
+          "type": "Not",
+          "params": {
+            "allSources": false
+          },
           "sources": [
-            "flux2",
-            "flux3"
+            "limit3"
           ]
         },
-        "or1": {
-          "type": "or",
-          "params": {},
+        "andRule1": {
+          "type": "And",
+          "params": {
+            "allSources": false
+          },
           "sources": [
-            "rule1",
-            "rule2"
-          ]
-        },
-        "rule3": {
-          "type": "zzz",
-          "params": {},
-          "sources": [
-            "flux1"
-          ]
-        },
-        "not1": {
-          "type": "not",
-          "params": {},
-          "sources": [
-            "rule3"
-          ]
-        },
-        "and1": {
-          "type": "and",
-          "params": {},
-          "sources": [
-            "or1",
-            "not1"
+            "orRule1",
+            "notRule1"
           ]
         }
       },
-      "aggregator": "and1"
+      "aggregator": "andRule1"
     }
   }
 }
