@@ -15,8 +15,8 @@
 package com.fibonsai.cryptomeria.xtratej.strategy;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
+import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 
 import java.util.function.Consumer;
 
@@ -30,13 +30,13 @@ public interface IStrategy {
         UNDEF
     }
 
-    IStrategy addIndicator(Fifo<ITemporalData> indicatorTimeseries);
+    IStrategy addSource(Subscriber source);
+
+    IStrategy addRule(RuleStream rule);
+
+    IStrategy setAggregatorRule(RuleStream aggregator);
 
     IStrategy setAggregatorRule(String ruleName);
-
-    IStrategy addIndicatorRule(RuleStream rule);
-
-    IStrategy addLogicRule(RuleStream rule);
 
     IStrategy activeRules();
 

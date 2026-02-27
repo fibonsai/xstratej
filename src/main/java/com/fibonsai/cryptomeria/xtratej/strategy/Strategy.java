@@ -17,10 +17,14 @@ package com.fibonsai.cryptomeria.xtratej.strategy;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
+import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
+import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -32,13 +36,13 @@ public class Strategy implements IStrategy {
     private final String source;
     private final StrategyType strategyType;
 
-    private final List<Fifo<ITemporalData>> indicators = new ArrayList<>();
-    private final AtomicInteger indicatorsZippedsCounter = new AtomicInteger(0);
-    private final AtomicInteger logicsZippedsCounter = new AtomicInteger(0);
-    private final Map<String, RuleStream> indicatorRules = new HashMap<>();
-    private final Map<String, RuleStream> logicRules = new HashMap<>();
-    private Fifo<ITemporalData> aggregatedResults = new Fifo<>();
+    private RuleStream aggregator = RuleType.False.builder().build();
     private Runnable onSubscribe = () -> {};
+
+    private final AtomicInteger rulesSubscribed = new AtomicInteger(0);
+
+    private final Map<String, Subscriber> sources = new HashMap<>();
+    private final Map<String, RuleStream> rules = new HashMap<>();
 
     public Strategy(String name, String symbol, String source, StrategyType strategyType) {
         this.name = name;
@@ -69,85 +73,73 @@ public class Strategy implements IStrategy {
 
     @Override
     public boolean isActivated() {
-        return indicatorRules.size() == indicatorsZippedsCounter.get() && logicRules.size() == logicsZippedsCounter.get();
+        return rules.size() == rulesSubscribed.get();
     }
 
     @Override
-    public IStrategy addIndicator(Fifo<ITemporalData> indicatorTimeseries) {
-        indicators.add(indicatorTimeseries);
-        return this;
-    }
-
-    @Override
-    public IStrategy setAggregatorRule(String ruleName) {
-        try {
-            aggregatedResults = Optional.ofNullable(logicRules.get(ruleName))
-                    .map(RuleStream::results)
-                    .orElseThrow(() -> new RuntimeException("%s logic rule NOT REGISTERED".formatted(ruleName)));
-
-            log.info("{} strategy: Aggregator rule {} registered", name(), ruleName);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+    public IStrategy addSource(Subscriber source) {
+        if (!isActivated()) {
+            sources.put(source.name(), source);
         }
         return this;
     }
 
     @Override
-    public IStrategy addIndicatorRule(RuleStream rule) {
-        indicatorRules.put(rule.name(), rule);
+    public IStrategy addRule(RuleStream rule) {
+        if (!isActivated()) {
+            rules.put(rule.name(), rule);
+        }
         return this;
     }
 
     @Override
-    public IStrategy addLogicRule(RuleStream rule) {
-        logicRules.put(rule.name(), rule);
+    public IStrategy setAggregatorRule(RuleStream aggregator) {
+        if (!isActivated()) {
+            this.aggregator = aggregator;
+            log.info("{} strategy: Aggregator rule {} registered", name(), aggregator.name());
+        }
+        return this;
+    }
+
+    @Override
+    public IStrategy setAggregatorRule(String ruleName) {
+        RuleStream rule = rules.get(ruleName);
+        if (rule != null) {
+            setAggregatorRule(rule);
+        } else {
+            log.error("{} rule NOT REGISTERED",ruleName);
+            aggregator = RuleType.False.builder().build();
+        }
         return this;
     }
 
     @Override
     public IStrategy activeRules() {
         if (!isActivated()) {
-            subscribeIndicators();
-            subscribeLogicRules();
+            subscribeRules();
         }
         return this;
     }
 
     @SuppressWarnings("unchecked")
-    private void subscribeLogicRules() {
-        for (var entry : logicRules.entrySet()) {
+    private void subscribeRules() {
+        for (var entry: rules.entrySet()) {
             RuleStream rule = entry.getValue();
-            List<String> sourceIds = rule.sourceIds();
-            List<Fifo<ITemporalData>> inputs = new ArrayList<>();
-            for (var indicatorRuleEntry : indicatorRules.entrySet()) {
-                RuleStream level0Rule = indicatorRuleEntry.getValue();
-                if (sourceIds.contains(level0Rule.name())) {
-                    inputs.add(level0Rule.results());
+            var inputs = new LinkedList<Fifo<ITemporalData>>();
+            for (var sourceId: rule.sourceIds()) {
+                var source = sources.get(sourceId);
+                if (source != null) {
+                    inputs.add(source.toFifo());
                 }
-            }
-            for (var logicRuleEntry : logicRules.entrySet()) {
-                RuleStream level1Rule = logicRuleEntry.getValue();
-                if (sourceIds.contains(level1Rule.name())) {
-                    inputs.add(level1Rule.results());
+                var otherRule = rules.get(sourceId);
+                if (otherRule != null) {
+                    inputs.add(otherRule.results());
                 }
             }
             var inputsArray = inputs.<Fifo<ITemporalData>>toArray(Fifo[]::new); // unckecked, but ok
-            var zipped = Fifo.zip(inputsArray);
-            rule.subscribe(zipped);
-            logicsZippedsCounter.getAndIncrement();
-            log.info("Logic Rule {} activated", rule.name());
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void subscribeIndicators() {
-        for (var entry : indicatorRules.entrySet()) {
-            RuleStream rule = entry.getValue();
-            var indicatorsArray = indicators.<Fifo<ITemporalData>>toArray(Fifo[]::new); // unckecked, but ok
-            var zipped = Fifo.zip(indicatorsArray);
-            rule.subscribe(zipped);
-            indicatorsZippedsCounter.getAndIncrement();
-            log.info("Indicator Rule {} activated", rule.name());
+            var inputsZipped = Fifo.zip(inputsArray);
+            rule.subscribe(inputsZipped);
+            rulesSubscribed.getAndIncrement();
         }
     }
 
@@ -159,7 +151,7 @@ public class Strategy implements IStrategy {
 
     @Override
     public IStrategy subscribe(Consumer<ITemporalData> consumer) {
-        aggregatedResults.onSubscribe(onSubscribe).subscribe(consumer);
+        aggregator.results().onSubscribe(onSubscribe).subscribe(consumer);
         return this;
     }
 }
