@@ -1,8 +1,14 @@
 {
   "strategies": {
     "enter": {
-      "indicators": {
-        "flux1": {},
+      "symbol": "BTC/USD",
+      "source": "OKX",
+      "type": "enter",
+      "sources": {
+        "flux1": {
+          "type": "nats",
+          "params": {}
+        },
         "flux2": {},
         "flux3": {}
       },
@@ -10,7 +16,7 @@
         "rule1": {
           "type": "xxx",
           "params": {},
-          "from": [
+          "sources": [
             "flux1",
             "flux2"
           ]
@@ -18,7 +24,7 @@
         "rule2": {
           "type": "yyy",
           "params": {},
-          "from": [
+          "sources": [
             "flux2",
             "flux3"
           ]
@@ -26,7 +32,7 @@
         "or1": {
           "type": "or",
           "params": {},
-          "from": [
+          "sources": [
             "rule1",
             "rule2"
           ]
@@ -34,27 +40,27 @@
         "rule3": {
           "type": "zzz",
           "params": {},
-          "from": [
+          "sources": [
             "flux1"
           ]
         },
         "not1": {
           "type": "not",
           "params": {},
-          "from": [
+          "sources": [
             "rule3"
           ]
         },
         "and1": {
           "type": "and",
           "params": {},
-          "from": [
+          "sources": [
             "or1",
             "not1"
           ]
         }
       },
-      "from": "and1"
+      "aggregator": "and1"
     }
   }
 }
