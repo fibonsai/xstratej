@@ -1,25 +1,14 @@
 # xtratej
 
-**xtratej** is a robust, reactive strategy engine for Java, designed by Fibonsai. It provides a flexible framework for defining, testing, and executing trading strategies based on time-series data and event streams.
+**xtratej** is a robust, reactive strategy/rule engine for Java. It provides a flexible framework for defining, testing, and executing trading strategies based on time-series data and event streams.
 
 ## Features
 
 *   **Reactive Architecture**: Built on a custom `Fifo` reactive stream implementation for efficient event processing.
 *   **Extensible Rules Engine**: define complex logic using a variety of composable rules (`CrossedRule`, `AndRule`, `OrRule`, etc.).
+*   **Subcriber connectors** (WIP): Support to connect and receive external datas.
 *   **Time-Series Handling**: Specialized support for temporal data manipulation and analysis.
 *   **Strategy Management**: Organize indicators and logic into cohesive `Strategy` units.
-
-## Installation
-
-Add the following dependency to your `pom.xml`:
-
-```xml
-<dependency>
-    <groupId>com.fibonsai.cryptomeria</groupId>
-    <artifactId>xtratej</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-</dependency>
-```
 
 ## Usage
 
@@ -73,11 +62,19 @@ myStrategy.subscribe(result -> {
 *   **RuleStream**: Abstract base for all logic components. Rules process inputs and emit `BooleanSingleTimeSeries` results.
 *   **TimeSeries**: Optimized storage for temporal data points (prices, signals).
 *   **Fifo**: The underlying reactive pipe connecting components.
+*   **Subscriber**: Entity to subscribe external data sources.
 
 ## Requirements
 
 *   Java 25 or higher
 *   Maven 3.8+
+
+## TODO
+
+[] Publishers to external consumers
+[] NATS Subscriber support.
+[] Kafka Subscriber support.
+[] Candles rules support.
 
 ## License
 
