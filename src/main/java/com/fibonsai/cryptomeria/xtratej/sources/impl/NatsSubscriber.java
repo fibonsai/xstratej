@@ -23,11 +23,12 @@ public class NatsSubscriber implements Subscriber {
 
     private final String name;
     private final JsonNode properties;
-    private final Fifo<ITemporalData> fifo = new Fifo<>();
+    private final Fifo<ITemporalData> fifo;
 
-    public NatsSubscriber(String name, JsonNode properties) {
+    public NatsSubscriber(String name, JsonNode properties, Fifo<ITemporalData> fifo) {
         this.name = name;
         this.properties = properties;
+        this.fifo = fifo;
     }
 
     @Override

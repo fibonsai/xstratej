@@ -37,7 +37,7 @@ public enum SourceType {
         this.clazz = clazz;
     }
 
-    public SourceType fromName(String name) {
+    public static SourceType fromName(String name) {
         for (var value: values()) {
             if (value.name().equals(name)) {
                 return value;
