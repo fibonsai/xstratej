@@ -71,10 +71,10 @@ myStrategy.subscribe(result -> {
 
 ## TODO
 
-[] Publishers to external consumers
-[] NATS Subscriber support.
-[] Kafka Subscriber support.
-[] Candles rules support.
+- [ ] Publishers to external consumers
+- [ ] NATS Subscriber support.
+- [ ] Kafka Subscriber support.
+- [ ] Candles rules support.
 
 ## License
 
