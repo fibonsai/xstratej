@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -14,8 +14,8 @@
 
 package com.fibonsai.cryptomeria.xtratej.strategy;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 
 import java.util.function.Consumer;
@@ -26,7 +26,8 @@ public interface IStrategy {
 
     enum StrategyType {
         ENTER,
-        EXIT
+        EXIT,
+        UNDEF
     }
 
     IStrategy addIndicator(Fifo<ITemporalData> indicatorTimeseries);
