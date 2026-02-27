@@ -102,6 +102,10 @@ public abstract class RuleStream {
         return this;
     }
 
+    public boolean allSources() {
+        return allSources;
+    }
+
     public RuleStream addSourceId(String id) {
         sourceIds.add(id);
         return this;

@@ -45,6 +45,15 @@ public enum RuleType {
         this.clazz = clazz;
     }
 
+    public static RuleType fromName(String name) {
+        for (var value: values()) {
+            if (value.name().equals(name)) {
+                return value;
+            }
+        }
+        return False;
+    }
+
     public Builder<? extends RuleStream> builder() {
         return new Builder<>(clazz);
     }
