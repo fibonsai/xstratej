@@ -13,6 +13,6 @@
  */
 
 @NullMarked
-package com.fibonsai.cryptomeria.xtratej.inflow;
+package com.fibonsai.cryptomeria.xtratej.sources.impl;
 
 import org.jspecify.annotations.NullMarked;

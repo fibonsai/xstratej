@@ -12,7 +12,11 @@
  *  limitations under the License.
  */
 
-@NullMarked
-package com.fibonsai.cryptomeria.xtratej.inflow.impl;
+package com.fibonsai.cryptomeria.xtratej.sources.impl;
 
-import org.jspecify.annotations.NullMarked;
+import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
+
+public class NatsSubscriber implements Subscriber {
+
+
+}
