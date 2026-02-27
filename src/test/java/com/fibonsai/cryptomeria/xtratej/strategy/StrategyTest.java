@@ -16,13 +16,14 @@ package com.fibonsai.cryptomeria.xtratej.strategy;
 
 import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.AndRule;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.LimitRule;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.NotRule;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.OrRule;
+import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
+import com.fibonsai.cryptomeria.xtratej.sources.impl.SimulatedSubscriber;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.JsonNodeFactory;
@@ -42,7 +43,7 @@ public class StrategyTest {
     private final Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
 
     @Test
-    public void runStrategies() {
+    public void createStrategyAndRun() {
 
         ObjectNode properties1 = nodeFactory.objectNode();
         LimitRule limit1 = new LimitRule("limit1", properties1);
@@ -90,31 +91,31 @@ public class StrategyTest {
         Strategy strategyEnter = new Strategy("enter", "UNDEF", "UNDEF", StrategyType.ENTER);
         Strategy strategyExit = new Strategy("exit", "UNDEF", "UNDEF", StrategyType.EXIT);
 
-        Fifo<ITemporalData> flux1 = new Fifo<>();
-        Fifo<ITemporalData> flux2 = new Fifo<>();
-        Fifo<ITemporalData> flux3 = new Fifo<>();
+        Subscriber source1 = new SimulatedSubscriber("flux1", nodeFactory.nullNode());
+        Subscriber source2 = new SimulatedSubscriber("flux2", nodeFactory.nullNode());
+        Subscriber source3 = new SimulatedSubscriber("flux3", nodeFactory.nullNode());
 
-        strategyEnter.addIndicator(flux1)
-                    .addIndicator(flux2)
-                    .addIndicator(flux3)
-                    .addIndicatorRule(limit1)
-                    .addIndicatorRule(limit2)
-                    .addIndicatorRule(limit3)
-                    .addLogicRule(andRule1)
-                    .addLogicRule(orRule1)
-                    .addLogicRule(notRule1)
+        strategyEnter.addSource(source1)
+                    .addSource(source2)
+                    .addSource(source3)
+                    .addRule(limit1)
+                    .addRule(limit2)
+                    .addRule(limit3)
+                    .addRule(andRule1)
+                    .addRule(orRule1)
+                    .addRule(notRule1)
                     .setAggregatorRule(andRule1.name());
 
-        strategyExit.addIndicator(flux1)
-                    .addIndicator(flux2)
-                    .addIndicator(flux3)
-                    .addIndicatorRule(limit4)
-                    .addIndicatorRule(limit5)
-                    .addIndicatorRule(limit6)
-                    .addLogicRule(andRule2)
-                    .addLogicRule(orRule2)
-                    .addLogicRule(notRule2)
-                    .setAggregatorRule(andRule2.name());
+        strategyExit.addSource(source1)
+                    .addSource(source2)
+                    .addSource(source3)
+                    .addRule(limit4)
+                    .addRule(limit5)
+                    .addRule(limit6)
+                    .addRule(andRule2)
+                    .addRule(orRule2)
+                    .addRule(notRule2)
+                    .setAggregatorRule(andRule2);
 
         StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer)
                 .registerStrategy(strategyEnter)
@@ -135,21 +136,24 @@ public class StrategyTest {
             long timestamp = Instant.now().toEpochMilli();
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
-                flux1.emitNext(new SingleTimeSeries("flux1", new Single[]{ new Single(timestamp, value)})));
+                source1.toFifo()
+                        .emitNext(new SingleTimeSeries("flux1", new Single[]{ new Single(timestamp, value)})));
         }
 
         for (int x=n-1; x>=0; x--) {
             long timestamp = Instant.now().toEpochMilli();
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
-                flux2.emitNext(new SingleTimeSeries("flux2", new Single[]{ new Single(timestamp, value)})));
+                source2.toFifo()
+                        .emitNext(new SingleTimeSeries("flux2", new Single[]{ new Single(timestamp, value)})));
         }
 
         for (int x=0; x < n; x++) {
             long timestamp = Instant.now().toEpochMilli();
             double value = random.nextDouble(0.0, n);
             Thread.startVirtualThread(() ->
-                flux3.emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
+                source3.toFifo()
+                        .emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
         }
 
         assertTrue(allStrategiesActivated);
