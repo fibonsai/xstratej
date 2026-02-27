@@ -22,6 +22,7 @@ import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -126,14 +127,19 @@ public class Strategy implements IStrategy {
         for (var entry: rules.entrySet()) {
             RuleStream rule = entry.getValue();
             var inputs = new LinkedList<Fifo<ITemporalData>>();
-            for (var sourceId: rule.sourceIds()) {
-                var source = sources.get(sourceId);
-                if (source != null) {
-                    inputs.add(source.toFifo());
-                }
-                var otherRule = rules.get(sourceId);
-                if (otherRule != null) {
-                    inputs.add(otherRule.results());
+            if (rule.allSources()) {
+                // only Subscriber implementations is supported
+                sources.values().forEach(source -> inputs.add(source.toFifo()));
+            } else {
+                for (var sourceId : rule.sourceIds()) {
+                    var source = sources.get(sourceId);
+                    if (source != null) {
+                        inputs.add(source.toFifo());
+                    }
+                    var otherRuleAsSource = rules.get(sourceId);
+                    if (otherRuleAsSource != null) {
+                        inputs.add(otherRuleAsSource.results());
+                    }
                 }
             }
             var inputsArray = inputs.<Fifo<ITemporalData>>toArray(Fifo[]::new); // unckecked, but ok
@@ -153,5 +159,10 @@ public class Strategy implements IStrategy {
     public IStrategy subscribe(Consumer<ITemporalData> consumer) {
         aggregator.results().onSubscribe(onSubscribe).subscribe(consumer);
         return this;
+    }
+
+    @Override
+    public Collection<Subscriber> getSources() {
+        return sources.values();
     }
 }

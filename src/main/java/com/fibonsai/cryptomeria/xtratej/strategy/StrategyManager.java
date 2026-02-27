@@ -50,6 +50,10 @@ public class StrategyManager {
         return this;
     }
 
+    public ArrayList<IStrategy> getStrategies() {
+        return strategies;
+    }
+
     public boolean run() {
         readLock.lock();
         if (strategies.isEmpty()) {

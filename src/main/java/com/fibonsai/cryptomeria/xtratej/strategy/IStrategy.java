@@ -18,16 +18,29 @@ import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 public interface IStrategy {
 
     default boolean isActivated() { return false; }
 
+    Collection<Subscriber> getSources();
+
     enum StrategyType {
         ENTER,
         EXIT,
         UNDEF
+        ;
+
+        public static StrategyType fromName(String name) {
+            for (var value: values()) {
+                if (value.name().equals(name)) {
+                    return value;
+                }
+            }
+            return UNDEF;
+        }
     }
 
     IStrategy addSource(Subscriber source);

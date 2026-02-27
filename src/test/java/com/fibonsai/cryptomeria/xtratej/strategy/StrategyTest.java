@@ -26,10 +26,15 @@ import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.sources.impl.SimulatedSubscriber;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -91,9 +96,9 @@ public class StrategyTest {
         Strategy strategyEnter = new Strategy("enter", "UNDEF", "UNDEF", StrategyType.ENTER);
         Strategy strategyExit = new Strategy("exit", "UNDEF", "UNDEF", StrategyType.EXIT);
 
-        Subscriber source1 = new SimulatedSubscriber("flux1", nodeFactory.nullNode());
-        Subscriber source2 = new SimulatedSubscriber("flux2", nodeFactory.nullNode());
-        Subscriber source3 = new SimulatedSubscriber("flux3", nodeFactory.nullNode());
+        Subscriber source1 = new SimulatedSubscriber("flux1", nodeFactory.nullNode(), new Fifo<>());
+        Subscriber source2 = new SimulatedSubscriber("flux2", nodeFactory.nullNode(), new Fifo<>());
+        Subscriber source3 = new SimulatedSubscriber("flux3", nodeFactory.nullNode(), new Fifo<>());
 
         strategyEnter.addSource(source1)
                     .addSource(source2)
@@ -154,6 +159,76 @@ public class StrategyTest {
             Thread.startVirtualThread(() ->
                 source3.toFifo()
                         .emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
+        }
+
+        assertTrue(allStrategiesActivated);
+        assertTrue(counter.get() > 0);
+    }
+
+    @Test
+    public void createStretegyFromJsonAndRun() throws IOException {
+        Map<String, IStrategy> strategies;
+        StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer);
+
+        ObjectMapper mapper = new ObjectMapper();
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies.json")) {
+            JsonNode jsonNode = mapper.readValue(is, JsonNode.class);
+            strategies = Loader.fromJson(jsonNode);
+        }
+
+        for (var strategy: strategies.values()) {
+            strategyManager.registerStrategy(strategy);
+        }
+
+        strategyManager.run();
+
+        int n = 100;
+        AtomicInteger counter = new AtomicInteger(1);
+        AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
+
+        tradingSignalConsumer.subscribe(_ -> {
+            counter.getAndIncrement();
+            lastUpdate.set(Instant.now().toEpochMilli());
+        });
+
+        boolean allStrategiesActivated = strategyManager.run();
+
+        for (var strategy: strategyManager.getStrategies()) {
+            for (var source: strategy.getSources()) {
+                String sourceName = source.name();
+                switch (sourceName) {
+                    case "flux1": {
+                        for (int x=0; x<n; x++) {
+                            long timestamp = Instant.now().toEpochMilli();
+                            double value = x * 1.0D;
+                            Thread.startVirtualThread(() ->
+                                    source.toFifo()
+                                            .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
+                        }
+                        break;
+                    }
+                    case "flux2": {
+                        for (int x=n-1; x>=0; x--) {
+                            long timestamp = Instant.now().toEpochMilli();
+                            double value = x * 1.0D;
+                            Thread.startVirtualThread(() ->
+                                    source.toFifo()
+                                            .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
+                        }
+                        break;
+                    }
+                    case "flux3": {
+                        for (int x=0; x < n; x++) {
+                            long timestamp = Instant.now().toEpochMilli();
+                            double value = random.nextDouble(0.0, n);
+                            Thread.startVirtualThread(() ->
+                                    source.toFifo()
+                                            .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
+                        }
+                        break;
+                    }
+                }
+            }
         }
 
         assertTrue(allStrategiesActivated);
