@@ -2,19 +2,21 @@
   "strategies": {
     "enter": {
       "symbol": "BTC/USD",
-      "source": "OKX",
       "type": "enter",
       "sources": {
         "flux1": {
           "type": "SIMULATED",
+          "publisher": "OKX",
           "params": {}
         },
         "flux2": {
           "type": "SIMULATED",
+          "publisher": "OKX",
           "params": {}
         },
         "flux3": {
           "type": "SIMULATED",
+          "publisher": "OKX",
           "params": {}
         }
       },

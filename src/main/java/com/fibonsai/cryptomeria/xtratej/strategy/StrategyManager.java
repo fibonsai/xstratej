@@ -64,7 +64,7 @@ public class StrategyManager {
             strategies.forEach(strategy -> {
                 final String strategyName = strategy.name();
                 final String strategyPair = strategy.symbol();
-                final String strategySource = strategy.source();
+                final String strategyPublishers = String.join("#", strategy.publishers());
                 final TradingSignal.Signal signalType = switch (strategy.strategyType()) {
                     case ENTER -> TradingSignal.Signal.ENTER;
                     case EXIT -> TradingSignal.Signal.EXIT;
@@ -84,7 +84,7 @@ public class StrategyManager {
                             if (log.isDebugEnabled()) {
                                 log.debug("[{}] Strategy {}: Send trading signal", timestamp, strategyName);
                             }
-                            var tradingSignal = new TradingSignal(timestamp, signalType, strategyName, strategyPair, strategySource);
+                            var tradingSignal = new TradingSignal(timestamp, signalType, strategyName, strategyPair, strategyPublishers);
                             tradingSignalConsumer.emitNext(tradingSignal);
                         }
                     });

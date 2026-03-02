@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Strategy loader
+ * Strategy loader V2
  */
-public class Loader {
+public class LoaderV2 {
 
     private static final JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance;
 
@@ -61,51 +61,70 @@ public class Loader {
                         JsonNode sourceJson = sourceEntry.getValue();
                         JsonNode sourceParams = NODE_FACTORY.nullNode();
                         SourceType sourceType = SourceType.UNDEF;
+                        String publisher = "undef";
                         if (sourceJson.hasNonNull("type") && sourceJson.get("type").isString()) {
                             sourceType = SourceType.fromName(sourceJson.get("type").asString());
+                        }
+                        if (sourceJson.hasNonNull("publisher") && sourceJson.get("publisher").isString()) {
+                            publisher = sourceJson.get("publisher").asString();
                         }
                         if (sourceJson.hasNonNull("params")) {
                             sourceParams = sourceJson.get("params");
                         }
-                        Subscriber sourceInstance = sourceType.builder().setName(sourceName).setProperties(sourceParams).build();
+                        Subscriber sourceInstance = sourceType.builder()
+                                .setName(sourceName)
+                                .setPublisher(publisher)
+                                .setProperties(sourceParams).build();
                         strategy.addSource(sourceInstance);
                     }
                 }
 
-                // rules
-                if (strategyJson.hasNonNull("rules")) {
-                    Set<Map.Entry<String, JsonNode>> rulesJson = strategyJson.get("rules").properties();
-                    for (var ruleEntry: rulesJson) {
-                        String ruleName = ruleEntry.getKey();
-                        JsonNode ruleJson = ruleEntry.getValue();
-                        RuleType ruleType = RuleType.False;
-                        JsonNode ruleParams = NODE_FACTORY.nullNode();
-                        if (ruleJson.hasNonNull("type") && ruleJson.get("type").isString()) {
-                            ruleType = RuleType.fromName(ruleJson.get("type").asString());
-                        }
-                        if (ruleJson.hasNonNull("params")) {
-                            ruleParams = ruleJson.get("params");
-                        }
-                        RuleStream ruleInstance = ruleType.builder().setId(ruleName).setProperties(ruleParams).build();
-                        if (ruleJson.hasNonNull("sources") && ruleJson.get("sources").isArray()) {
-                            for (var source: ruleJson.get("sources")) {
-                                if (source.isString()) {
-                                    ruleInstance.addSourceId(source.asString());
-                                }
-                            }
-                        }
-                        strategy.addRule(ruleInstance);
+                // rule (recursive structure)
+                if (strategyJson.hasNonNull("rule") && strategyJson.get("rule").isObject()) {
+                    Set<Map.Entry<String, JsonNode>> ruleEntries = strategyJson.get("rule").properties();
+                    for (var ruleEntry : ruleEntries) {
+                        String rootRuleName = ruleEntry.getKey();
+                        parseRule(rootRuleName, ruleEntry.getValue(), strategy);
+                        strategy.setAggregatorRule(rootRuleName);
                     }
-                }
-
-                // aggregator
-                if (strategyJson.hasNonNull("aggregator") && strategyJson.get("aggregator").isString()) {
-                    strategy.setAggregatorRule(strategyJson.get("aggregator").asString());
                 }
 
                 strategiesMap.put(strategyName, strategy);
             }
         }
         return strategiesMap;
+    }
+
+    private static void parseRule(String ruleName, JsonNode ruleJson, IStrategy strategy) {
+        RuleType ruleType = RuleType.False;
+        JsonNode ruleParams = NODE_FACTORY.nullNode();
+        if (ruleJson.hasNonNull("type") && ruleJson.get("type").isString()) {
+            ruleType = RuleType.fromName(ruleJson.get("type").asString());
+        }
+        if (ruleJson.hasNonNull("params")) {
+            ruleParams = ruleJson.get("params");
+        }
+        RuleStream ruleInstance = ruleType.builder().setId(ruleName).setProperties(ruleParams).build();
+
+        if (ruleJson.hasNonNull("inputs")) {
+            JsonNode inputs = ruleJson.get("inputs");
+            if (inputs.isArray()) {
+                // Leaf rule taking sources as inputs
+                for (JsonNode input : inputs) {
+                    if (input.isString()) {
+                        ruleInstance.addSourceId(input.asString());
+                    }
+                }
+            } else if (inputs.isObject()) {
+                // Composite rule taking other rules as inputs
+                Set<Map.Entry<String, JsonNode>> subRules = inputs.properties();
+                for (var entry : subRules) {
+                    String subRuleName = entry.getKey();
+                    parseRule(subRuleName, entry.getValue(), strategy);
+                    ruleInstance.addSourceId(subRuleName);
+                }
+            }
+        }
+        strategy.addRule(ruleInstance);
     }
 }

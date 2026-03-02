@@ -22,19 +22,16 @@ import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Strategy implements IStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(Strategy.class);
     private final String name;
     private final String symbol;
-    private final String source;
     private final StrategyType strategyType;
 
     private RuleStream aggregator = RuleType.False.builder().build();
@@ -45,10 +42,9 @@ public class Strategy implements IStrategy {
     private final Map<String, Subscriber> sources = new HashMap<>();
     private final Map<String, RuleStream> rules = new HashMap<>();
 
-    public Strategy(String name, String symbol, String source, StrategyType strategyType) {
+    public Strategy(String name, String symbol, StrategyType strategyType) {
         this.name = name;
         this.symbol = symbol;
-        this.source = source;
         this.strategyType = strategyType;
     }
 
@@ -63,8 +59,8 @@ public class Strategy implements IStrategy {
     }
 
     @Override
-    public String source() {
-        return source;
+    public Set<String> publishers() {
+        return sources.values().stream().map(Subscriber::publisher).collect(Collectors.toSet());
     }
 
     @Override

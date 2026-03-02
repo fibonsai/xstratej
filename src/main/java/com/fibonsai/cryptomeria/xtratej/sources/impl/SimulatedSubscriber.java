@@ -22,11 +22,13 @@ import tools.jackson.databind.JsonNode;
 public class SimulatedSubscriber implements Subscriber {
 
     private final String name;
+    private final String publisher;
     private final JsonNode properties;
     private final Fifo<ITemporalData> fifo;
 
-    public SimulatedSubscriber(String name, JsonNode properties, Fifo<ITemporalData> fifo) {
+    public SimulatedSubscriber(String name, String publisher, JsonNode properties, Fifo<ITemporalData> fifo) {
         this.name = name;
+        this.publisher = publisher;
         this.properties = properties;
         this.fifo = fifo;
     }
@@ -34,6 +36,11 @@ public class SimulatedSubscriber implements Subscriber {
     @Override
     public String name() {
         return this.name;
+    }
+
+    @Override
+    public String publisher() {
+        return publisher;
     }
 
     @Override

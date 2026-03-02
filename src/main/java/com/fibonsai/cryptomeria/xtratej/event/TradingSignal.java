@@ -19,7 +19,7 @@ public record TradingSignal(
         Signal signal,
         String strategyName,
         String pair,
-        String source) implements ITemporalData {
+        String publishers) implements ITemporalData {
 
     public enum Signal {
         ENTER,

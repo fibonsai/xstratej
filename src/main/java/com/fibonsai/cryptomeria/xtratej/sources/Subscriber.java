@@ -18,7 +18,8 @@ import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 
 public interface Subscriber {
-    public String name();
+    String name();
+    String publisher();
 
     Fifo<ITemporalData> toFifo();
 }

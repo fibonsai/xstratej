@@ -1,0 +1,152 @@
+{
+  "strategies": {
+    "enter": {
+      "symbol": "BTC/USD",
+      "type": "enter",
+      "sources": {
+        "flux1": {
+          "type": "SIMULATED",
+          "publisher": "local",
+          "params": {}
+        },
+        "flux2": {
+          "type": "SIMULATED",
+          "publisher": "local",
+          "params": {}
+        },
+        "flux3": {
+          "type": "SIMULATED",
+          "publisher": "local",
+          "params": {}
+        }
+      },
+      "rule": {
+        "andRule1": {
+          "type": "And",
+          "inputs": {
+            "orRule1": {
+              "type": "Or",
+              "inputs": {
+                "limit1": {
+                  "type": "Limit",
+                  "params": {
+                    "min": 2.0,
+                    "max": 80.0
+                  },
+                  "inputs": [
+                    "flux1",
+                    "flux2",
+                    "flux3"
+                  ]
+                },
+                "limit2": {
+                  "type": "Limit",
+                  "params": {
+                    "min": 0.0,
+                    "max": 50.0
+                  },
+                  "inputs": [
+                    "flux1",
+                    "flux2",
+                    "flux3"
+                  ]
+                }
+              }
+            },
+            "notRule1": {
+              "type": "Not",
+              "inputs": {
+                "limit3": {
+                  "type": "Limit",
+                  "params": {
+                    "upperSourceId": "flux1",
+                    "lowerSourceId": "flux2"
+                  },
+                  "inputs": [
+                    "flux1",
+                    "flux2",
+                    "flux3"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "exit": {
+      "symbol": "BTC/USD",
+      "type": "enter",
+      "sources": {
+        "flux4": {
+          "type": "SIMULATED",
+          "publisher": "local",
+          "params": {}
+        },
+        "flux5": {
+          "type": "SIMULATED",
+          "publisher": "local",
+          "params": {}
+        },
+        "flux6": {
+          "type": "SIMULATED",
+          "publisher": "local",
+          "params": {}
+        }
+      },
+      "rule": {
+        "andRule2": {
+          "type": "And",
+          "inputs": {
+            "orRule2": {
+              "type": "Or",
+              "inputs": {
+                "limit4": {
+                  "type": "Limit",
+                  "params": {
+                    "min": 2.0,
+                    "max": 80.0
+                  },
+                  "inputs": [
+                    "flux4",
+                    "flux5",
+                    "flux6"
+                  ]
+                },
+                "limit5": {
+                  "type": "Limit",
+                  "params": {
+                    "min": 0.0,
+                    "max": 50.0
+                  },
+                  "inputs": [
+                    "flux4",
+                    "flux5",
+                    "flux6"
+                  ]
+                }
+              }
+            },
+            "notRule2": {
+              "type": "Not",
+              "inputs": {
+                "limit3": {
+                  "type": "Limit",
+                  "params": {
+                    "upperSourceId": "flux4",
+                    "lowerSourceId": "flux5"
+                  },
+                  "inputs": [
+                    "flux4",
+                    "flux5",
+                    "flux6"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

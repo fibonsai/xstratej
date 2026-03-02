@@ -53,7 +53,8 @@ public enum SourceType {
     public static class Builder<T> {
         private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
         private final Constructor<T> constructor;
-        private String id = "undef";
+        private String name = "undef";
+        private String publisher = "undef";
         private JsonNode properties = nodeFactory.nullNode();
         private Fifo<ITemporalData> results = new Fifo<>();
 
@@ -62,7 +63,7 @@ public enum SourceType {
                 if (clazz == null) {
                     throw new UnsupportedOperationException();
                 }
-                this.constructor = clazz.getConstructor(String.class, JsonNode.class, Fifo.class);
+                this.constructor = clazz.getConstructor(String.class, String.class, JsonNode.class, Fifo.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -73,8 +74,13 @@ public enum SourceType {
             return this;
         }
 
-        public Builder<T> setId(String id) {
-            this.id = id;
+        public Builder<T> setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder<T> setPublisher(String publisher) {
+            this.publisher = publisher;
             return this;
         }
 
@@ -85,7 +91,7 @@ public enum SourceType {
 
         public T build() {
             try {
-                return constructor.newInstance(id, properties, results);
+                return constructor.newInstance(name, publisher,properties, results);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }

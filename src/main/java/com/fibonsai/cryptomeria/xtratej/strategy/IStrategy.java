@@ -19,6 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public interface IStrategy {
@@ -57,7 +58,7 @@ public interface IStrategy {
 
     String symbol();
 
-    String source();
+    Set<String> publishers();
 
     StrategyType strategyType();
 
