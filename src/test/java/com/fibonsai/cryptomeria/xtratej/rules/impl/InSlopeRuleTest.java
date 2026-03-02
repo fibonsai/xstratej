@@ -1,11 +1,26 @@
 
+/*
+ *  Copyright (c) 2026 fibonsai.com
+ *  All rights reserved.
+ *
+ *  This source is subject to the Apache License, Version 2.0.
+ *  Please see the LICENSE file for more information.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +67,7 @@ class InSlopeRuleTest {
     void processProperties_shouldSetSlopes() {
         properties.put("minSlope", 0.5);
         properties.put("maxSlope", 1.5);
-        InSlopeRule rule = new InSlopeRule("test", properties, mockResults);
+        InSlopeRule rule = RuleType.InSlope.build().setProperties(properties) instanceof InSlopeRule r ? r : null;
         assertNotNull(rule);
     }
 
@@ -60,8 +75,11 @@ class InSlopeRuleTest {
     void predicate_slopeWithinRange_shouldReturnTrue() {
         properties.put("minSlope", 0.5);
         properties.put("maxSlope", 1.5);
-        InSlopeRule rule = new InSlopeRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+            case InSlopeRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         ITemporalData[] input = new ITemporalData[]{series};
@@ -74,8 +92,11 @@ class InSlopeRuleTest {
     @Test
     void predicate_slopeBelowMin_shouldReturnFalse() {
         properties.put("minSlope", 1.5);
-        InSlopeRule rule = new InSlopeRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+            case InSlopeRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         ITemporalData[] input = new ITemporalData[]{series};
@@ -88,8 +109,11 @@ class InSlopeRuleTest {
     @Test
     void predicate_slopeAboveMax_shouldReturnFalse() {
         properties.put("maxSlope", 0.5);
-        InSlopeRule rule = new InSlopeRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+            case InSlopeRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         ITemporalData[] input = new ITemporalData[]{series};
@@ -101,8 +125,11 @@ class InSlopeRuleTest {
 
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        InSlopeRule rule = new InSlopeRule("test", properties, mockResults);
-        rule.setAllSources(false);
+        InSlopeRule rule = switch (RuleType.InSlope.build().setProperties(properties)) {
+            case InSlopeRule r -> r;
+            default -> throw new RuntimeException();
+        };
+
         ITemporalData[] input = new ITemporalData[]{};
 
         BooleanSingle[] result = rule.predicate().apply(input);

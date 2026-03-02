@@ -1,11 +1,26 @@
 
+/*
+ *  Copyright (c) 2026 fibonsai.com
+ *  All rights reserved.
+ *
+ *  This source is subject to the Apache License, Version 2.0.
+ *  Please see the LICENSE file for more information.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +67,7 @@ class CrossedRuleTest {
     void processProperties_shouldSetThresholdAndSourceId() {
         properties.put("threshold", 50.5);
         properties.put("sourceId", "comparator");
-        CrossedRule rule = new CrossedRule("test", properties, mockResults);
+        CrossedRule rule = RuleType.Crossed.build().setProperties(properties) instanceof CrossedRule crossedRule ? crossedRule : null;
 
         // We can't directly test private fields, but we test the behavior in other tests
         assertNotNull(rule);
@@ -61,8 +76,11 @@ class CrossedRuleTest {
     @Test
     void predicate_crossedThreshold_shouldReturnTrue() {
         properties.put("threshold", 50.0);
-        CrossedRule rule = new CrossedRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -76,8 +94,11 @@ class CrossedRuleTest {
     @Test
     void predicate_notCrossedThreshold_shouldReturnFalse() {
         properties.put("threshold", 70.0);
-        CrossedRule rule = new CrossedRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -92,8 +113,11 @@ class CrossedRuleTest {
     void predicate_seriesCrossed_shouldReturnTrue() {
         properties.put("sourceId", "s2");
         properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1").add("s2"));
-        CrossedRule rule = new CrossedRule("test", properties, mockResults);
-        rule.setAllSources(false);
+        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{50.0, 50.0});
@@ -109,8 +133,11 @@ class CrossedRuleTest {
     void predicate_seriesNotCrossed_shouldReturnFalse() {
         properties.put("sourceId", "s2");
         properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1").add("s2"));
-        CrossedRule rule = new CrossedRule("test", properties, mockResults);
-        rule.setAllSources(false);
+        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{70.0, 80.0});
@@ -124,8 +151,11 @@ class CrossedRuleTest {
 
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        CrossedRule rule = new CrossedRule("test", properties, mockResults);
-        rule.setAllSources(false);
+        CrossedRule rule = switch (RuleType.Crossed.build().setProperties(properties)) {
+            case CrossedRule r -> r;
+            default -> throw new RuntimeException();
+        };
+
         ITemporalData[] input = new ITemporalData[]{};
 
         BooleanSingle[] result = rule.predicate().apply(input);

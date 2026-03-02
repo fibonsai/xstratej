@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.JsonNodeFactory;
-import tools.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,77 +49,65 @@ public class StrategyTest {
     @Test
     public void createStrategyAndRun() {
 
-        ObjectNode properties1 = nodeFactory.objectNode();
-        LimitRule limit1 = new LimitRule("limit1", properties1);
-        limit1.setMin(2.0).setMax(80.0).setAllSources(true);
-
-        ObjectNode properties2 = nodeFactory.objectNode();
-        LimitRule limit2 = new LimitRule("limit2", properties2);
-        limit2.setMin(0.0).setMax(50.0).setAllSources(true);
-
-        ObjectNode properties3 = nodeFactory.objectNode();
-        LimitRule limit3 = new LimitRule("limit3", properties3);
-        limit3.setLowerSourceId("flux1").setUpperSourceId("flux2").setAllSources(true);
-
-        OrRule orRule1 = new OrRule("orRule1", nodeFactory.nullNode());
-        orRule1.addSourceId(limit1.name()).addSourceId(limit2.name()).setAllSources(false);
-
-        NotRule notRule1 = new NotRule("notRule1", nodeFactory.nullNode());
-        notRule1.addSourceId(limit3.name()).setAllSources(false);
-
-        AndRule andRule1 = new AndRule("andRule1", nodeFactory.nullNode());
-        andRule1.addSourceId(orRule1.name()).addSourceId(notRule1.name()).setAllSources(false);
-
-
-        ObjectNode properties4 = nodeFactory.objectNode();
-        LimitRule limit4 = new LimitRule("limit4", properties4);
-        limit4.setMin(2.0).setMax(80.0).setAllSources(true);
-
-        ObjectNode properties5 = nodeFactory.objectNode();
-        LimitRule limit5 = new LimitRule("limit5", properties5);
-        limit5.setMin(0.0).setMax(50.0).setAllSources(true);
-
-        ObjectNode properties6 = nodeFactory.objectNode();
-        LimitRule limit6 = new LimitRule("limit6", properties6);
-        limit6.setLowerSourceId("flux1").setUpperSourceId("flux2").setAllSources(true);
-
-        OrRule orRule2 = new OrRule("orRule2", nodeFactory.nullNode());
-        orRule2.addSourceId(limit4.name()).addSourceId(limit5.name()).setAllSources(false);
-
-        NotRule notRule2 = new NotRule("notRule2", nodeFactory.nullNode());
-        notRule2.addSourceId(limit6.name()).setAllSources(false);
-
-        AndRule andRule2 = new AndRule("andRule2", nodeFactory.nullNode());
-        andRule2.addSourceId(orRule2.name()).addSourceId(notRule2.name()).setAllSources(false);
-
-        Strategy strategyEnter = new Strategy("enter", "UNDEF", StrategyType.ENTER);
-        Strategy strategyExit = new Strategy("exit", "UNDEF", StrategyType.EXIT);
-
         Subscriber source1 = new SimulatedSubscriber("flux1", SimulatedSubscriber.class.getSimpleName(), nodeFactory.nullNode(), new Fifo<>());
         Subscriber source2 = new SimulatedSubscriber("flux2", SimulatedSubscriber.class.getSimpleName(), nodeFactory.nullNode(), new Fifo<>());
         Subscriber source3 = new SimulatedSubscriber("flux3", SimulatedSubscriber.class.getSimpleName(), nodeFactory.nullNode(), new Fifo<>());
 
+        // --------
+
+        LimitRule limit1 = new LimitRule();
+        limit1.setMin(2.0).setMax(80.0);
+
+        LimitRule limit2 = new LimitRule();
+        limit2.setMin(0.0).setMax(50.0);
+
+        LimitRule limit3 = new LimitRule();
+        limit3.setLowerSourceId("flux1").setUpperSourceId("flux2");
+
+        OrRule orRule1 = new OrRule();
+        orRule1.subscribe(Fifo.zip(limit1.results(), limit2.results()));
+
+        NotRule notRule1 = new NotRule();
+        notRule1.subscribe(Fifo.zip(limit3.results()));
+
+        AndRule andRule1 = new AndRule();
+        andRule1.subscribe(Fifo.zip(orRule1.results(), notRule1.results()));
+
+        Strategy strategyEnter = new Strategy("enter", "UNDEF", StrategyType.ENTER);
+
         strategyEnter.addSource(source1)
-                    .addSource(source2)
-                    .addSource(source3)
-                    .addRule(limit1)
-                    .addRule(limit2)
-                    .addRule(limit3)
-                    .addRule(andRule1)
-                    .addRule(orRule1)
-                    .addRule(notRule1)
-                    .setAggregatorRule(andRule1.name());
+                .addSource(source2)
+                .addSource(source3)
+                .setAggregatorRule(andRule1);
+
+        // --------
+
+        LimitRule limit4 = new LimitRule();
+        limit4.setMin(2.0).setMax(80.0);
+
+        LimitRule limit5 = new LimitRule();
+        limit5.setMin(0.0).setMax(50.0);
+
+        LimitRule limit6 = new LimitRule();
+        limit6.setLowerSourceId("flux1").setUpperSourceId("flux2");
+
+        OrRule orRule2 = new OrRule();
+        orRule2.subscribe(Fifo.zip(limit4.results(), limit5.results()));
+
+        NotRule notRule2 = new NotRule();
+        notRule2.subscribe(Fifo.zip(limit6.results()));
+
+        AndRule andRule2 = new AndRule();
+        andRule2.subscribe(Fifo.zip(orRule2.results(), notRule2.results()));
+
+        Strategy strategyExit = new Strategy("exit", "UNDEF", StrategyType.EXIT);
 
         strategyExit.addSource(source1)
                     .addSource(source2)
                     .addSource(source3)
-                    .addRule(limit4)
-                    .addRule(limit5)
-                    .addRule(limit6)
-                    .addRule(andRule2)
-                    .addRule(orRule2)
-                    .addRule(notRule2)
                     .setAggregatorRule(andRule2);
+
+        // ---------
 
         StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer)
                 .registerStrategy(strategyEnter)
@@ -159,76 +146,6 @@ public class StrategyTest {
             Thread.startVirtualThread(() ->
                 source3.toFifo()
                         .emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
-        }
-
-        assertTrue(allStrategiesActivated);
-        assertTrue(counter.get() > 0);
-    }
-
-    @Test
-    public void createStretegyFromJsonAndRun() throws IOException {
-        Map<String, IStrategy> strategies;
-        StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer);
-
-        ObjectMapper mapper = new ObjectMapper();
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies.json")) {
-            JsonNode jsonNode = mapper.readValue(is, JsonNode.class);
-            strategies = Loader.fromJson(jsonNode);
-        }
-
-        for (var strategy: strategies.values()) {
-            strategyManager.registerStrategy(strategy);
-        }
-
-        strategyManager.run();
-
-        int n = 100;
-        AtomicInteger counter = new AtomicInteger(1);
-        AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
-
-        tradingSignalConsumer.subscribe(_ -> {
-            counter.getAndIncrement();
-            lastUpdate.set(Instant.now().toEpochMilli());
-        });
-
-        boolean allStrategiesActivated = strategyManager.run();
-
-        for (var strategy: strategyManager.getStrategies()) {
-            for (var source: strategy.getSources().values()) {
-                String sourceName = source.name();
-                switch (sourceName) {
-                    case "flux1": {
-                        for (int x=0; x<n; x++) {
-                            long timestamp = Instant.now().toEpochMilli();
-                            double value = x * 1.0D;
-                            Thread.startVirtualThread(() ->
-                                    source.toFifo()
-                                            .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
-                        }
-                        break;
-                    }
-                    case "flux2": {
-                        for (int x=n-1; x>=0; x--) {
-                            long timestamp = Instant.now().toEpochMilli();
-                            double value = x * 1.0D;
-                            Thread.startVirtualThread(() ->
-                                    source.toFifo()
-                                            .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
-                        }
-                        break;
-                    }
-                    case "flux3": {
-                        for (int x=0; x < n; x++) {
-                            long timestamp = Instant.now().toEpochMilli();
-                            double value = random.nextDouble(0.0, n);
-                            Thread.startVirtualThread(() ->
-                                    source.toFifo()
-                                            .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
-                        }
-                        break;
-                    }
-                }
-            }
         }
 
         assertTrue(allStrategiesActivated);

@@ -15,39 +15,26 @@
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.JsonNode;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class NotRule extends RuleStream {
 
     private static final Logger log = LoggerFactory.getLogger(NotRule.class);
 
-    public NotRule(String name, JsonNode properties) {
-        this(name, properties, new Fifo<>());
-    }
-
-    public NotRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
-        super(name, properties, results);
-        processProperties();
-    }
-
     @Override
     protected Function<ITemporalData[], BooleanSingle[]> predicate() {
         return temporalDatas -> {
-            List<Integer> sourceIndexes = getSourceIndexes(temporalDatas);
-            if (sourceIndexes.isEmpty()) {
+            if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanSingle[0];
             }
-            if (sourceIndexes.size() > 1) {
+            if (temporalDatas.length > 1) {
                 log.error("Multi-timeseries are not supported as a source. Only one.");
                 return new BooleanSingle[0];
             }
@@ -63,4 +50,7 @@ public class NotRule extends RuleStream {
             return new BooleanSingle[0];
         };
     }
+
+    @Override
+    protected void processProperties() {}
 }

@@ -16,109 +16,72 @@ package com.fibonsai.cryptomeria.xtratej.rules;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public abstract class RuleStream {
 
-    private final String name;
+    private static final JsonNode NULL_NODE = JsonNodeFactory.instance.nullNode();
 
-    protected final Set<Map.Entry<String, JsonNode>> properties;
-    private final Fifo<ITemporalData> results;
+    private Set<Map.Entry<String, JsonNode>> properties;
 
-    protected boolean allSources = true;
-    protected final List<String> sourceIds = new ArrayList<>();
+    private final Fifo<ITemporalData> results = new Fifo<>();
+    private final AtomicBoolean activated = new AtomicBoolean(false);
 
-    protected RuleStream(String name, JsonNode properties, Fifo<ITemporalData> results) {
-        this.name = name;
-        this.properties = properties.properties();
-        this.results = results;
+    private String description = "";
+
+    public RuleStream() {
+        this(NULL_NODE);
     }
 
-    public String name() {
-        return name;
+    protected RuleStream(JsonNode properties) {
+        this.properties = properties.properties();
+        processProperties();
+    }
+
+    public Set<Map.Entry<String, JsonNode>> getProperties() {
+        return properties;
+    }
+
+    public RuleStream setProperties(JsonNode properties) {
+        this.properties = properties.properties();
+        processProperties();
+        return this;
     }
 
     public void subscribe(Fifo<ITemporalData[]> inputs) {
-        inputs.subscribe(temporalDatas -> {
+        inputs.onSubscribe(() -> activated.set(true)).subscribe(temporalDatas -> {
             BooleanSingle[] booleanSingles = predicate().apply(temporalDatas);
-            BooleanSingleTimeSeries resultSeries = new BooleanSingleTimeSeries(name(), booleanSingles);
+            BooleanSingleTimeSeries resultSeries = new BooleanSingleTimeSeries(toString(), booleanSingles);
             results.emitNext(resultSeries);
         });
     }
 
-    protected void processProperties() {
-        for (var e: this.properties) {
-            if ("allSources".equals(e.getKey()) && e.getValue().isBoolean()) {
-                allSources = e.getValue().asBoolean();
-            }
-            if (!allSources && "sources".equals(e.getKey()) && e.getValue().isArray()) {
-                for (var element: e.getValue()) {
-                    if (element.isString()) {
-                        sourceIds.add(element.asString());
-                    }
-                }
-            }
-        }
+    public boolean isActivated() {
+        return activated.get();
     }
+
+    protected abstract void processProperties();
 
     protected abstract Function<ITemporalData[], BooleanSingle[]> predicate();
-
-    protected List<Integer> getSourceIndexes(ITemporalData[] temporalData) {
-        List<Integer> sourceIndexes = new ArrayList<>();
-        for (int x = 0; x< temporalData.length; x++) {
-            if (allSources || (temporalData[x] instanceof TimeSeries series && sourceIds.contains(series.id()))) sourceIndexes.add(x);
-        }
-        return sourceIndexes;
-    }
 
     public Fifo<ITemporalData> results() {
         return results;
     }
 
-    public List<String> sourceIds() {
-        return sourceIds;
+    public String getDescription() {
+        return description;
     }
 
-    public RuleStream setAllSources(boolean allSources) {
-        this.allSources = allSources;
-        for (var e: this.properties) {
-            if (!allSources && "sources".equals(e.getKey()) && e.getValue().isArray()) {
-                for (var element: e.getValue()) {
-                    if (element.isString()) {
-                        sourceIds.add(element.asString());
-                    }
-                }
-            }
-        }
+    public RuleStream setDescription(String description) {
+        this.description = description;
         return this;
-    }
-
-    public boolean allSources() {
-        return allSources;
-    }
-
-    public RuleStream addSourceId(String id) {
-        sourceIds.add(id);
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof RuleStream rule)) return false;
-        return name.equals(rule.name());
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
     }
 }

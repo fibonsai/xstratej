@@ -14,12 +14,15 @@
 
 package com.fibonsai.cryptomeria.xtratej.strategy;
 
+import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
 import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.HashMap;
@@ -42,6 +45,7 @@ public class LoaderV2 {
         PARAMS("params"),
         RULE("rule"),
         INPUTS("inputs"),
+        DESCRIPTION("description"),
         ;
 
         private final String keyName;
@@ -105,13 +109,10 @@ public class LoaderV2 {
                 }
 
                 // rule (recursive structure)
-                if (strategyJson.hasNonNull(RULE.key()) && strategyJson.get(RULE.key()).isObject()) {
-                    Set<Map.Entry<String, JsonNode>> ruleEntries = strategyJson.get(RULE.key()).properties();
-                    for (var ruleEntry : ruleEntries) {
-                        String rootRuleName = ruleEntry.getKey();
-                        parseRule(rootRuleName, ruleEntry.getValue(), strategy);
-                        strategy.setAggregatorRule(rootRuleName);
-                    }
+                if (strategyJson.hasNonNull(RULE.key())) {
+                    JsonNode ruleAggregatorJson = strategyJson.get(RULE.key());
+                    RuleStream ruleAggregator = parseRule(ruleAggregatorJson, strategy);
+                    strategy.setAggregatorRule(ruleAggregator);
                 }
 
                 strategiesMap.put(strategyName, strategy);
@@ -120,36 +121,45 @@ public class LoaderV2 {
         return strategiesMap;
     }
 
-    private static void parseRule(String ruleName, JsonNode ruleJson, IStrategy strategy) {
+    private static RuleStream parseRule(JsonNode ruleJson, IStrategy strategy) {
         RuleType ruleType = RuleType.False;
-        JsonNode ruleParams = NODE_FACTORY.nullNode();
+        JsonNode ruleParams = NODE_FACTORY.objectNode();
+        String description = "";
+        ArrayNode inputs = NODE_FACTORY.arrayNode();
+
         if (ruleJson.hasNonNull(TYPE.key()) && ruleJson.get(TYPE.key()).isString()) {
             ruleType = RuleType.fromName(ruleJson.get(TYPE.key()).asString());
         }
         if (ruleJson.hasNonNull(PARAMS.key())) {
             ruleParams = ruleJson.get(PARAMS.key());
         }
-        RuleStream ruleInstance = ruleType.builder().setId(ruleName).setProperties(ruleParams).build();
+        if (ruleJson.hasNonNull(DESCRIPTION.key()) && ruleJson.get(DESCRIPTION.key()).isString()) {
+            description = ruleJson.get(DESCRIPTION.key()).asString();
+        }
+        if (ruleJson.hasNonNull(INPUTS.key()) && ruleJson.get(INPUTS.key()).isArray()) {
+            inputs = ruleJson.get(INPUTS.key()).asArray();
+        }
 
-        if (ruleJson.hasNonNull(INPUTS.key())) {
-            JsonNode inputs = ruleJson.get(INPUTS.key());
-            if (inputs.isArray()) {
-                // Leaf rule taking sources as inputs
-                for (JsonNode input : inputs) {
-                    if (input.isString()) {
-                        ruleInstance.addSourceId(input.asString());
-                    }
-                }
-            } else if (inputs.isObject()) {
-                // Composite rule taking other rules as inputs
-                Set<Map.Entry<String, JsonNode>> subRules = inputs.properties();
-                for (var entry : subRules) {
-                    String subRuleName = entry.getKey();
-                    parseRule(subRuleName, entry.getValue(), strategy);
-                    ruleInstance.addSourceId(subRuleName);
-                }
+        RuleStream ruleInstance = ruleType.build()
+                .setProperties(ruleParams)
+                .setDescription(description);
+
+        JsonNode firstInput = inputs.get(0);
+        //noinspection unchecked
+        Fifo<ITemporalData>[] fifos = (Fifo<ITemporalData>[]) new Fifo[inputs.size()];
+        int counter = 0;
+        if (firstInput != null && firstInput.isString()) {
+            for (var input: inputs) {
+                Subscriber subscriber = strategy.getSources().get(input.asString());
+                fifos[counter++] = subscriber != null ? subscriber.toFifo() : Fifo.empty();
+            }
+        } else {
+            for (var input: inputs) {
+                RuleStream subRule = parseRule(input, strategy);
+                fifos[counter++] = subRule.results();
             }
         }
-        strategy.addRule(ruleInstance);
+        ruleInstance.subscribe(Fifo.zip(fifos));
+        return ruleInstance;
     }
 }

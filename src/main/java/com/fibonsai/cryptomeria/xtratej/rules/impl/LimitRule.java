@@ -15,16 +15,13 @@
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.EmptyTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.JsonNode;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -37,19 +34,9 @@ public class LimitRule extends RuleStream {
     private String upperSourceId = "";
     private String lowerSourceId = "";
 
-    public LimitRule(String name, JsonNode properties) {
-        this(name, properties, new Fifo<>());
-    }
-
-    public LimitRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
-        super(name, properties, results);
-        processProperties();
-    }
-
     @Override
     protected void processProperties() {
-        super.processProperties();
-        for (var e: properties) {
+        for (var e: getProperties()) {
             if ("min".equals(e.getKey()) && e.getValue().isDouble()) min = e.getValue().asDouble();
             if ("max".equals(e.getKey()) && e.getValue().isDouble()) max = e.getValue().asDouble();
             if ("upperSourceId".equals(e.getKey()) && e.getValue().isString()) upperSourceId = e.getValue().asString();
@@ -60,9 +47,7 @@ public class LimitRule extends RuleStream {
     @Override
     protected Function<ITemporalData[], BooleanSingle[]> predicate() {
         return temporalDatas -> {
-            final List<Integer> sourceIndexes = getSourceIndexes(temporalDatas);
-
-            if (sourceIndexes.isEmpty()) {
+            if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanSingle[0];
             }
@@ -86,7 +71,7 @@ public class LimitRule extends RuleStream {
                     if (Objects.equals(timeSeries.id(), tsUpper.id()) || Objects.equals(timeSeries.id(), tsLower.id())) {
                         continue;
                     }
-                    if ((allSources || sourceIndexes.contains(count++)) && timeSeries.size() > 0) {
+                    if (timeSeries.size() > 0) {
                         lastTimestamp = timeSeries.timestamp();
                         for (int x = timeSeries.size() - 1; x >= 0; x--) {
                             double value = timeSeries.singleDoubleValues()[x];

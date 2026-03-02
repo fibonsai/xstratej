@@ -15,16 +15,13 @@
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.JsonNode;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.function.Function;
 
 public class TimeRule extends RuleStream {
@@ -36,19 +33,9 @@ public class TimeRule extends RuleStream {
     private String timeFormat = "";
     private boolean invert = false;
 
-    public TimeRule(String name, JsonNode properties) {
-        this(name, properties, new Fifo<>());
-    }
-
-    public TimeRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
-        super(name, properties, results);
-        processProperties();
-    }
-
     @Override
     protected void processProperties() {
-        super.processProperties();
-        for (var e: properties) {
+        for (var e: getProperties()) {
             if ("begin".equals(e.getKey()) && e.getValue().isString()) {
                 begin = e.getValue().asString();
             }
@@ -67,8 +54,7 @@ public class TimeRule extends RuleStream {
     @Override
     protected Function<ITemporalData[], BooleanSingle[]> predicate() {
         return temporalDatas -> {
-            List<Integer> sourceIndexes = getSourceIndexes(temporalDatas);
-            if (sourceIndexes.isEmpty()) {
+            if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanSingle[0];
             }
@@ -82,9 +68,8 @@ public class TimeRule extends RuleStream {
             boolean result = isOnTime(formatter);
 
             long timestamp = 0L;
-            int count = 0;
             for (var ts: temporalDatas) {
-                if ((allSources || sourceIndexes.contains(count++)) && ts.timestamp() > timestamp) {
+                if (ts.timestamp() > timestamp) {
                     timestamp = ts.timestamp();
                 }
             }

@@ -15,18 +15,16 @@
 package com.fibonsai.cryptomeria.xtratej.strategy;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
+import com.fibonsai.cryptomeria.xtratej.rules.impl.FalseRule;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -37,13 +35,10 @@ public class Strategy implements IStrategy {
     private final String symbol;
     private final StrategyType strategyType;
 
-    private RuleStream aggregator = RuleType.False.builder().build();
+    private RuleStream aggregator = RuleType.False.build();
     private Runnable onSubscribe = () -> {};
 
-    private final AtomicInteger rulesSubscribed = new AtomicInteger(0);
-
     private final Map<String, Subscriber> sources = new HashMap<>();
-    private final Map<String, RuleStream> rules = new HashMap<>();
 
     public Strategy(String name, String symbol, StrategyType strategyType) {
         this.name = name;
@@ -73,7 +68,7 @@ public class Strategy implements IStrategy {
 
     @Override
     public boolean isActivated() {
-        return !rules.isEmpty() && rules.size() == rulesSubscribed.get();
+        return ! (aggregator instanceof FalseRule);
     }
 
     @Override
@@ -85,67 +80,12 @@ public class Strategy implements IStrategy {
     }
 
     @Override
-    public IStrategy addRule(RuleStream rule) {
-        if (!isActivated()) {
-            rules.put(rule.name(), rule);
-        }
-        return this;
-    }
-
-    @Override
     public IStrategy setAggregatorRule(RuleStream aggregator) {
         if (!isActivated()) {
             this.aggregator = aggregator;
-            log.info("{} strategy: Aggregator rule {} registered", name(), aggregator.name());
+            log.info("{} strategy: Aggregator rule {} registered", name(), aggregator.getDescription());
         }
         return this;
-    }
-
-    @Override
-    public IStrategy setAggregatorRule(String ruleName) {
-        RuleStream rule = rules.get(ruleName);
-        if (rule != null) {
-            setAggregatorRule(rule);
-        } else {
-            log.error("{} rule NOT REGISTERED",ruleName);
-            aggregator = RuleType.False.builder().build();
-        }
-        return this;
-    }
-
-    @Override
-    public IStrategy activeRules() {
-        if (!isActivated()) {
-            subscribeRules();
-        }
-        return this;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void subscribeRules() {
-        for (var entry: rules.entrySet()) {
-            RuleStream rule = entry.getValue();
-            var inputs = new LinkedList<Fifo<ITemporalData>>();
-            if (rule.allSources()) {
-                // only Subscriber implementations is supported
-                sources.values().forEach(source -> inputs.add(source.toFifo()));
-            } else {
-                for (var sourceId : rule.sourceIds()) {
-                    var source = sources.get(sourceId);
-                    if (source != null) {
-                        inputs.add(source.toFifo());
-                    }
-                    var otherRuleAsSource = rules.get(sourceId);
-                    if (otherRuleAsSource != null) {
-                        inputs.add(otherRuleAsSource.results());
-                    }
-                }
-            }
-            var inputsArray = inputs.<Fifo<ITemporalData>>toArray(Fifo[]::new); // unckecked, but ok
-            var inputsZipped = Fifo.zip(inputsArray);
-            rule.subscribe(inputsZipped);
-            rulesSubscribed.getAndIncrement();
-        }
     }
 
     @Override

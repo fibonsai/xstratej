@@ -73,7 +73,7 @@ public class StrategyManager {
 
                 Thread.startVirtualThread(() -> {
                     log.info("Executing {} strategy", strategyName);
-                    strategy.activeRules().onSubscribe(latch::countDown).subscribe(temporalData -> {
+                    strategy.onSubscribe(latch::countDown).subscribe(temporalData -> {
                         var result = switch (temporalData) {
                             case BooleanSingleTimeSeries ts when ts.size() > 0 -> new BooleanSingle(ts.timestamp(), ts.values()[ts.size() - 1]);
                             case BooleanSingle bSingle -> bSingle;

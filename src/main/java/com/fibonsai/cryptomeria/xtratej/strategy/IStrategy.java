@@ -44,13 +44,7 @@ public interface IStrategy {
 
     IStrategy addSource(Subscriber source);
 
-    IStrategy addRule(RuleStream rule);
-
     IStrategy setAggregatorRule(RuleStream aggregator);
-
-    IStrategy setAggregatorRule(String ruleName);
-
-    IStrategy activeRules();
 
     String name();
 

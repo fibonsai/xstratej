@@ -20,6 +20,7 @@ import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,8 +67,11 @@ class LimitRuleTest {
     void predicate_withinMinMax_shouldReturnTrue() {
         properties.put("min", 10.0);
         properties.put("max", 20.0);
-        LimitRule rule = new LimitRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+            case LimitRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -81,8 +85,11 @@ class LimitRuleTest {
     void predicate_belowMin_shouldReturnFalse() {
         properties.put("min", 10.0);
         properties.put("max", 20.0);
-        LimitRule rule = new LimitRule("test", properties, mockResults);
-        rule.setAllSources(true);
+        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+            case LimitRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -97,7 +104,11 @@ class LimitRuleTest {
         properties.put("lowerSourceId", "lower");
         properties.put("upperSourceId", "top");
         properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
-        LimitRule rule = new LimitRule("test", properties, mockResults);
+        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+            case LimitRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         ITemporalData lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
@@ -114,7 +125,11 @@ class LimitRuleTest {
         properties.put("lowerSourceId", "lower");
         properties.put("upperSourceId", "top");
         properties.set("sources", JsonNodeFactory.instance.arrayNode().add("s1"));
-        LimitRule rule = new LimitRule("test", properties, mockResults);
+        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+            case LimitRule r -> r;
+            default -> throw new RuntimeException();
+        };
+        rule.subscribe(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{25.0});
         ITemporalData lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
@@ -128,8 +143,11 @@ class LimitRuleTest {
     
     @Test
     void predicate_noSources_shouldReturnEmptyArray() {
-        LimitRule rule = new LimitRule("test", properties, mockResults);
-        rule.setAllSources(false);
+        LimitRule rule = switch (RuleType.Limit.build().setProperties(properties)) {
+            case LimitRule r -> r;
+            default -> throw new RuntimeException();
+        };
+
         ITemporalData[] input = new ITemporalData[]{};
 
         BooleanSingle[] result = rule.predicate().apply(input);

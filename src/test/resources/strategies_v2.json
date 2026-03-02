@@ -21,14 +21,15 @@
         }
       },
       "rule": {
-        "andRule1": {
+          "description": "aggregator",
           "type": "And",
-          "inputs": {
-            "orRule1": {
+          "inputs": [
+            {
               "type": "Or",
-              "inputs": {
-                "limit1": {
+              "inputs": [
+                {
                   "type": "Limit",
+                  "description": "limit1",
                   "params": {
                     "min": 2.0,
                     "max": 80.0
@@ -39,8 +40,9 @@
                     "flux3"
                   ]
                 },
-                "limit2": {
+                {
                   "type": "Limit",
+                  "description": "limit2",
                   "params": {
                     "min": 0.0,
                     "max": 50.0
@@ -51,13 +53,14 @@
                     "flux3"
                   ]
                 }
-              }
+              ]
             },
-            "notRule1": {
+            {
               "type": "Not",
-              "inputs": {
-                "limit3": {
+              "inputs": [
+                {
                   "type": "Limit",
+                  "description": "limit3",
                   "params": {
                     "upperSourceId": "flux1",
                     "lowerSourceId": "flux2"
@@ -68,10 +71,9 @@
                     "flux3"
                   ]
                 }
-              }
+              ]
             }
-          }
-        }
+          ]
       }
     },
     "exit": {

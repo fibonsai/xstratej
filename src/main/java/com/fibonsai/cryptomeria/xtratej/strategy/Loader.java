@@ -86,21 +86,21 @@ public class Loader {
                         if (ruleJson.hasNonNull("params")) {
                             ruleParams = ruleJson.get("params");
                         }
-                        RuleStream ruleInstance = ruleType.builder().setId(ruleName).setProperties(ruleParams).build();
+                        RuleStream ruleInstance = ruleType.build().setDescription(ruleName).setProperties(ruleParams);
                         if (ruleJson.hasNonNull("sources") && ruleJson.get("sources").isArray()) {
                             for (var source: ruleJson.get("sources")) {
                                 if (source.isString()) {
-                                    ruleInstance.addSourceId(source.asString());
+                                    //
                                 }
                             }
                         }
-                        strategy.addRule(ruleInstance);
+                        //;
                     }
                 }
 
                 // aggregator
                 if (strategyJson.hasNonNull("aggregator") && strategyJson.get("aggregator").isString()) {
-                    strategy.setAggregatorRule(strategyJson.get("aggregator").asString());
+                    //
                 }
 
                 strategiesMap.put(strategyName, strategy);

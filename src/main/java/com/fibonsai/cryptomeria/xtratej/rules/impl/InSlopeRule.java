@@ -15,16 +15,13 @@
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.hipparchus.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.JsonNode;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class InSlopeRule extends RuleStream {
@@ -35,19 +32,9 @@ public class InSlopeRule extends RuleStream {
     private double minSlope = Double.NaN;
     private double maxSlope = Double.NaN;
 
-    public InSlopeRule(String name, JsonNode properties) {
-        this(name, properties, new Fifo<>());
-    }
-
-    public InSlopeRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
-        super(name, properties, results);
-        processProperties();
-    }
-
     @Override
     protected void processProperties() {
-        super.processProperties();
-        for (var e: properties) {
+        for (var e: getProperties()) {
             if ("minSlope".equals(e.getKey()) && e.getValue().isDouble()) minSlope = e.getValue().asDouble();
             if ("maxSlope".equals(e.getKey()) && e.getValue().isDouble()) maxSlope = e.getValue().asDouble();
         }
@@ -56,17 +43,15 @@ public class InSlopeRule extends RuleStream {
     @Override
     protected Function<ITemporalData[], BooleanSingle[]> predicate() {
         return temporalDatas -> {
-            List<Integer> sourceIndexes = getSourceIndexes(temporalDatas);
-            if (sourceIndexes.isEmpty()) {
+            if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanSingle[0];
             }
 
-            int count = 0;
             Boolean allresult = null;
             long lastTimestamp = 0;
             for (var temporalData: temporalDatas) {
-                if ((allSources || sourceIndexes.contains(count++)) && temporalData instanceof TimeSeries timeSeries && timeSeries.size() > 0) {
+                if (temporalData instanceof TimeSeries timeSeries && timeSeries.size() > 0) {
                     double slope = getSlope(timeSeries);
 
                     lastTimestamp = timeSeries.timestamp();

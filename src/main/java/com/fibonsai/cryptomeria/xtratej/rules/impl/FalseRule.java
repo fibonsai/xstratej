@@ -15,43 +15,29 @@
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.JsonNode;
 
-import java.util.List;
 import java.util.function.Function;
 
 public class FalseRule extends RuleStream {
 
     private static final Logger log = LoggerFactory.getLogger(FalseRule.class);
 
-    public FalseRule(String name, JsonNode properties) {
-        this(name, properties, new Fifo<>());
-    }
-
-    public FalseRule(String name, JsonNode properties, Fifo<ITemporalData> results) {
-        super(name, properties, results);
-        processProperties();
-    }
-
     @Override
     protected Function<ITemporalData[], BooleanSingle[]> predicate() {
         return temporalDatas -> {
-            List<Integer> sourceIndexes = getSourceIndexes(temporalDatas);
-            if (sourceIndexes.isEmpty()) {
+            if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanSingle[0];
             }
 
             long timestamp = 0L;
-            int count = 0;
             for (var ts: temporalDatas) {
-                if ((allSources || sourceIndexes.contains(count++)) && ts instanceof BooleanSingleTimeSeries series && series.size() > 0) {
+                if (ts instanceof BooleanSingleTimeSeries series && series.size() > 0) {
                     if (series.timestamp() > timestamp) timestamp = series.timestamp();
                 }
             }
@@ -59,4 +45,7 @@ public class FalseRule extends RuleStream {
             return new BooleanSingle[] { new BooleanSingle(timestamp, false) };
         };
     }
+
+    @Override
+    protected void processProperties() {}
 }

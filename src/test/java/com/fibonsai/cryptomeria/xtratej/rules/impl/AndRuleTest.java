@@ -1,4 +1,18 @@
 
+/*
+ *  Copyright (c) 2026 fibonsai.com
+ *  All rights reserved.
+ *
+ *  This source is subject to the Apache License, Version 2.0.
+ *  Please see the LICENSE file for more information.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.fibonsai.cryptomeria.xtratej.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
@@ -11,8 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import tools.jackson.databind.node.JsonNodeFactory;
-import tools.jackson.databind.node.ObjectNode;
 
 import java.util.function.Function;
 
@@ -30,9 +42,8 @@ class AndRuleTest {
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        ObjectNode properties = JsonNodeFactory.instance.objectNode();
-        properties.put("allSources", true);
-        andRule = new AndRule("testAndRule", properties, mockResults);
+        andRule = new AndRule();
+        andRule.subscribe(new Fifo<>());
     }
 
     @AfterEach
@@ -101,20 +112,6 @@ class AndRuleTest {
         assertEquals(1, result.length);
         assertFalse(result[0].value());
         assertEquals(101L, result[0].timestamp());
-    }
-
-    @Test
-    void predicate_withNoSources_shouldReturnEmptyArray() {
-        // Arrange
-        andRule.setAllSources(false);
-        ITemporalData[] input = {};
-
-        // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = andRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
-
-        // Assert
-        assertEquals(0, result.length);
     }
 
     @Test
