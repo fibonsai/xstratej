@@ -18,7 +18,7 @@ import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
