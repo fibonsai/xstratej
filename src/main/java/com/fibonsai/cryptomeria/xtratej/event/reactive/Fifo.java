@@ -78,10 +78,10 @@ public class Fifo<T> {
         }
     }
 
-    public static void empty() {
-        new Fifo<Object>() {
+    public static <T> Fifo<T> empty() {
+        return new Fifo<>() {
             @Override
-            public void subscribe(Consumer<Object> consumer) {
+            public void subscribe(Consumer<T> consumer) {
                 if (log.isDebugEnabled()) {
                     log.debug("subscribing EMPTY {}", this.getClass().getSimpleName());
                 }
