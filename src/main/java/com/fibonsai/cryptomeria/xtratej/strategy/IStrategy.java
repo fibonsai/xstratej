@@ -26,8 +26,6 @@ public interface IStrategy {
 
     default boolean isActivated() { return false; }
 
-    Collection<Subscriber> getSources();
-
     enum StrategyType {
         ENTER,
         EXIT,
@@ -65,4 +63,6 @@ public interface IStrategy {
     IStrategy onSubscribe(Runnable onSubscribe);
 
     IStrategy subscribe(Consumer<ITemporalData> consumer);
+
+    Map<String, Subscriber> getSources();
 }

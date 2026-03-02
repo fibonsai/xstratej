@@ -194,7 +194,7 @@ public class StrategyTest {
         boolean allStrategiesActivated = strategyManager.run();
 
         for (var strategy: strategyManager.getStrategies()) {
-            for (var source: strategy.getSources()) {
+            for (var source: strategy.getSources().values()) {
                 String sourceName = source.name();
                 switch (sourceName) {
                     case "flux1": {
@@ -264,7 +264,7 @@ public class StrategyTest {
         boolean allStrategiesActivated = strategyManager.run();
 
         for (var strategy: strategyManager.getStrategies()) {
-            for (var source: strategy.getSources()) {
+            for (var source: strategy.getSources().values()) {
                 String sourceName = source.name();
                 if (sourceName.equals("flux1") || sourceName.equals("flux4")) {
                     for (int x=0; x<n; x++) {
