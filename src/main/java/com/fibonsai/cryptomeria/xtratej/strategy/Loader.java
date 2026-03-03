@@ -30,12 +30,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.fibonsai.cryptomeria.xtratej.strategy.LoaderV2.SchemaKey.*;
+import static com.fibonsai.cryptomeria.xtratej.strategy.Loader.SchemaKey.*;
 
 /**
  * Strategy loader V2
  */
-public class LoaderV2 {
+public class Loader {
 
     public enum SchemaKey {
         STRATEGIES("strategies"),
