@@ -159,7 +159,7 @@ public class StrategyTest {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies_v2.json")) {
             JsonNode jsonNode = mapper.readValue(is, JsonNode.class);
-            strategies = LoaderV2.fromJson(jsonNode);
+            strategies = Loader.fromJson(jsonNode);
         }
 
         for (var strategy: strategies.values()) {
