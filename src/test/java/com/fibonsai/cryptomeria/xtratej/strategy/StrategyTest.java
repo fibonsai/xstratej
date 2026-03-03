@@ -14,6 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.strategy;
 
+import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
@@ -25,7 +26,10 @@ import com.fibonsai.cryptomeria.xtratej.rules.impl.OrRule;
 import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -33,18 +37,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StrategyTest {
 
+    private static final Logger log = LoggerFactory.getLogger(StrategyTest.class);
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Test
-    public void createStrategyAndRun() {
+    public void createStrategyAndRun() throws InterruptedException {
 
         Subscriber source1 = SourceType.SIMULATED.builder().setName("flux1").setPublisher("test").build();
         Subscriber source2 = SourceType.SIMULATED.builder().setName("flux2").setPublisher("test").build();
@@ -54,12 +61,15 @@ public class StrategyTest {
 
         LimitRule limit1 = (LimitRule) RuleType.Limit.build();
         limit1.setMin(2.0).setMax(80.0);
+        limit1.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
 
         LimitRule limit2 = (LimitRule) RuleType.Limit.build();
         limit2.setMin(0.0).setMax(50.0);
+        limit2.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
 
         LimitRule limit3 = (LimitRule) RuleType.Limit.build();
         limit3.setLowerSourceId("flux1").setUpperSourceId("flux2");
+        limit3.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
 
         OrRule orRule1 = (OrRule) RuleType.Or.build();
         orRule1.watch(Fifo.zip(limit1.results(), limit2.results()));
@@ -81,12 +91,15 @@ public class StrategyTest {
 
         LimitRule limit4 = (LimitRule) RuleType.Limit.build();
         limit4.setMin(2.0).setMax(80.0);
+        limit4.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
 
         LimitRule limit5 = (LimitRule) RuleType.Limit.build();
         limit5.setMin(0.0).setMax(50.0);
+        limit5.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
 
         LimitRule limit6 = (LimitRule) RuleType.Limit.build();
         limit6.setLowerSourceId("flux1").setUpperSourceId("flux2");
+        limit6.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
 
         OrRule orRule2 = (OrRule) RuleType.Or.build();
         orRule2.watch(Fifo.zip(limit4.results(), limit5.results()));
@@ -111,12 +124,19 @@ public class StrategyTest {
                 .registerStrategy(strategyExit);
 
         int n = 100;
-        AtomicInteger counter = new AtomicInteger(1);
-        AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
 
-        strategyManager.tradingSignalPublisher().subscribe(_ -> {
-            counter.getAndIncrement();
-            lastUpdate.set(Instant.now().toEpochMilli());
+        CountDownLatch enterLatch = new CountDownLatch(1);
+        CountDownLatch exitLatch = new CountDownLatch(1);
+        AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
+        AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
+        strategyManager.tradingSignalPublisher().subscribe(t -> {
+            if (t.signal() == TradingSignal.Signal.ENTER) {
+                enterTradingSignal.set(t);
+                enterLatch.countDown();
+            } else {
+                exitTradingSignal.set(t);
+                exitLatch.countDown();
+            }
         });
 
         boolean allStrategiesActivated = strategyManager.run();
@@ -145,12 +165,16 @@ public class StrategyTest {
                         .emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
         }
 
+        enterLatch.await(2, TimeUnit.SECONDS);
+        exitLatch.await(2, TimeUnit.SECONDS);
+
+        assertNotNull(enterTradingSignal.get());
+        assertNotNull(exitTradingSignal.get());
         assertTrue(allStrategiesActivated);
-        assertTrue(counter.get() > 0);
     }
 
     @Test
-    public void createStrategyFromJsonV2AndRun() throws IOException {
+    public void createStrategyFromJsonV2AndRun() throws IOException, InterruptedException {
         Map<String, IStrategy> strategies;
         StrategyManager strategyManager = new StrategyManager();
 
@@ -167,12 +191,19 @@ public class StrategyTest {
         strategyManager.run();
 
         int n = 100;
-        AtomicInteger counter = new AtomicInteger(1);
-        AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
 
-        strategyManager.tradingSignalPublisher().subscribe(_ -> {
-            counter.getAndIncrement();
-            lastUpdate.set(Instant.now().toEpochMilli());
+        CountDownLatch enterLatch = new CountDownLatch(1);
+        CountDownLatch exitLatch = new CountDownLatch(1);
+        AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
+        AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
+        strategyManager.tradingSignalPublisher().subscribe(t -> {
+            if (t.signal() == TradingSignal.Signal.ENTER) {
+                enterTradingSignal.set(t);
+                enterLatch.countDown();
+            } else {
+                exitTradingSignal.set(t);
+                exitLatch.countDown();
+            }
         });
 
         boolean allStrategiesActivated = strategyManager.run();
@@ -208,7 +239,11 @@ public class StrategyTest {
             }
         }
 
+        enterLatch.await(2, TimeUnit.SECONDS);
+        exitLatch.await(2, TimeUnit.SECONDS);
+
+        assertNotNull(exitTradingSignal.get());
+        assertNotNull(enterTradingSignal.get());
         assertTrue(allStrategiesActivated);
-        assertTrue(counter.get() > 0);
     }
 }

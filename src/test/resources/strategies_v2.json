@@ -97,57 +97,55 @@
         }
       },
       "rule": {
-        "andRule2": {
-          "type": "And",
-          "inputs": {
-            "orRule2": {
-              "type": "Or",
-              "inputs": {
-                "limit4": {
-                  "type": "Limit",
-                  "params": {
-                    "min": 2.0,
-                    "max": 80.0
-                  },
-                  "inputs": [
-                    "flux4",
-                    "flux5",
-                    "flux6"
-                  ]
+        "type": "And",
+        "inputs": [
+          {
+            "type": "Or",
+            "inputs": [
+              {
+                "type": "Limit",
+                "params": {
+                  "min": 2.0,
+                  "max": 80.0
                 },
-                "limit5": {
-                  "type": "Limit",
-                  "params": {
-                    "min": 0.0,
-                    "max": 50.0
-                  },
-                  "inputs": [
-                    "flux4",
-                    "flux5",
-                    "flux6"
-                  ]
-                }
+                "inputs": [
+                  "flux4",
+                  "flux5",
+                  "flux6"
+                ]
+              },
+              {
+                "type": "Limit",
+                "params": {
+                  "min": 0.0,
+                  "max": 50.0
+                },
+                "inputs": [
+                  "flux4",
+                  "flux5",
+                  "flux6"
+                ]
               }
-            },
-            "notRule2": {
-              "type": "Not",
-              "inputs": {
-                "limit3": {
-                  "type": "Limit",
-                  "params": {
-                    "upperSourceId": "flux4",
-                    "lowerSourceId": "flux5"
-                  },
-                  "inputs": [
-                    "flux4",
-                    "flux5",
-                    "flux6"
-                  ]
-                }
+            ]
+          },
+          {
+            "type": "Not",
+            "inputs": [
+              {
+                "type": "Limit",
+                "params": {
+                  "upperSourceId": "flux4",
+                  "lowerSourceId": "flux5"
+                },
+                "inputs": [
+                  "flux4",
+                  "flux5",
+                  "flux6"
+                ]
               }
-            }
+            ]
           }
-        }
+        ]
       }
     }
   }
