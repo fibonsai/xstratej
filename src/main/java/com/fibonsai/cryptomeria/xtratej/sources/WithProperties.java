@@ -12,23 +12,10 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.cryptomeria.xtratej.sources.impl;
+package com.fibonsai.cryptomeria.xtratej.sources;
 
-import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
+import tools.jackson.databind.JsonNode;
 
-public class SimulatedSubscriber extends Subscriber {
-
-    public SimulatedSubscriber(String name, String publisher) {
-        super(name, publisher);
-    }
-
-    @Override
-    public boolean connect() {
-        return true;
-    }
-
-    @Override
-    public boolean disconnect() {
-        return true;
-    }
+public interface WithProperties {
+    Subscriber setProperties(JsonNode properties);
 }

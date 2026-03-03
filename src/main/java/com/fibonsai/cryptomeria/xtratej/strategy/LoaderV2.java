@@ -20,6 +20,7 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
+import com.fibonsai.cryptomeria.xtratej.sources.WithProperties;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
@@ -103,7 +104,10 @@ public class LoaderV2 {
                         Subscriber sourceInstance = sourceType.builder()
                                 .setName(sourceName)
                                 .setPublisher(publisher)
-                                .setProperties(sourceParams).build();
+                                .build();
+                        if (sourceInstance instanceof WithProperties withProperties) {
+                            withProperties.setProperties(sourceParams);
+                        }
                         strategy.addSource(sourceInstance);
                     }
                 }

@@ -14,12 +14,9 @@
 
 package com.fibonsai.cryptomeria.xtratej.sources;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.sources.impl.NatsSubscriber;
 import com.fibonsai.cryptomeria.xtratej.sources.impl.SimulatedSubscriber;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.lang.reflect.Constructor;
@@ -39,7 +36,7 @@ public enum SourceType {
 
     public static SourceType fromName(String name) {
         for (var value: values()) {
-            if (value.name().equals(name)) {
+            if (value.name().equalsIgnoreCase(name)) {
                 return value;
             }
         }
@@ -55,23 +52,16 @@ public enum SourceType {
         private final Constructor<T> constructor;
         private String name = "undef";
         private String publisher = "undef";
-        private JsonNode properties = nodeFactory.nullNode();
-        private Fifo<ITemporalData> results = new Fifo<>();
 
         public Builder(@Nullable Class<T> clazz) {
             try {
                 if (clazz == null) {
                     throw new UnsupportedOperationException();
                 }
-                this.constructor = clazz.getConstructor(String.class, String.class, JsonNode.class, Fifo.class);
+                this.constructor = clazz.getConstructor(String.class, String.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
-
-        public Builder<T> setProperties(JsonNode properties) {
-            this.properties = properties;
-            return this;
         }
 
         public Builder<T> setName(String name) {
@@ -84,14 +74,9 @@ public enum SourceType {
             return this;
         }
 
-        public Builder<T> setResults(Fifo<ITemporalData> results) {
-            this.results = results;
-            return this;
-        }
-
         public T build() {
             try {
-                return constructor.newInstance(name, publisher,properties, results);
+                return constructor.newInstance(name, publisher);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }

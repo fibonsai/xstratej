@@ -42,7 +42,7 @@ public enum RuleType {
 
     public static RuleType fromName(String name) {
         for (var value: values()) {
-            if (value.name().equals(name)) {
+            if (value.name().equalsIgnoreCase(name)) {
                 return value;
             }
         }

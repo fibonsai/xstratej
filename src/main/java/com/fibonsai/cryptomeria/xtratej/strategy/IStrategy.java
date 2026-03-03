@@ -34,7 +34,7 @@ public interface IStrategy {
 
         public static StrategyType fromName(String name) {
             for (var value: values()) {
-                if (value.name().equals(name.toUpperCase())) {
+                if (value.name().equalsIgnoreCase(name)) {
                     return value;
                 }
             }

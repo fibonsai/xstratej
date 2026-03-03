@@ -18,17 +18,17 @@ import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.AndRule;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.LimitRule;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.NotRule;
 import com.fibonsai.cryptomeria.xtratej.rules.impl.OrRule;
+import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.sources.impl.SimulatedSubscriber;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,62 +42,61 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StrategyTest {
 
-    private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
     private final Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
 
     @Test
     public void createStrategyAndRun() {
 
-        Subscriber source1 = new SimulatedSubscriber("flux1", SimulatedSubscriber.class.getSimpleName(), nodeFactory.nullNode(), new Fifo<>());
-        Subscriber source2 = new SimulatedSubscriber("flux2", SimulatedSubscriber.class.getSimpleName(), nodeFactory.nullNode(), new Fifo<>());
-        Subscriber source3 = new SimulatedSubscriber("flux3", SimulatedSubscriber.class.getSimpleName(), nodeFactory.nullNode(), new Fifo<>());
+        Subscriber source1 = SourceType.SIMULATED.builder().setName("flux1").setPublisher("test").build();
+        Subscriber source2 = SourceType.SIMULATED.builder().setName("flux2").setPublisher("test").build();
+        Subscriber source3 = SourceType.SIMULATED.builder().setName("flux3").setPublisher("test").build();
 
         // --------
 
-        LimitRule limit1 = new LimitRule();
+        LimitRule limit1 = (LimitRule) RuleType.Limit.build();
         limit1.setMin(2.0).setMax(80.0);
 
-        LimitRule limit2 = new LimitRule();
+        LimitRule limit2 = (LimitRule) RuleType.Limit.build();
         limit2.setMin(0.0).setMax(50.0);
 
-        LimitRule limit3 = new LimitRule();
+        LimitRule limit3 = (LimitRule) RuleType.Limit.build();
         limit3.setLowerSourceId("flux1").setUpperSourceId("flux2");
 
-        OrRule orRule1 = new OrRule();
+        OrRule orRule1 = (OrRule) RuleType.Or.build();
         orRule1.watch(Fifo.zip(limit1.results(), limit2.results()));
 
-        NotRule notRule1 = new NotRule();
+        NotRule notRule1 = (NotRule) RuleType.Not.build();
         notRule1.watch(Fifo.zip(limit3.results()));
 
-        AndRule andRule1 = new AndRule();
+        AndRule andRule1 = (AndRule) RuleType.And.build();
         andRule1.watch(Fifo.zip(orRule1.results(), notRule1.results()));
 
         Strategy strategyEnter = new Strategy("enter", "UNDEF", StrategyType.ENTER);
 
         strategyEnter.addSource(source1)
-                .addSource(source2)
-                .addSource(source3)
-                .setAggregatorRule(andRule1);
+                    .addSource(source2)
+                    .addSource(source3)
+                    .setAggregatorRule(andRule1);
 
         // --------
 
-        LimitRule limit4 = new LimitRule();
+        LimitRule limit4 = (LimitRule) RuleType.Limit.build();
         limit4.setMin(2.0).setMax(80.0);
 
-        LimitRule limit5 = new LimitRule();
+        LimitRule limit5 = (LimitRule) RuleType.Limit.build();
         limit5.setMin(0.0).setMax(50.0);
 
-        LimitRule limit6 = new LimitRule();
+        LimitRule limit6 = (LimitRule) RuleType.Limit.build();
         limit6.setLowerSourceId("flux1").setUpperSourceId("flux2");
 
-        OrRule orRule2 = new OrRule();
+        OrRule orRule2 = (OrRule) RuleType.Or.build();
         orRule2.watch(Fifo.zip(limit4.results(), limit5.results()));
 
-        NotRule notRule2 = new NotRule();
+        NotRule notRule2 = (NotRule) RuleType.Not.build();
         notRule2.watch(Fifo.zip(limit6.results()));
 
-        AndRule andRule2 = new AndRule();
+        AndRule andRule2 = (AndRule) RuleType.And.build();
         andRule2.watch(Fifo.zip(orRule2.results(), notRule2.results()));
 
         Strategy strategyExit = new Strategy("exit", "UNDEF", StrategyType.EXIT);

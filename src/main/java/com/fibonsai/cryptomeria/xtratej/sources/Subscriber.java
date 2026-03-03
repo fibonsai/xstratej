@@ -17,9 +17,28 @@ package com.fibonsai.cryptomeria.xtratej.sources;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 
-public interface Subscriber {
-    String name();
-    String publisher();
+public abstract class Subscriber {
+    private final String name;
+    private final String publisher;
+    private Fifo<ITemporalData> fifo = new Fifo<>();
 
-    Fifo<ITemporalData> toFifo();
+    public Subscriber(String name, String publisher) {
+        this.name = name;
+        this.publisher = publisher;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public String publisher() {
+        return publisher;
+    }
+
+    public Fifo<ITemporalData> toFifo() {
+        return this.fifo;
+    }
+
+    public abstract boolean connect();
+    public abstract boolean disconnect();
 }
