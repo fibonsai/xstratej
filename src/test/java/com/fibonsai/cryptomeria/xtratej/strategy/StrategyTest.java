@@ -14,7 +14,6 @@
 
 package com.fibonsai.cryptomeria.xtratej.strategy;
 
-import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
@@ -43,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class StrategyTest {
 
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
-    private final Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
 
     @Test
     public void createStrategyAndRun() {
@@ -108,7 +106,7 @@ public class StrategyTest {
 
         // ---------
 
-        StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer)
+        StrategyManager strategyManager = new StrategyManager()
                 .registerStrategy(strategyEnter)
                 .registerStrategy(strategyExit);
 
@@ -116,7 +114,7 @@ public class StrategyTest {
         AtomicInteger counter = new AtomicInteger(1);
         AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
 
-        tradingSignalConsumer.subscribe(_ -> {
+        strategyManager.tradingSignalPublisher().subscribe(_ -> {
             counter.getAndIncrement();
             lastUpdate.set(Instant.now().toEpochMilli());
         });
@@ -154,7 +152,7 @@ public class StrategyTest {
     @Test
     public void createStrategyFromJsonV2AndRun() throws IOException {
         Map<String, IStrategy> strategies;
-        StrategyManager strategyManager = new StrategyManager(tradingSignalConsumer);
+        StrategyManager strategyManager = new StrategyManager();
 
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies_v2.json")) {
@@ -172,7 +170,7 @@ public class StrategyTest {
         AtomicInteger counter = new AtomicInteger(1);
         AtomicLong lastUpdate = new AtomicLong(Instant.now().toEpochMilli());
 
-        tradingSignalConsumer.subscribe(_ -> {
+        strategyManager.tradingSignalPublisher().subscribe(_ -> {
             counter.getAndIncrement();
             lastUpdate.set(Instant.now().toEpochMilli());
         });

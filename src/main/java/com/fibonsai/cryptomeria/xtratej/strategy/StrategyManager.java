@@ -34,11 +34,7 @@ public class StrategyManager {
     private final ReentrantReadWriteLock.WriteLock writeLock = reentrantReadWriteLock.writeLock();
 
     private final ArrayList<IStrategy> strategies = new ArrayList<>();
-    private final Fifo<TradingSignal> tradingSignalConsumer;
-
-    public StrategyManager(Fifo<TradingSignal> tradingSignalConsumer) {
-        this.tradingSignalConsumer = tradingSignalConsumer;
-    }
+    private final Fifo<TradingSignal> tradingSignalPublisher = new Fifo<>();
 
     public StrategyManager registerStrategy(IStrategy strategy) {
         writeLock.lock();
@@ -48,6 +44,10 @@ public class StrategyManager {
             writeLock.unlock();
         }
         return this;
+    }
+
+    public Fifo<TradingSignal> tradingSignalPublisher() {
+        return tradingSignalPublisher;
     }
 
     public ArrayList<IStrategy> getStrategies() {
@@ -85,7 +85,7 @@ public class StrategyManager {
                                 log.debug("[{}] Strategy {}: Send trading signal", timestamp, strategyName);
                             }
                             var tradingSignal = new TradingSignal(timestamp, signalType, strategyName, strategyPair, strategyPublishers);
-                            tradingSignalConsumer.emitNext(tradingSignal);
+                            tradingSignalPublisher.emitNext(tradingSignal);
                         }
                     });
                 });

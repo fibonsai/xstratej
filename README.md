@@ -51,13 +51,12 @@ myStrategy.addSource(source1)
 
 // 4. Manage and Run
 
-Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
-StrategyManager manager = new StrategyManager(tradingSignalConsumer);
+StrategyManager manager = new StrategyManager();
 manager.registerStrategy(myStrategy);
 
 manager.run();
 
-tradingSignalConsumer.subscribe(signal -> {
+manager.tradingSignalPublisher().subscribe(signal -> {
    // buy/sell logic 
 });
 ```
@@ -75,7 +74,6 @@ ObjectMapper mapper = new ObjectMapper();
 JsonNode jsonNode = mapper.readTree(new File("strategies.json"));
 Map<String, IStrategy> strategies = Loader.fromJson(jsonNode);
 
-Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
 StrategyManager manager = new StrategyManager(tradingSignalConsumer);
 for (var strategy: strategies.values()) {
     manager.registerStrategy(strategy);
@@ -83,7 +81,7 @@ for (var strategy: strategies.values()) {
 
 manager.run();
 
-tradingSignalConsumer.subscribe(signal -> {
+manager.tradingSignalPublisher().subscribe(signal -> {
     // buy/sell logic 
 });
 ```
