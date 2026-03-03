@@ -70,7 +70,7 @@ class DateTimeRuleTest {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
         BooleanSingle[] result = rule.predicate().apply(input);
@@ -87,7 +87,7 @@ class DateTimeRuleTest {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
         BooleanSingle[] result = rule.predicate().apply(input);
@@ -106,7 +106,7 @@ class DateTimeRuleTest {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
         BooleanSingle[] result = rule.predicate().apply(input);
@@ -124,7 +124,7 @@ class DateTimeRuleTest {
             case DateTimeRule dateTimeRule -> dateTimeRule;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
         BooleanSingle[] result = rule.predicate().apply(input);

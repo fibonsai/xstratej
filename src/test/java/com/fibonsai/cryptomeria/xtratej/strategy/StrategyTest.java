@@ -65,13 +65,13 @@ public class StrategyTest {
         limit3.setLowerSourceId("flux1").setUpperSourceId("flux2");
 
         OrRule orRule1 = new OrRule();
-        orRule1.subscribe(Fifo.zip(limit1.results(), limit2.results()));
+        orRule1.watch(Fifo.zip(limit1.results(), limit2.results()));
 
         NotRule notRule1 = new NotRule();
-        notRule1.subscribe(Fifo.zip(limit3.results()));
+        notRule1.watch(Fifo.zip(limit3.results()));
 
         AndRule andRule1 = new AndRule();
-        andRule1.subscribe(Fifo.zip(orRule1.results(), notRule1.results()));
+        andRule1.watch(Fifo.zip(orRule1.results(), notRule1.results()));
 
         Strategy strategyEnter = new Strategy("enter", "UNDEF", StrategyType.ENTER);
 
@@ -92,13 +92,13 @@ public class StrategyTest {
         limit6.setLowerSourceId("flux1").setUpperSourceId("flux2");
 
         OrRule orRule2 = new OrRule();
-        orRule2.subscribe(Fifo.zip(limit4.results(), limit5.results()));
+        orRule2.watch(Fifo.zip(limit4.results(), limit5.results()));
 
         NotRule notRule2 = new NotRule();
-        notRule2.subscribe(Fifo.zip(limit6.results()));
+        notRule2.watch(Fifo.zip(limit6.results()));
 
         AndRule andRule2 = new AndRule();
-        andRule2.subscribe(Fifo.zip(orRule2.results(), notRule2.results()));
+        andRule2.watch(Fifo.zip(orRule2.results(), notRule2.results()));
 
         Strategy strategyExit = new Strategy("exit", "UNDEF", StrategyType.EXIT);
 

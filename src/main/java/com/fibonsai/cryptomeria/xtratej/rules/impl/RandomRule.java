@@ -48,7 +48,4 @@ public class RandomRule extends RuleStream {
             return new BooleanSingle[] { new BooleanSingle(timestamp, result) };
         };
     }
-
-    @Override
-    protected void processProperties() {}
 }

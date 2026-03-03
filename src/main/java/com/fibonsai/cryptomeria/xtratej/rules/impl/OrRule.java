@@ -49,7 +49,4 @@ public class OrRule extends RuleStream {
             return new BooleanSingle[]{new BooleanSingle(timestamp, result != null && result)};
         };
     }
-
-    @Override
-    protected void processProperties() {}
 }

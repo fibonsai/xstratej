@@ -45,7 +45,4 @@ public class FalseRule extends RuleStream {
             return new BooleanSingle[] { new BooleanSingle(timestamp, false) };
         };
     }
-
-    @Override
-    protected void processProperties() {}
 }

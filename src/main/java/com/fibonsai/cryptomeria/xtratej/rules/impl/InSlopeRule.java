@@ -21,23 +21,26 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.hipparchus.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.util.function.Function;
 
 public class InSlopeRule extends RuleStream {
 
     private static final Logger log = LoggerFactory.getLogger(InSlopeRule.class);
+
     private final SimpleRegression regression = new SimpleRegression();
 
     private double minSlope = Double.NaN;
     private double maxSlope = Double.NaN;
 
     @Override
-    protected void processProperties() {
-        for (var e: getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e: jsonNode.properties()) {
             if ("minSlope".equals(e.getKey()) && e.getValue().isDouble()) minSlope = e.getValue().asDouble();
             if ("maxSlope".equals(e.getKey()) && e.getValue().isDouble()) maxSlope = e.getValue().asDouble();
         }
+        return this;
     }
 
     @Override

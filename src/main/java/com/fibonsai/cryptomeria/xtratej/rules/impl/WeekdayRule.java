@@ -19,6 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSerie
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ public class WeekdayRule extends RuleStream {
     private final List<String> weekdays = new ArrayList<>();
 
     @Override
-    protected void processProperties() {
-        for (var e: getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e: jsonNode.properties()) {
             if ("weekdays".equals(e.getKey()) && e.getValue().isArray()) {
                 for (var element: e.getValue()) {
                     if (element.isString()) {
@@ -42,6 +43,7 @@ public class WeekdayRule extends RuleStream {
                 }
             }
         }
+        return this;
     }
 
     @Override

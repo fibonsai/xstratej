@@ -80,7 +80,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -98,7 +98,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -117,7 +117,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{50.0, 50.0});
@@ -137,7 +137,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         ITemporalData series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{70.0, 80.0});

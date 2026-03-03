@@ -46,7 +46,7 @@ class RandomRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         randomRule = new RandomRule();
-        randomRule.subscribe(new Fifo<>());
+        randomRule.watch(new Fifo<>());
     }
 
     @AfterEach

@@ -41,7 +41,7 @@ class NotRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         notRule = new NotRule();
-        notRule.subscribe(new Fifo<>());
+        notRule.watch(new Fifo<>());
     }
 
     @AfterEach

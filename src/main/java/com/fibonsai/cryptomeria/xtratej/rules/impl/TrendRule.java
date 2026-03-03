@@ -22,6 +22,7 @@ import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.hipparchus.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -35,8 +36,8 @@ public class TrendRule extends RuleStream {
     private boolean isRising = true;
 
     @Override
-    protected void processProperties() {
-        for (var e : getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e : jsonNode.properties()) {
             if ("sourceId".equals(e.getKey()) && e.getValue().isString()) {
                 sourceId = e.getValue().asString();
             }
@@ -44,6 +45,7 @@ public class TrendRule extends RuleStream {
               isRising = e.getValue().asBoolean();
             }
         }
+        return this;
     }
 
     @Override

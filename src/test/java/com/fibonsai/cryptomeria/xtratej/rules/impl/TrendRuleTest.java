@@ -78,7 +78,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Rising
         ITemporalData[] input = new ITemporalData[]{series};
@@ -95,7 +95,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
         ITemporalData[] input = new ITemporalData[]{series};
@@ -112,7 +112,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
         ITemporalData[] input = new ITemporalData[]{series};
@@ -131,7 +131,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData s1 = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope 1.0
         ITemporalData s2 = createSingleTimeSeries("s2", new long[]{1, 2, 3}, new double[]{1, 1.5, 2}); // Slope 0.5

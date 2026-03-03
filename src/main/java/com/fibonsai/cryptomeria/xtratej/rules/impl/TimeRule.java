@@ -19,6 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSerie
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -34,8 +35,8 @@ public class TimeRule extends RuleStream {
     private boolean invert = false;
 
     @Override
-    protected void processProperties() {
-        for (var e: getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e: jsonNode.properties()) {
             if ("begin".equals(e.getKey()) && e.getValue().isString()) {
                 begin = e.getValue().asString();
             }
@@ -49,6 +50,7 @@ public class TimeRule extends RuleStream {
                 invert = e.getValue().asBoolean();
             }
         }
+        return this;
     }
 
     @Override
