@@ -42,8 +42,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StrategyTest {
 
@@ -51,7 +50,7 @@ public class StrategyTest {
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Test
-    public void createStrategyAndRun() throws InterruptedException {
+    public void createStrategyAndRun() {
 
         Subscriber source1 = SourceType.SIMULATED.builder().setName("flux1").setPublisher("test").build();
         Subscriber source2 = SourceType.SIMULATED.builder().setName("flux2").setPublisher("test").build();
@@ -165,16 +164,15 @@ public class StrategyTest {
                         .emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
         }
 
-        enterLatch.await(2, TimeUnit.SECONDS);
-        exitLatch.await(2, TimeUnit.SECONDS);
-
+        assertDoesNotThrow(() -> enterLatch.await(2, TimeUnit.SECONDS));
+        assertDoesNotThrow(() -> exitLatch.await(2, TimeUnit.SECONDS));
         assertNotNull(enterTradingSignal.get());
         assertNotNull(exitTradingSignal.get());
         assertTrue(allStrategiesActivated);
     }
 
     @Test
-    public void createStrategyFromJsonV2AndRun() throws IOException, InterruptedException {
+    public void createStrategyFromJsonV2AndRun() throws IOException {
         Map<String, IStrategy> strategies;
         StrategyManager strategyManager = new StrategyManager();
 
@@ -239,9 +237,8 @@ public class StrategyTest {
             }
         }
 
-        enterLatch.await(2, TimeUnit.SECONDS);
-        exitLatch.await(2, TimeUnit.SECONDS);
-
+        assertDoesNotThrow(() -> enterLatch.await(2, TimeUnit.SECONDS));
+        assertDoesNotThrow(() -> exitLatch.await(2, TimeUnit.SECONDS));
         assertNotNull(exitTradingSignal.get());
         assertNotNull(enterTradingSignal.get());
         assertTrue(allStrategiesActivated);
