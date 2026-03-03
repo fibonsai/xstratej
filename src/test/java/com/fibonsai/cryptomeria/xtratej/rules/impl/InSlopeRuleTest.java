@@ -79,7 +79,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         ITemporalData[] input = new ITemporalData[]{series};
@@ -96,7 +96,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         ITemporalData[] input = new ITemporalData[]{series};
@@ -113,7 +113,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         ITemporalData[] input = new ITemporalData[]{series};

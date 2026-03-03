@@ -159,7 +159,7 @@ public class LoaderV2 {
                 fifos[counter++] = subRule.results();
             }
         }
-        ruleInstance.subscribe(Fifo.zip(fifos));
+        ruleInstance.watch(Fifo.zip(fifos));
         return ruleInstance;
     }
 }

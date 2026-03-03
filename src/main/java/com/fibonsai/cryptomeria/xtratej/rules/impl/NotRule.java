@@ -34,6 +34,7 @@ public class NotRule extends RuleStream {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanSingle[0];
             }
+
             if (temporalDatas.length > 1) {
                 log.error("Multi-timeseries are not supported as a source. Only one.");
                 return new BooleanSingle[0];
@@ -50,7 +51,4 @@ public class NotRule extends RuleStream {
             return new BooleanSingle[0];
         };
     }
-
-    @Override
-    protected void processProperties() {}
 }

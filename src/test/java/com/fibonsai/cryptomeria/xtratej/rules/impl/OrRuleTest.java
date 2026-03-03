@@ -40,7 +40,7 @@ class OrRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         orRule = new OrRule();
-        orRule.subscribe(new Fifo<>());
+        orRule.watch(new Fifo<>());
     }
 
     @AfterEach

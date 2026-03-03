@@ -28,12 +28,13 @@ import java.util.function.Function;
 public class CrossedRule extends RuleStream {
 
     private static final Logger log = LoggerFactory.getLogger(CrossedRule.class);
+
     private double threshold = Double.NaN;
     private String sourceId = "";
 
     @Override
-    protected void processProperties() {
-        for (var e : getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e : jsonNode.properties()) {
             if ("threshold".equals(e.getKey())) {
                 final JsonNode value = e.getValue();
                 threshold = value.isDouble() ? value.asDouble() : (value.isInt() ? value.asInt() : Double.NaN);
@@ -42,11 +43,17 @@ public class CrossedRule extends RuleStream {
                 sourceId = e.getValue().asString();
             }
         }
+        return this;
     }
 
     @Override
     protected Function<ITemporalData[], BooleanSingle[]> predicate() {
         return temporalDatas -> {
+            if (!isActivated()) {
+                log.warn("No sources. Ignoring rule.");
+                return new BooleanSingle[0];
+            }
+
             TimeSeries timeSeriesComparator = null;
             if (!sourceId.isBlank()) {
                 for (var temporalData : temporalDatas) {
@@ -57,12 +64,6 @@ public class CrossedRule extends RuleStream {
                 }
             }
 
-            if (!isActivated()) {
-                log.warn("No sources. Ignoring rule.");
-                return new BooleanSingle[0];
-            }
-
-            int count = 0;
             Boolean allresult = null;
             long lastTimestamp = 0;
             for (var temporalData: temporalDatas) {

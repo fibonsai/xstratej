@@ -43,7 +43,7 @@ class AndRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         andRule = new AndRule();
-        andRule.subscribe(new Fifo<>());
+        andRule.watch(new Fifo<>());
     }
 
     @AfterEach

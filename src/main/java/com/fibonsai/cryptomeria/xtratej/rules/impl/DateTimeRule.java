@@ -19,6 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSerie
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,8 +34,8 @@ public class DateTimeRule extends RuleStream {
     private String datetimeFormat = "";
 
     @Override
-    protected void processProperties() {
-        for (var e: getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e: jsonNode.properties()) {
             if ("begin".equals(e.getKey()) && e.getValue().isString()) {
                 begin = e.getValue().asString();
             }
@@ -45,6 +46,7 @@ public class DateTimeRule extends RuleStream {
                 datetimeFormat = e.getValue().asString();
             }
         }
+        return this;
     }
 
     @Override
@@ -70,7 +72,6 @@ public class DateTimeRule extends RuleStream {
                     now.isBefore(dateTimeBegin) || now.isAfter(dateTimeEnd);
 
             long timestamp = 0L;
-            int count = 0;
             for (var ts: temporalDatas) {
                 if (ts.timestamp() > timestamp) {
                     timestamp = ts.timestamp();

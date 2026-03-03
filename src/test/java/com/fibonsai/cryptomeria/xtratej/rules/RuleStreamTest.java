@@ -39,13 +39,10 @@ class RuleStreamTest {
     static class TestRuleStream extends RuleStream {
         private Function<ITemporalData[], BooleanSingle[]> predicateFunction;
 
-        protected TestRuleStream(JsonNode properties) {
-            super(properties);
+        protected TestRuleStream(JsonNode jsonNodeProperties) {
             this.predicateFunction = _ -> new BooleanSingle[0]; // Default empty
+            setProperties(jsonNodeProperties);
         }
-
-        @Override
-        protected void processProperties() {}
 
         @Override
         protected Function<ITemporalData[], BooleanSingle[]> predicate() {
@@ -55,15 +52,6 @@ class RuleStreamTest {
         public void setPredicateFunction(Function<ITemporalData[], BooleanSingle[]> predicateFunction) {
             this.predicateFunction = predicateFunction;
         }
-    }
-
-    @Test
-    void constructorAndNameMethod() {
-        JsonNode properties = nodeFactory.objectNode();
-        TestRuleStream ruleStream = new TestRuleStream(properties);
-
-        assertNotNull(ruleStream.getProperties());
-        assertTrue(ruleStream.getProperties().isEmpty());
     }
 
     @Test
@@ -77,7 +65,7 @@ class RuleStreamTest {
 
         ITemporalData[] temporalDatas = { new SingleTimeSeries.Single(0, 0.0) } ;
         var inputStream = new Fifo<ITemporalData[]>();
-        ruleStream.subscribe(inputStream);
+        ruleStream.watch(inputStream);
         AtomicReference<ITemporalData> result = new AtomicReference<>(EmptyTimeSeries.INSTANCE);
         CountDownLatch latch = new CountDownLatch(1);
         ruleStream.results().onSubscribe(latch::countDown).subscribe(result::set);

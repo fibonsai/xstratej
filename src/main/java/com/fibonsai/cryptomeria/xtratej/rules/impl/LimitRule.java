@@ -21,6 +21,7 @@ import com.fibonsai.cryptomeria.xtratej.event.series.impl.EmptyTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.rules.RuleStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -35,13 +36,14 @@ public class LimitRule extends RuleStream {
     private String lowerSourceId = "";
 
     @Override
-    protected void processProperties() {
-        for (var e: getProperties()) {
+    public RuleStream setProperties(JsonNode jsonNode) {
+        for (var e: jsonNode.properties()) {
             if ("min".equals(e.getKey()) && e.getValue().isDouble()) min = e.getValue().asDouble();
             if ("max".equals(e.getKey()) && e.getValue().isDouble()) max = e.getValue().asDouble();
             if ("upperSourceId".equals(e.getKey()) && e.getValue().isString()) upperSourceId = e.getValue().asString();
             if ("lowerSourceId".equals(e.getKey()) && e.getValue().isString()) lowerSourceId = e.getValue().asString();
         }
+        return this;
     }
 
     @Override
@@ -52,7 +54,6 @@ public class LimitRule extends RuleStream {
                 return new BooleanSingle[0];
             }
 
-            int count = 0;
             boolean result = false;
             long lastTimestamp = 0;
 

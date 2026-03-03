@@ -40,7 +40,7 @@ class XOrRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         xorRule = new XOrRule();
-        xorRule.subscribe(new Fifo<>());
+        xorRule.watch(new Fifo<>());
     }
 
     @AfterEach

@@ -71,7 +71,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -89,7 +89,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
         ITemporalData[] input = new ITemporalData[]{series};
@@ -108,7 +108,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         ITemporalData lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
@@ -129,7 +129,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.subscribe(new Fifo<>());
+        rule.watch(new Fifo<>());
 
         ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{25.0});
         ITemporalData lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
