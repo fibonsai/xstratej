@@ -17,6 +17,7 @@
 You can define strategies and rules directly in Java. Use `StrategyManager` to coordinate multiple strategies.
 
 ```java
+import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.strategy.Strategy;
 import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy;
 import com.fibonsai.cryptomeria.xtratej.strategy.StrategyManager;
@@ -28,30 +29,37 @@ import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 
 // 1. Create Sources
 Subscriber source1 = SourceType.SIMULATED.builder()
-    .setName("flux1")
-    .setPublisher("test")
-    .build();
+        .setName("flux1")
+        .setPublisher("test")
+        .build();
 
 // 2. Configure Rules
 LimitRule limitRule = (LimitRule) RuleType.Limit.build();
+
 limitRule.setMin(2.0).setMax(80.0);
 limitRule.watch(Fifo.zip(source1.toFifo()));
 
 // 3. Define Strategy
 IStrategy myStrategy = new Strategy(
-    "MyStrategy",
-    "BTC-USD",
-    IStrategy.StrategyType.ENTER
+        "MyStrategy",
+        "BTC-USD",
+        IStrategy.StrategyType.ENTER
 );
 
 myStrategy.addSource(source1)
           .setAggregatorRule(limitRule);
 
 // 4. Manage and Run
-StrategyManager manager = new StrategyManager(new Fifo<>())
-    .registerStrategy(myStrategy);
+
+Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
+StrategyManager manager = new StrategyManager(tradingSignalConsumer);
+manager.registerStrategy(myStrategy);
 
 manager.run();
+
+tradingSignalConsumer.subscribe(signal -> {
+   // buy/sell logic 
+});
 ```
 
 ### 2. JSON Configuration
@@ -66,6 +74,18 @@ import tools.jackson.databind.ObjectMapper;
 ObjectMapper mapper = new ObjectMapper();
 JsonNode jsonNode = mapper.readTree(new File("strategies.json"));
 Map<String, IStrategy> strategies = Loader.fromJson(jsonNode);
+
+Fifo<TradingSignal> tradingSignalConsumer = new Fifo<>();
+StrategyManager manager = new StrategyManager(tradingSignalConsumer);
+for (var strategy: strategies.values()) {
+    manager.registerStrategy(strategy);
+}
+
+manager.run();
+
+tradingSignalConsumer.subscribe(signal -> {
+    // buy/sell logic 
+});
 ```
 
 #### JSON Schema
