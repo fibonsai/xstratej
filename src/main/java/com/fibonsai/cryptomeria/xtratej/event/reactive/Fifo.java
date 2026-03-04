@@ -96,6 +96,11 @@ public class Fifo<T> {
         };
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Fifo<T>[] createArray(int size) {
+        return (Fifo<T>[]) new Fifo[size];
+    }
+
     /**
      * Combines multiple {@code RealTimeReactor<T>} sources into a single
      * {@code RealTimeReactor<T[]>} that emits arrays of one event per source,
@@ -292,7 +297,7 @@ public class Fifo<T> {
                 discardSlot();
                 return;
             }
-            Z[] snapshot = currentSlot.toArray((Z[]) Array.newInstance(typeToken.getClass(), 0)); // unckecked, but ok
+            Z[] snapshot = currentSlot.toArray((Z[]) Array.newInstance(typeToken.getClass(), 0)); // unchecked, but ok
 
             slotActive  = false;
             currentSlot = List.of();
