@@ -24,8 +24,10 @@ import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy.StrategyType;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,6 +63,8 @@ public class Loader {
 
     private static final String UNDEF = "undef";
     private static final JsonNodeFactory NODE_FACTORY = JsonNodeFactory.instance;
+    public static final JsonNode EMPTY_PARAMS = new ObjectNode(NODE_FACTORY, Map.of());
+    public static final JsonNode EMPTY_ARRAY = new ArrayNode(NODE_FACTORY, List.of());
 
     public static Map<String, IStrategy> fromJson(JsonNode json) {
 
@@ -88,7 +92,7 @@ public class Loader {
                     for (var sourceEntry: sources) {
                         String sourceName = sourceEntry.getKey();
                         JsonNode sourceJson = sourceEntry.getValue();
-                        JsonNode sourceParams = NODE_FACTORY.objectNode();
+                        JsonNode sourceParams = EMPTY_PARAMS;
                         SourceType sourceType = SourceType.UNDEF;
                         String publisher = UNDEF;
                         if (sourceJson.hasNonNull(TYPE.key()) && sourceJson.get(TYPE.key()).isString()) {
@@ -119,9 +123,9 @@ public class Loader {
 
     private static RuleStream parseRule(JsonNode ruleJson, IStrategy strategy) {
         RuleType ruleType = RuleType.False;
-        JsonNode ruleParams = NODE_FACTORY.objectNode();
+        JsonNode ruleParams = EMPTY_PARAMS;
         String description = "";
-        ArrayNode inputs = NODE_FACTORY.arrayNode();
+        JsonNode inputs = EMPTY_ARRAY;
 
         if (ruleJson.hasNonNull(TYPE.key()) && ruleJson.get(TYPE.key()).isString()) {
             ruleType = RuleType.fromName(ruleJson.get(TYPE.key()).asString());
@@ -140,22 +144,24 @@ public class Loader {
                 .setParams(ruleParams)
                 .setDescription(description);
 
-        JsonNode firstInput = inputs.get(0);
-        //noinspection unchecked
-        Fifo<ITemporalData>[] fifos = (Fifo<ITemporalData>[]) new Fifo[inputs.size()];
-        int counter = 0;
-        if (firstInput != null && firstInput.isString()) {
-            for (var input: inputs) {
-                Subscriber subscriber = strategy.getSources().get(input.asString());
-                fifos[counter++] = subscriber != null ? subscriber.toFifo() : Fifo.empty();
+        if (!inputs.isEmpty()) {
+            JsonNode firstInput = inputs.get(0);
+            Fifo<ITemporalData>[] fifos = Fifo.createArray(inputs.size());
+            int counter = 0;
+            if (firstInput != null && firstInput.isString()) {
+                for (var input : inputs) {
+                    Subscriber subscriber = strategy.getSources().get(input.asString());
+                    fifos[counter++] = subscriber != null ? subscriber.toFifo() : Fifo.empty();
+                }
+            } else {
+                for (var input : inputs) {
+                    RuleStream subRule = parseRule(input, strategy);
+                    fifos[counter++] = subRule.results();
+                }
             }
-        } else {
-            for (var input: inputs) {
-                RuleStream subRule = parseRule(input, strategy);
-                fifos[counter++] = subRule.results();
-            }
+            ruleInstance.watch(Fifo.zip(fifos));
         }
-        ruleInstance.watch(Fifo.zip(fifos));
         return ruleInstance;
     }
+
 }

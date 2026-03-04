@@ -24,7 +24,6 @@ import com.fibonsai.cryptomeria.xtratej.sources.WithParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +34,6 @@ import java.util.stream.Collectors;
 public class Strategy implements IStrategy {
 
     private static final Logger log = LoggerFactory.getLogger(Strategy.class);
-
-    public static final JsonNode EMPTY_PARAMS = JsonNodeFactory.instance.objectNode();
 
     private final String name;
     private final String symbol;
@@ -88,7 +85,7 @@ public class Strategy implements IStrategy {
 
     @Override
     public IStrategy addSource(SourceType sourceType, String name, String publisher) {
-        return addSource(sourceType, name, publisher, EMPTY_PARAMS);
+        return addSource(sourceType, name, publisher, Loader.EMPTY_PARAMS);
     }
 
     @Override
