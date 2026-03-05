@@ -17,16 +17,6 @@
 You can define strategies and rules directly in Java. Use `StrategyManager` to coordinate multiple strategies.
 
 ```java
-import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
-import com.fibonsai.cryptomeria.xtratej.strategy.Strategy;
-import com.fibonsai.cryptomeria.xtratej.strategy.IStrategy;
-import com.fibonsai.cryptomeria.xtratej.strategy.StrategyManager;
-import com.fibonsai.cryptomeria.xtratej.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.rules.impl.LimitRule;
-import com.fibonsai.cryptomeria.xtratej.sources.SourceType;
-import com.fibonsai.cryptomeria.xtratej.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-
 // 1. Create Sources
 Subscriber source1 = SourceType.SIMULATED.builder()
         .setName("flux1")
@@ -66,10 +56,6 @@ manager.tradingSignalPublisher().subscribe(signal -> {
 Strategies can be loaded from a JSON file for better flexibility.
 
 ```java
-import com.fibonsai.cryptomeria.xtratej.strategy.Loader;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
-
 ObjectMapper mapper = new ObjectMapper();
 JsonNode jsonNode = mapper.readTree(new File("strategies.json"));
 Map<String, IStrategy> strategies = Loader.fromJson(jsonNode);
@@ -191,11 +177,15 @@ The `Loader` class expects a JSON structure as follows:
 
 ## Architecture
 
-*   **Strategy**: The central coordinator that manages lifecycle and data flow.
-*   **RuleStream**: Abstract base for all logic components. Rules process inputs and emit `BooleanSingleTimeSeries` results.
-*   **TimeSeries**: Optimized storage for temporal data points (prices, signals).
-*   **Fifo**: The underlying reactive pipe connecting components.
-*   **Subscriber**: Entity to subscribe external data sources.
+We have two modules/subprojects:
+* **event**: data flow containers implementations supported by a simple, but "real-time" reactive approach.
+  *   **TimeSeries**: Optimized storage for temporal data points (prices, signals).
+  *   **Fifo**: The underlying reactive pipe connecting components.
+  
+* **engine**: Rule/Strategy engine with external sources connectors.
+  *   **Strategy**: The central coordinator that manages lifecycle and data flow.
+  *   **RuleStream**: Abstract base for all logic components. Rules process inputs and emit `BooleanSingleTimeSeries` results.
+  *   **Subscriber**: Entity to subscribe external data sources.
 
 ## Requirements
 
@@ -204,8 +194,8 @@ The `Loader` class expects a JSON structure as follows:
 
 ## TODO
 
+- [x] NATS Subscriber support.
 - [ ] Publishers to external consumers
-- [ ] NATS Subscriber support.
 - [ ] Kafka Subscriber support.
 - [ ] Candles rules support.
 
