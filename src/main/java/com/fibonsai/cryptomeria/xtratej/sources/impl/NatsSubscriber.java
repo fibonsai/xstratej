@@ -41,6 +41,8 @@ import static com.fibonsai.cryptomeria.xtratej.sources.impl.NatsSubscriber.NatsK
 
 public class NatsSubscriber extends Subscriber implements WithParams {
 
+    public static final List<Class<? extends ITemporalData>> CLASSES_SUPPORTED = List.of(SingleTimeSeries.class, SingleTimeSeries.Single.class, BarTimeSeries.class, BarTimeSeries.Bar.class, BooleanSingleTimeSeries.class, BooleanSingleTimeSeries.BooleanSingle.class);
+
     public enum NatsKey {
         NATS_CREDS("nats-creds"),
         SERVERS("servers"),
@@ -120,7 +122,7 @@ public class NatsSubscriber extends Subscriber implements WithParams {
                 ITemporalData temporalData = null;
 
                 if (className != null) {
-                    for (var clazz: List.of(SingleTimeSeries.class, SingleTimeSeries.Single.class, BarTimeSeries.class, BarTimeSeries.Bar.class, BooleanSingleTimeSeries.class, BooleanSingleTimeSeries.BooleanSingle.class)) {
+                    for (var clazz: CLASSES_SUPPORTED) {
                         if (clazz.getSimpleName().equals(className)) {
                             temporalData = MAPPER.readValue(msg, clazz);
                             break;
