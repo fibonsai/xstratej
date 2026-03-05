@@ -177,7 +177,7 @@ The `Loader` class expects a JSON structure as follows:
 
 ## Architecture
 
-We have two modules/subprojects:
+There are two modules/subprojects:
 * **event**: data flow containers implementations supported by a simple, but "real-time" reactive approach.
   *   **TimeSeries**: Optimized storage for temporal data points (prices, signals).
   *   **Fifo**: The underlying reactive pipe connecting components.

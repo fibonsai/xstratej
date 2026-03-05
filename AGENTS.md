@@ -43,19 +43,21 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 *   **Injected data from external datasources**: Implements support to connect and subscribe external market data providers (`Subscriber` implementations)
 *   **Enum Builder**: Prefer create new instances using Enum Builders, as RuleType, and SourceType.
 
-## Architecture decisions
+## Architectural Decisions
+
 * Wiring Mechanism: The `Loader` class is responsible for wiring. It parses a JSON definition where sources are defined first. Rules then specify their inputs which can be names of these sources or nested rule definitions.
 * Reactive Data Flow: Connection is achieved using `Fifo<ITemporalData>`. `Loader.parseRule` collects the FIFOs from the named sources (via `strategy.getSources().get(inputName).toFifo()`), zips them using `Fifo.zip()`, and passes the resulting zipped FIFO to `RuleStream.watch()`.
 * LimitRule Logic: `LimitRule` specifically looks for `upperSourceId` and `lowerSourceId` in its params. In its predicate function, it iterates through the provided `ITemporalData[]` array (produced by the zipped FIFO) and matches TimeSeries IDs against these params to determine dynamic boundaries. If no dynamic boundaries are found, it falls back to fixed min/max values.
 * Strategy Integration: `Strategy` acts as a container. `StrategyManager` runs strategies by subscribing to the root rule's (aggregator) result FIFO. When the rule evaluates to true, a `TradingSignal` is emitted.
 
 ## Exploring the code
-* "Read @engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java to understand its logic and params (min, max, upperSourceId, lowerSourceId).
-* "Read @engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/RuleStream.java to understand the base rule class and the watch mechanism using Fifo.
-* "Read @engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Strategy.java and @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
-* "Read @engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/StrategyManager.java to see how strategies are executed and how results are handled.
-* "Read @engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Loader.java to understand how the JSON configuration is parsed and how rules are wired to sources using Fifo.zip.
-* "Read @engine/src/test/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java to see example usage and testing patterns for rules.
+
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using Fifo.
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Strategy.java` and @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/StrategyManager.java` to see how strategies are executed and how results are handled.
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Loader.java` to understand how the JSON configuration is parsed and how rules are wired to sources using Fifo.zip.
+* "Read `engine/src/test/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to see example usage and testing patterns for rules.
 
 ## Testing
 
