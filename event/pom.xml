@@ -23,6 +23,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
     <artifactId>event</artifactId>
 
     <properties>

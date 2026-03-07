@@ -23,6 +23,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
     <artifactId>engine</artifactId>
 
     <properties>
@@ -33,7 +34,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fibonsai.cryptomeria</groupId>
+            <groupId>com.fibonsai.cryptomeria.xtratej</groupId>
             <artifactId>event</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
