@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -270,7 +269,6 @@ public class TimeSeriesBuilderTest {
         assertEquals(3, timeSeries.timestamps().length);
 
         long[] timestamps = timeSeries.timestamps();
-        System.out.printf(Arrays.toString(timestamps));
         assertEquals(2000L, timestamps[0], "First timestamp should be 2000 (skipped 1000)");
         assertEquals(3000L, timestamps[1], "Second timestamp should be 3000");
         assertEquals(4000L, timestamps[2], "Third timestamp should be 4000 (appended)");
