@@ -13,17 +13,3 @@
  */
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao;
-
-import java.io.Serializable;
-
-public interface ITemporalData extends Comparable<ITemporalData>, Serializable {
-    String id();
-    long[] timestamps();
-
-    long timestamp();
-
-    @Override
-    default int compareTo(ITemporalData o) {
-        return Long.compare(timestamp(), o.timestamp());
-    }
-}

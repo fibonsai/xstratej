@@ -16,13 +16,13 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record Double2TimeSeries(@Nullable String id, long[] timestamps, double[] values, double[] values2) implements ITemporalData {
+public record CorrelatedTimeSeries(@Nullable String id, long[] timestamps, double[] values, double[] values2) implements ITemporalData {
 
-    public Double2TimeSeries {
+    public CorrelatedTimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");
     }
 
-    public Double2TimeSeries(long[] timestamps, double[] values, double[] values2) {
+    public CorrelatedTimeSeries(long[] timestamps, double[] values, double[] values2) {
         this(null, timestamps, values, values2);
     }
 

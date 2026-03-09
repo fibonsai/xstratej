@@ -24,6 +24,11 @@ public record EmptyTimeSeries() implements ITemporalData {
     }
 
     @Override
+    public long[] timestamps() {
+        return new long[0];
+    }
+
+    @Override
     public long timestamp() {
         return 0;
     }
