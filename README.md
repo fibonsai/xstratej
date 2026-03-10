@@ -41,12 +41,13 @@ myStrategy.addSource(source1)
 
 // 4. Manage and Run
 
-StrategyManager manager = new StrategyManager();
+Publisher publisher = TargetType.SIMULATED.builder().setName("simulated").build();
+StrategyManager manager = new StrategyManager().setPublisher(publisher);
 manager.registerStrategy(myStrategy);
 
 manager.run();
 
-manager.tradingSignalPublisher().subscribe(signal -> {
+publisher.toFifo().subscribe(signal -> {
    // buy/sell logic 
 });
 ```
@@ -60,14 +61,15 @@ ObjectMapper mapper = new ObjectMapper();
 JsonNode jsonNode = mapper.readTree(new File("strategies.json"));
 Map<String, IStrategy> strategies = Loader.fromJson(jsonNode);
 
-StrategyManager manager = new StrategyManager(tradingSignalConsumer);
+Publisher publisher = TargetType.SIMULATED.builder().setName("simulated").build();
+StrategyManager manager = new StrategyManager(tradingSignalConsumer).setPublisher(publisher);
 for (var strategy: strategies.values()) {
     manager.registerStrategy(strategy);
 }
 
 manager.run();
 
-manager.tradingSignalPublisher().subscribe(signal -> {
+publisher.toFifo().subscribe(signal -> {
     // buy/sell logic 
 });
 ```
