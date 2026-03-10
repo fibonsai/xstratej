@@ -17,7 +17,6 @@ package com.fibonsai.cryptomeria.xtratej.engine.sources;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.impl.NatsSubscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.impl.SimulatedSubscriber;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.databind.node.JsonNodeFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +47,6 @@ public enum SourceType {
     }
 
     public static class Builder<T> {
-        private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
         private final Constructor<T> constructor;
         private String name = "undef";
         private String publisher = "undef";
