@@ -6,7 +6,7 @@
 
 *   **Reactive Architecture**: Built on a custom `Fifo` reactive stream implementation for efficient event processing.
 *   **Extensible Rules Engine**: define complex logic using a variety of composable rules (`CrossedRule`, `AndRule`, `OrRule`, etc.).
-*   **Subcriber connectors** (WIP): Support to connect and receive external datas.
+*   **Subcriber connectors**: Support to connect and receive external datas.
 *   **Time-Series Handling**: Specialized support for temporal data manipulation and analysis.
 *   **Strategy Management**: Organize indicators and logic into cohesive `Strategy` units.
 
