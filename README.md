@@ -47,6 +47,9 @@ manager.registerStrategy(myStrategy);
 
 manager.run();
 
+// 5. Publisher send to external Trading signal consumer.
+
+// HINT: it's possible monitoring publisher using this:
 publisher.subscribe(signal -> {
    // buy/sell logic 
 });
@@ -69,6 +72,9 @@ for (var strategy: strategies.values()) {
 
 manager.run();
 
+// 5. Publisher send to external Trading signal consumer.
+
+// HINT: it's possible monitoring publisher using this:
 publisher.subscribe(signal -> {
     // buy/sell logic 
 });
