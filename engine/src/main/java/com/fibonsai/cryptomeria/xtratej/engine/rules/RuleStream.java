@@ -14,6 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
+import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
@@ -41,6 +42,26 @@ public abstract class RuleStream {
             BooleanTimeSeries resultSeries = builder.merge(booleanTimeSeries).build();
             results.emitNext(resultSeries);
         });
+    }
+
+    public void watch(Subscriber... subscribers) {
+        Fifo<TimeSeries>[] arrayOfFifo = Fifo.createArray(subscribers.length);
+        int count = 0;
+        for (var subscribe: subscribers) {
+            arrayOfFifo[count++] = subscribe.toFifo();
+        }
+        Fifo<TimeSeries[]> inputs = Fifo.zip(arrayOfFifo);
+        watch(inputs);
+    }
+
+    public void watch(RuleStream... rules) {
+        Fifo<TimeSeries>[] arrayOfFifo = Fifo.createArray(rules.length);
+        int count = 0;
+        for (var rule: rules) {
+            arrayOfFifo[count++] = rule.results();
+        }
+        Fifo<TimeSeries[]> inputs = Fifo.zip(arrayOfFifo);
+        watch(inputs);
     }
 
     public boolean isActivated() {

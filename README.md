@@ -27,7 +27,7 @@ Subscriber source1 = SourceType.SIMULATED.builder()
 LimitRule limitRule = (LimitRule) RuleType.Limit.build();
 
 limitRule.setMin(2.0).setMax(80.0);
-limitRule.watch(Fifo.zip(source1.toFifo()));
+limitRule.watch(source1);
 
 // 3. Define Strategy
 IStrategy myStrategy = new Strategy(

@@ -22,7 +22,6 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.OrRule;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.strategy.IStrategy.StrategyType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.jspecify.annotations.Nullable;
@@ -59,24 +58,24 @@ public class StrategyTest {
 
         LimitRule limit1 = (LimitRule) RuleType.Limit.build();
         limit1.setMin(2.0).setMax(80.0);
-        limit1.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
+        limit1.watch(source1, source2, source3);
 
         LimitRule limit2 = (LimitRule) RuleType.Limit.build();
         limit2.setMin(0.0).setMax(50.0);
-        limit2.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
+        limit2.watch(source1, source2, source3);
 
         LimitRule limit3 = (LimitRule) RuleType.Limit.build();
         limit3.setLowerSourceId("flux1").setUpperSourceId("flux2");
-        limit3.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
+        limit3.watch(source1, source2, source3);
 
         OrRule orRule1 = (OrRule) RuleType.Or.build();
-        orRule1.watch(Fifo.zip(limit1.results(), limit2.results()));
+        orRule1.watch(limit1, limit2);
 
         NotRule notRule1 = (NotRule) RuleType.Not.build();
-        notRule1.watch(Fifo.zip(limit3.results()));
+        notRule1.watch(limit3);
 
         AndRule andRule1 = (AndRule) RuleType.And.build();
-        andRule1.watch(Fifo.zip(orRule1.results(), notRule1.results()));
+        andRule1.watch(orRule1, notRule1);
 
         Strategy strategyEnter = new Strategy("enter", "UNDEF", StrategyType.ENTER);
 
@@ -89,24 +88,24 @@ public class StrategyTest {
 
         LimitRule limit4 = (LimitRule) RuleType.Limit.build();
         limit4.setMin(2.0).setMax(80.0);
-        limit4.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
+        limit4.watch(source1, source2, source3);
 
         LimitRule limit5 = (LimitRule) RuleType.Limit.build();
         limit5.setMin(0.0).setMax(50.0);
-        limit5.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
+        limit5.watch(source1, source2, source3);
 
         LimitRule limit6 = (LimitRule) RuleType.Limit.build();
         limit6.setLowerSourceId("flux1").setUpperSourceId("flux2");
-        limit6.watch(Fifo.zip(source1.toFifo(), source2.toFifo(), source3.toFifo()));
+        limit6.watch(source1, source2, source3);
 
         OrRule orRule2 = (OrRule) RuleType.Or.build();
-        orRule2.watch(Fifo.zip(limit4.results(), limit5.results()));
+        orRule2.watch(limit4, limit5);
 
         NotRule notRule2 = (NotRule) RuleType.Not.build();
-        notRule2.watch(Fifo.zip(limit6.results()));
+        notRule2.watch(limit6);
 
         AndRule andRule2 = (AndRule) RuleType.And.build();
-        andRule2.watch(Fifo.zip(orRule2.results(), notRule2.results()));
+        andRule2.watch(orRule2, notRule2);
 
         Strategy strategyExit = new Strategy("exit", "UNDEF", StrategyType.EXIT);
 
