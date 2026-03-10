@@ -22,6 +22,8 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.OrRule;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.strategy.IStrategy.StrategyType;
+import com.fibonsai.cryptomeria.xtratej.engine.targets.Publisher;
+import com.fibonsai.cryptomeria.xtratej.engine.targets.TargetType;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
 import org.jspecify.annotations.Nullable;
@@ -116,7 +118,9 @@ public class StrategyTest {
 
         // ---------
 
+        Publisher publisher = TargetType.SIMULATED.builder().setName("simulated").build();
         StrategyManager strategyManager = new StrategyManager()
+                .setPublisher(publisher)
                 .registerStrategy(strategyEnter)
                 .registerStrategy(strategyExit);
 
@@ -126,7 +130,7 @@ public class StrategyTest {
         CountDownLatch exitLatch = new CountDownLatch(1);
         AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
         AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
-        strategyManager.tradingSignalPublisher().subscribe(t -> {
+        publisher.toFifo().subscribe(t -> {
             if (t.signal() == TradingSignal.Signal.ENTER) {
                 enterTradingSignal.set(t);
                 enterLatch.countDown();
@@ -172,7 +176,8 @@ public class StrategyTest {
     @Test
     public void createStrategyFromJsonV2AndRun() throws IOException {
         Map<String, IStrategy> strategies;
-        StrategyManager strategyManager = new StrategyManager();
+        Publisher publisher = TargetType.SIMULATED.builder().setName("simulated").build();
+        StrategyManager strategyManager = new StrategyManager().setPublisher(publisher);
 
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("strategies.json")) {
@@ -192,7 +197,7 @@ public class StrategyTest {
         CountDownLatch exitLatch = new CountDownLatch(1);
         AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
         AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
-        strategyManager.tradingSignalPublisher().subscribe(t -> {
+        publisher.toFifo().subscribe(t -> {
             if (t.signal() == TradingSignal.Signal.ENTER) {
                 enterTradingSignal.set(t);
                 enterLatch.countDown();
