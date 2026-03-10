@@ -12,7 +12,10 @@
  *  limitations under the License.
  */
 
-@NullMarked
-package com.fibonsai.cryptomeria.xtratej.engine.targets.impl;
+package com.fibonsai.cryptomeria.xtratej.engine.targets;
 
-import org.jspecify.annotations.NullMarked;
+import tools.jackson.databind.JsonNode;
+
+public interface WithParams {
+    Publisher setParams(JsonNode params);
+}

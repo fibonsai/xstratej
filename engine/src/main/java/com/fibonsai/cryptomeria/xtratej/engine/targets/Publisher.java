@@ -17,41 +17,12 @@ package com.fibonsai.cryptomeria.xtratej.engine.targets;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
 
-public abstract class Publisher {
-
-    public static final Publisher NULL = new Publisher("NULL") {
-
-        @Override
-        public Fifo<TradingSignal> toFifo() {
-            return Fifo.empty();
-        }
-
-        @Override
-        public boolean connect() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean disconnect() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isConnected() {
-            throw new UnsupportedOperationException();
-        }
-    };
+public abstract class Publisher extends Fifo<TradingSignal> {
 
     private final String name;
 
-    private final Fifo<TradingSignal> fifo = new Fifo<>();
-
     public Publisher(String name) {
         this.name = name;
-    }
-
-    public Fifo<TradingSignal> toFifo() {
-        return this.fifo;
     }
 
     public String name() {

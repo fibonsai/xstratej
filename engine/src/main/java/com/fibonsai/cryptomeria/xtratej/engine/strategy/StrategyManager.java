@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.strategy;
 
 import com.fibonsai.cryptomeria.xtratej.engine.targets.Publisher;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.engine.targets.TargetType;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
@@ -35,11 +35,7 @@ public class StrategyManager {
     private final ReentrantReadWriteLock.WriteLock writeLock = reentrantReadWriteLock.writeLock();
 
     private final ArrayList<IStrategy> strategies = new ArrayList<>();
-    private Publisher publisher = Publisher.NULL;
-
-    private Fifo<TradingSignal> fifo() {
-        return publisher.toFifo();
-    }
+    private Publisher publisher = TargetType.SIMULATED.builder().build();
 
     public StrategyManager registerStrategy(IStrategy strategy) {
         writeLock.lock();
@@ -91,7 +87,7 @@ public class StrategyManager {
                                 log.debug("[{}] Strategy {}: Send trading signal", timestamp, strategyName);
                             }
                             var tradingSignal = new TradingSignal(toString(), timestamp, signalType, strategyName, strategyPair, strategyPublishers);
-                            fifo().emitNext(tradingSignal);
+                            publisher.emitNext(tradingSignal);
                         }
                     });
                 });

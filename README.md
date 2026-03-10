@@ -47,7 +47,7 @@ manager.registerStrategy(myStrategy);
 
 manager.run();
 
-publisher.toFifo().subscribe(signal -> {
+publisher.subscribe(signal -> {
    // buy/sell logic 
 });
 ```
@@ -69,7 +69,7 @@ for (var strategy: strategies.values()) {
 
 manager.run();
 
-publisher.toFifo().subscribe(signal -> {
+publisher.subscribe(signal -> {
     // buy/sell logic 
 });
 ```

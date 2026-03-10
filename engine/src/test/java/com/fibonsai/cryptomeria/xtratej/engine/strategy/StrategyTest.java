@@ -130,7 +130,7 @@ public class StrategyTest {
         CountDownLatch exitLatch = new CountDownLatch(1);
         AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
         AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
-        publisher.toFifo().subscribe(t -> {
+        publisher.subscribe(t -> {
             if (t.signal() == TradingSignal.Signal.ENTER) {
                 enterTradingSignal.set(t);
                 enterLatch.countDown();
@@ -197,7 +197,7 @@ public class StrategyTest {
         CountDownLatch exitLatch = new CountDownLatch(1);
         AtomicReference<@Nullable TradingSignal> enterTradingSignal = new AtomicReference<>(null);
         AtomicReference<@Nullable TradingSignal> exitTradingSignal = new AtomicReference<>(null);
-        publisher.toFifo().subscribe(t -> {
+        publisher.subscribe(t -> {
             if (t.signal() == TradingSignal.Signal.ENTER) {
                 enterTradingSignal.set(t);
                 enterLatch.countDown();
