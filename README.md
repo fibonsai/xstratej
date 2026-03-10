@@ -194,10 +194,7 @@ There are two modules/subprojects:
 
 ## TODO
 
-- [x] NATS Subscriber support.
-- [ ] Publishers to external consumers
-- [ ] Kafka Subscriber support.
-- [ ] Candles rules support.
+Check [issue tracker](https://github.com/fibonsai/xtratej/issues)
 
 ## License
 
