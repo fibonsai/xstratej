@@ -12,18 +12,24 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.cryptomeria.xtratej.event;
+package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 public record TradingSignal(
+        String id,
         long timestamp,
         Signal signal,
         String strategyName,
         String pair,
-        String publishers) implements ITemporalData {
+        String publishers) implements TimeSeries {
 
     public enum Signal {
         ENTER,
         EXIT,
         UNDEF
+    }
+
+    @Override
+    public long[] timestamps() {
+        return new long[]{timestamp};
     }
 }

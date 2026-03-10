@@ -19,8 +19,8 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.strategy.IStrategy.StrategyType;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
@@ -146,7 +146,7 @@ public class Loader {
 
         if (!inputs.isEmpty()) {
             JsonNode firstInput = inputs.get(0);
-            Fifo<ITemporalData>[] fifos = Fifo.createArray(inputs.size());
+            Fifo<TimeSeries>[] fifos = Fifo.createArray(inputs.size());
             int counter = 0;
             if (firstInput != null && firstInput.isString()) {
                 for (var input : inputs) {

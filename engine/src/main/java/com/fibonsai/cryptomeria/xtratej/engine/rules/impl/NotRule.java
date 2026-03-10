@@ -15,9 +15,9 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,27 +28,27 @@ public class NotRule extends RuleStream {
     private static final Logger log = LoggerFactory.getLogger(NotRule.class);
 
     @Override
-    protected Function<ITemporalData[], BooleanSingle[]> predicate() {
-        return temporalDatas -> {
+    protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
+        return timeSeriesArray -> {
             if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
-                return new BooleanSingle[0];
+                return new BooleanTimeSeries[0];
             }
 
-            if (temporalDatas.length > 1) {
+            if (timeSeriesArray.length > 1) {
                 log.error("Multi-timeseries are not supported as a source. Only one.");
-                return new BooleanSingle[0];
+                return new BooleanTimeSeries[0];
             }
 
-            var ts = temporalDatas[0];
-            if (ts instanceof BooleanSingleTimeSeries series) {
+            var ts = timeSeriesArray[0];
+            if (ts instanceof BooleanTimeSeries series) {
                 int endIndex = series.size() - 1;
                 boolean lastValue = series.values()[endIndex];
                 long lastTimestamp = series.timestamp();
-                return new BooleanSingle[] { new BooleanSingle(lastTimestamp, !lastValue) };
+                return new BooleanTimeSeries[] { new BooleanTimeSeriesBuilder().add(lastTimestamp, !lastValue).build() };
             }
 
-            return new BooleanSingle[0];
+            return new BooleanTimeSeries[0];
         };
     }
 }

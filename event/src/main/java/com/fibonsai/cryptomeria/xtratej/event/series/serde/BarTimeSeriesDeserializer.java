@@ -23,6 +23,7 @@ import tools.jackson.databind.deser.std.StdDeserializer;
 
 import java.util.Iterator;
 
+@Deprecated(forRemoval = true)
 public class BarTimeSeriesDeserializer extends StdDeserializer<BarTimeSeries> {
 
     protected BarTimeSeriesDeserializer() {

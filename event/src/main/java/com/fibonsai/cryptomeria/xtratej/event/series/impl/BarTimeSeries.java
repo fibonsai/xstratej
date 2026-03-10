@@ -23,6 +23,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = BarTimeSeriesSerializer.class)
 @JsonDeserialize(using = BarTimeSeriesDeserializer.class)
+@Deprecated(forRemoval = true)
 public class BarTimeSeries extends TimeSeries {
 
     private double[] opens;

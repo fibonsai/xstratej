@@ -15,10 +15,11 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.EmptyTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.EmptyTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.hipparchus.stat.regression.SimpleRegression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,38 +50,38 @@ public class TrendRule extends RuleStream {
     }
 
     @Override
-    protected Function<ITemporalData[], BooleanSingle[]> predicate() {
-        return temporalDatas -> {
+    protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
+        return timeSeriesArray -> {
             if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
-                return new BooleanSingle[0];
+                return new BooleanTimeSeries[0];
             }
 
             TimeSeries timeSeriesComparator = EmptyTimeSeries.INSTANCE;
             if (!sourceId.isBlank()) {
-                for (var temporalData : temporalDatas) {
-                    if (temporalData instanceof TimeSeries timeSeries && Objects.equals(timeSeries.id(), sourceId)) timeSeriesComparator = timeSeries;
+                for (var timeSeries : timeSeriesArray) {
+                    if (Objects.equals(timeSeries.id(), sourceId)) timeSeriesComparator = timeSeries;
                 }
             }
 
-            double slopeComparable = (timeSeriesComparator != EmptyTimeSeries.INSTANCE) ? getSlope(timeSeriesComparator) : 0.0D;
+            double slopeComparable = (timeSeriesComparator != EmptyTimeSeries.INSTANCE) && timeSeriesComparator instanceof SingleTimeSeries ts ? getSlope(ts) : 0.0D;
 
             Boolean allresult = null;
             long lastTimestamp = 0;
-            for (var temporalData: temporalDatas) {
-                if (temporalData instanceof TimeSeries timeSeries && timeSeries.size() > 0) {
-                    if (Objects.equals(timeSeriesComparator.id(), timeSeries.id())) {
+            for (var timeSeries: timeSeriesArray) {
+                if (timeSeries instanceof SingleTimeSeries singleTimeSeries && singleTimeSeries.size() > 0) {
+                    if (Objects.equals(timeSeriesComparator.id(), singleTimeSeries.id())) {
                         continue;
                     }
-                    double slope = getSlope(timeSeries);
-                    lastTimestamp = timeSeries.timestamp();
+                    double slope = getSlope(singleTimeSeries);
+                    lastTimestamp = singleTimeSeries.timestamp();
 
                     boolean result = isRising ? slope > slopeComparable : slope < slopeComparable;
                     allresult = allresult == null ? result : allresult && result;
                 }
             }
             if (allresult == null) allresult = false;
-            return new BooleanSingle[] { new BooleanSingle(lastTimestamp, allresult) };
+            return new BooleanTimeSeries[] { new BooleanTimeSeriesBuilder().add(lastTimestamp, allresult).build() };
         };
     }
 
@@ -94,11 +95,11 @@ public class TrendRule extends RuleStream {
         return this;
     }
 
-    private double getSlope(TimeSeries series) {
+    private double getSlope(SingleTimeSeries series) {
         regression.clear();
         for (int x = 0; x < series.size(); x++) {
             double doubleTimestamp = series.timestamps()[x];
-            double value = series.singleDoubleValues()[x];
+            double value = series.values()[x];
             regression.addData(doubleTimestamp, value);
         }
         return regression.getSlope();

@@ -25,6 +25,7 @@ import tools.jackson.databind.ser.std.StdSerializer;
 import java.util.Iterator;
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public class BarTimeSeriesSerializer extends StdSerializer<BarTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(BarTimeSeriesSerializer.class);

@@ -14,8 +14,8 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
@@ -50,12 +50,20 @@ public class SingleTimeSeriesBuilder extends TimeSeriesBuilder<SingleTimeSeriesB
     }
 
     @Override
-    public SingleTimeSeriesBuilder from(ITemporalData temporalData) {
-        if (temporalData instanceof SingleTimeSeries(String id1, long[] timestamps, double[] values)) {
+    public SingleTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof SingleTimeSeries(String id1, long[] timestamps, double[] values)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], values[x]);
                 setId(id1);
             }
+        }
+        return this;
+    }
+
+    @Override
+    public SingleTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+        for (var timeSeries: timeSeriesArray) {
+            from(timeSeries);
         }
         return this;
     }

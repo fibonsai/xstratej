@@ -23,6 +23,7 @@ import tools.jackson.databind.deser.std.StdDeserializer;
 
 import java.util.Iterator;
 
+@Deprecated(forRemoval = true)
 public class BooleanSingleTimeSeriesDeserializer extends StdDeserializer<BooleanSingleTimeSeries> {
 
     protected BooleanSingleTimeSeriesDeserializer() {

@@ -22,10 +22,9 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.OrRule;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.strategy.IStrategy.StrategyType;
-import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -145,7 +144,7 @@ public class StrategyTest {
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
                 source1.toFifo()
-                        .emitNext(new SingleTimeSeries("flux1", new Single[]{ new Single(timestamp, value)})));
+                        .emitNext(new SingleTimeSeriesBuilder().setId("flux1").add(timestamp, value).build()));
         }
 
         for (int x=n-1; x>=0; x--) {
@@ -153,7 +152,7 @@ public class StrategyTest {
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
                 source2.toFifo()
-                        .emitNext(new SingleTimeSeries("flux2", new Single[]{ new Single(timestamp, value)})));
+                        .emitNext(new SingleTimeSeriesBuilder().setId("flux2").add(timestamp, value).build()));
         }
 
         for (int x=0; x < n; x++) {
@@ -161,7 +160,7 @@ public class StrategyTest {
             double value = random.nextDouble(0.0, n);
             Thread.startVirtualThread(() ->
                 source3.toFifo()
-                        .emitNext(new SingleTimeSeries("flux3", new Single[]{ new Single(timestamp, value)})));
+                        .emitNext(new SingleTimeSeriesBuilder().setId("flux3").add(timestamp, value).build()));
         }
 
         assertDoesNotThrow(() -> enterLatch.await(2, TimeUnit.SECONDS));
@@ -215,7 +214,7 @@ public class StrategyTest {
                         double value = x * 1.0D;
                         Thread.startVirtualThread(() ->
                                 source.toFifo()
-                                        .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
+                                        .emitNext(new SingleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 } else if (sourceName.equals("flux2") || sourceName.equals("flux5")) {
                     for (int x=n-1; x>=0; x--) {
@@ -223,7 +222,7 @@ public class StrategyTest {
                         double value = x * 1.0D;
                         Thread.startVirtualThread(() ->
                                 source.toFifo()
-                                        .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
+                                        .emitNext(new SingleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 } else {
                     for (int x=0; x < n; x++) {
@@ -231,7 +230,7 @@ public class StrategyTest {
                         double value = random.nextDouble(0.0, n);
                         Thread.startVirtualThread(() ->
                                 source.toFifo()
-                                        .emitNext(new SingleTimeSeries(sourceName, new Single[]{ new Single(timestamp, value)})));
+                                        .emitNext(new SingleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 }
             }

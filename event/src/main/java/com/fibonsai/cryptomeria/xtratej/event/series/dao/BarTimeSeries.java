@@ -16,7 +16,7 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record BarTimeSeries(@Nullable String id, long[] timestamps, double[] opens, double[] highs, double[] lows, double[] closes, double[] volumes) implements ITemporalData {
+public record BarTimeSeries(@Nullable String id, long[] timestamps, double[] opens, double[] highs, double[] lows, double[] closes, double[] volumes) implements TimeSeries {
 
     public BarTimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");

@@ -16,7 +16,7 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record BooleanTimeSeries(@Nullable String id, long[] timestamps, boolean[] values) implements ITemporalData {
+public record BooleanTimeSeries(@Nullable String id, long[] timestamps, boolean[] values) implements TimeSeries {
 
     public BooleanTimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");

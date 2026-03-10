@@ -14,12 +14,12 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.EmptyTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.EmptyTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.JsonNodeFactory;
@@ -37,19 +37,19 @@ class RuleStreamTest {
 
     // Concrete implementation for testing abstract RuleStream
     static class TestRuleStream extends RuleStream {
-        private Function<ITemporalData[], BooleanSingle[]> predicateFunction;
+        private Function<TimeSeries[], BooleanTimeSeries[]> predicateFunction;
 
         protected TestRuleStream(JsonNode params) {
-            this.predicateFunction = _ -> new BooleanSingle[0]; // Default empty
+            this.predicateFunction = _ -> new BooleanTimeSeries[0]; // Default empty
             setParams(params);
         }
 
         @Override
-        protected Function<ITemporalData[], BooleanSingle[]> predicate() {
+        protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
             return predicateFunction;
         }
 
-        public void setPredicateFunction(Function<ITemporalData[], BooleanSingle[]> predicateFunction) {
+        public void setPredicateFunction(Function<TimeSeries[], BooleanTimeSeries[]> predicateFunction) {
             this.predicateFunction = predicateFunction;
         }
     }
@@ -60,27 +60,27 @@ class RuleStreamTest {
         TestRuleStream ruleStream = new TestRuleStream(params);
 
         long timestamp = System.currentTimeMillis();
-        BooleanSingle[] expectedBooleanSingles = {new BooleanSingle(timestamp, true)};
+        BooleanTimeSeries[] expectedBooleanSingles = { new BooleanTimeSeriesBuilder().add(timestamp, true).build() };
         ruleStream.setPredicateFunction(_ -> expectedBooleanSingles);
 
-        ITemporalData[] temporalDatas = { new SingleTimeSeries.Single(0, 0.0) } ;
-        var inputStream = new Fifo<ITemporalData[]>();
+        TimeSeries[] timeSeriesArray = { new SingleTimeSeriesBuilder().add(0, 0.0).build() } ;
+        var inputStream = new Fifo<TimeSeries[]>();
         ruleStream.watch(inputStream);
-        AtomicReference<ITemporalData> result = new AtomicReference<>(EmptyTimeSeries.INSTANCE);
+        AtomicReference<TimeSeries> result = new AtomicReference<>(EmptyTimeSeries.INSTANCE);
         CountDownLatch latch = new CountDownLatch(1);
         ruleStream.results().onSubscribe(latch::countDown).subscribe(result::set);
         //noinspection ResultOfMethodCallIgnored
         latch.await(5, TimeUnit.SECONDS);
 
-        inputStream.emitNext(temporalDatas);
+        inputStream.emitNext(timeSeriesArray);
 
-        ITemporalData emittedSeries = result.get();
+        TimeSeries emittedSeries = result.get();
         assertNotNull(emittedSeries);
-        assertInstanceOf(BooleanSingleTimeSeries.class, emittedSeries);
-        BooleanSingleTimeSeries booleanSeries = (BooleanSingleTimeSeries) emittedSeries;
+        assertInstanceOf(BooleanTimeSeries.class, emittedSeries);
+        BooleanTimeSeries booleanSeries = (BooleanTimeSeries) emittedSeries;
 
         assertEquals(1, booleanSeries.size());
         assertEquals(expectedBooleanSingles[0].timestamp(), booleanSeries.timestamps()[0]);
-        assertEquals(expectedBooleanSingles[0].value(), booleanSeries.values()[0]);
+        assertEquals(expectedBooleanSingles[0].values()[0], booleanSeries.values()[0]);
     }
 }

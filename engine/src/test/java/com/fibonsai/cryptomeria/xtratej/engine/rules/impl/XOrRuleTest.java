@@ -15,10 +15,10 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,73 +48,73 @@ class XOrRuleTest {
         }
     }
 
-    private BooleanSingleTimeSeries createBooleanSeries(String name, long timestamp, boolean... values) {
-        BooleanSingle[] singles = new BooleanSingle[values.length];
+    private BooleanTimeSeries createBooleanSeries(String name, long timestamp, boolean... values) {
+        BooleanTimeSeriesBuilder builder = new BooleanTimeSeriesBuilder().setId(name);
         for (int i = 0; i < values.length; i++) {
-            singles[i] = new BooleanSingle(timestamp + i, values[i]);
+            builder.add(timestamp + i, values[i]);
         }
-        return new BooleanSingleTimeSeries(name, singles);
+        return builder.build();
     }
 
     @Test
     void predicate_withTwoTrue_shouldReturnFalse() {
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, true);
-        ITemporalData[] input = new ITemporalData[]{series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true);
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
 
-        BooleanSingle[] result = xorRule.predicate().apply(input);
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Test
     void predicate_withOneTrueOneFalse_shouldReturnTrue() {
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, false);
-        ITemporalData[] input = new ITemporalData[]{series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, false);
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
 
-        BooleanSingle[] result = xorRule.predicate().apply(input);
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
     void predicate_withTwoFalse_shouldReturnFalse() {
-        ITemporalData series1 = createBooleanSeries("s1", 100L, false);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, false);
-        ITemporalData[] input = new ITemporalData[]{series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, false);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, false);
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
 
-        BooleanSingle[] result = xorRule.predicate().apply(input);
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Test
     void predicate_withThreeTrue_shouldReturnTrue() {
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, true);
-        ITemporalData series3 = createBooleanSeries("s3", 102L, true);
-        ITemporalData[] input = new ITemporalData[]{series1, series2, series3};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true);
+        TimeSeries series3 = createBooleanSeries("s3", 102L, true);
+        TimeSeries[] input = new TimeSeries[]{series1, series2, series3};
 
-        BooleanSingle[] result = xorRule.predicate().apply(input);
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
     void predicate_withTwoTrueOneFalse_shouldReturnFalse() {
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, true);
-        ITemporalData series3 = createBooleanSeries("s3", 102L, false);
-        ITemporalData[] input = new ITemporalData[]{series1, series2, series3};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true);
+        TimeSeries series3 = createBooleanSeries("s3", 102L, false);
+        TimeSeries[] input = new TimeSeries[]{series1, series2, series3};
 
-        BooleanSingle[] result = xorRule.predicate().apply(input);
+        BooleanTimeSeries[] result = xorRule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 }

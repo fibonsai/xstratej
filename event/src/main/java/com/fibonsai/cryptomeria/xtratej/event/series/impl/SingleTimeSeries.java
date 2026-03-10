@@ -23,6 +23,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = SingleTimeSeriesSerializer.class)
 @JsonDeserialize(using = SingleTimeSeriesDeserializer.class)
+@Deprecated(forRemoval = true)
 public class SingleTimeSeries extends TimeSeries {
 
     private double[] values;

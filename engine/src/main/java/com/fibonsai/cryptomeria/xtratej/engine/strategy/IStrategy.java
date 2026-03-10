@@ -17,7 +17,7 @@ package com.fibonsai.cryptomeria.xtratej.engine.strategy;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import tools.jackson.databind.JsonNode;
 
 import java.util.Map;
@@ -62,7 +62,7 @@ public interface IStrategy {
 
     IStrategy onSubscribe(Runnable onSubscribe);
 
-    IStrategy subscribe(Consumer<ITemporalData> consumer);
+    IStrategy subscribe(Consumer<TimeSeries> consumer);
 
     Map<String, Subscriber> getSources();
 }

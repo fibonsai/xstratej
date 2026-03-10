@@ -14,10 +14,10 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.strategy;
 
-import com.fibonsai.cryptomeria.xtratej.event.TradingSignal;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,18 +73,18 @@ public class StrategyManager {
 
                 Thread.startVirtualThread(() -> {
                     log.info("Executing {} strategy", strategyName);
-                    strategy.onSubscribe(latch::countDown).subscribe(temporalData -> {
-                        var result = switch (temporalData) {
-                            case BooleanSingleTimeSeries ts when ts.size() > 0 -> new BooleanSingle(ts.timestamp(), ts.values()[ts.size() - 1]);
-                            case BooleanSingle bSingle -> bSingle;
-                            default -> new BooleanSingle(0, false);
+                    strategy.onSubscribe(latch::countDown).subscribe(timeSeries -> {
+                        var result = switch (timeSeries) {
+                            case BooleanTimeSeries ts when ts.size() > 0 -> new BooleanTimeSeriesBuilder().add(ts.timestamp(), ts.values()[ts.size() - 1]).build();
+                            case BooleanTimeSeries bSingle -> bSingle;
+                            default -> new BooleanTimeSeriesBuilder().add(0, false).build();
                         };
                         long timestamp;
-                        if ((timestamp = result.timestamp()) > 0 && result.value()) {
+                        if ((timestamp = result.timestamp()) > 0 && result.values()[result.size() - 1]) {
                             if (log.isDebugEnabled()) {
                                 log.debug("[{}] Strategy {}: Send trading signal", timestamp, strategyName);
                             }
-                            var tradingSignal = new TradingSignal(timestamp, signalType, strategyName, strategyPair, strategyPublishers);
+                            var tradingSignal = new TradingSignal(toString(), timestamp, signalType, strategyName, strategyPair, strategyPublishers);
                             tradingSignalPublisher.emitNext(tradingSignal);
                         }
                     });

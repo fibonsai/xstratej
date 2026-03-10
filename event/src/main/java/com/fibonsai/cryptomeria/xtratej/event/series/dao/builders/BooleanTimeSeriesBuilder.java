@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
@@ -54,12 +54,20 @@ public class BooleanTimeSeriesBuilder extends TimeSeriesBuilder<BooleanTimeSerie
     }
 
     @Override
-    public BooleanTimeSeriesBuilder from(ITemporalData temporalData) {
-        if (temporalData instanceof BooleanTimeSeries(String id1, long[] timestamps, boolean[] values)) {
+    public BooleanTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof BooleanTimeSeries(String id1, long[] timestamps, boolean[] values)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], values[x]);
-                setId(id1);
+                if (id1 != null) setId(id1);
             }
+        }
+        return this;
+    }
+
+    @Override
+    public BooleanTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+        for (var timeSeries: timeSeriesArray) {
+            from(timeSeries);
         }
         return this;
     }

@@ -14,11 +14,13 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.sources.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BarTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BarTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
 import io.github.amadeusitgroup.testcontainers.nats.NatsContainer;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
@@ -107,7 +109,7 @@ public class NatsSubscriberTest {
         boolean connected = natsSubscriber.connect();
         assertTrue(connected, "Should connect successfully");
 
-        SingleTimeSeries.Single data = new SingleTimeSeries.Single(Instant.now().toEpochMilli(), 123.45);
+        SingleTimeSeries data = new SingleTimeSeriesBuilder().add(Instant.now().toEpochMilli(), 123.45).build();
 
         boolean received = sendAndSubscribeNoTimeSeries(data).await(5, TimeUnit.SECONDS);
         assertTrue(received, "Should receive message within timeout");
@@ -129,7 +131,7 @@ public class NatsSubscriberTest {
         boolean connected = natsSubscriber.connect();
         assertTrue(connected, "Should connect successfully");
 
-        BooleanSingleTimeSeries.BooleanSingle data = new BooleanSingleTimeSeries.BooleanSingle(Instant.now().toEpochMilli(), true);
+        BooleanTimeSeries data = new BooleanTimeSeriesBuilder().add(Instant.now().toEpochMilli(), true).build();
 
         boolean received = sendAndSubscribeNoTimeSeries(data).await(5, TimeUnit.SECONDS);
         assertTrue(received, "Should receive message within timeout");
@@ -151,7 +153,7 @@ public class NatsSubscriberTest {
         boolean connected = natsSubscriber.connect();
         assertTrue(connected, "Should connect successfully");
 
-        BarTimeSeries.Bar data = new BarTimeSeries.Bar(Instant.now().toEpochMilli(), 123.45, 2.0D, 3.0D, 4.0D, 5.0D);
+        BarTimeSeries data = new BarTimeSeriesBuilder().add(Instant.now().toEpochMilli(), 123.45, 2.0D, 3.0D, 4.0D, 5.0D).build();
 
         boolean received = sendAndSubscribeNoTimeSeries(data).await(5, TimeUnit.SECONDS);
         assertTrue(received, "Should receive message within timeout");
@@ -173,10 +175,7 @@ public class NatsSubscriberTest {
         boolean connected = natsSubscriber.connect();
         assertTrue(connected, "Should connect successfully");
 
-        SingleTimeSeries testSeries = new SingleTimeSeries("test-series",
-                new SingleTimeSeries.Single[] {
-                        new SingleTimeSeries.Single(Instant.now().toEpochMilli(), 123.45)
-                });
+        SingleTimeSeries testSeries = new SingleTimeSeriesBuilder().setId("test-series").add(Instant.now().toEpochMilli(), 123.45).build();
 
         boolean received = sendAndSubscribe(testSeries).await(5, TimeUnit.SECONDS);
         assertTrue(received, "Should receive message within timeout");
@@ -198,10 +197,7 @@ public class NatsSubscriberTest {
         boolean connected = natsSubscriber.connect();
         assertTrue(connected, "Should connect successfully");
 
-        BooleanSingleTimeSeries testSeries = new BooleanSingleTimeSeries("test-series",
-                new BooleanSingleTimeSeries.BooleanSingle[] {
-                        new BooleanSingleTimeSeries.BooleanSingle(Instant.now().toEpochMilli(), true)
-                });
+        BooleanTimeSeries testSeries = new BooleanTimeSeriesBuilder().setId("test-series").add(Instant.now().toEpochMilli(), true).build();
 
         boolean received = sendAndSubscribe(testSeries).await(5, TimeUnit.SECONDS);
         assertTrue(received, "Should receive message within timeout");
@@ -223,10 +219,7 @@ public class NatsSubscriberTest {
         boolean connected = natsSubscriber.connect();
         assertTrue(connected, "Should connect successfully");
 
-        BarTimeSeries testSeries = new BarTimeSeries("test-series",
-                new BarTimeSeries.Bar[] {
-                        new BarTimeSeries.Bar(Instant.now().toEpochMilli(), 1.0D, 2.0D, 3.0D, 4.0D, 5.0D)
-                });
+        BarTimeSeries testSeries = new BarTimeSeriesBuilder().setId("test-series").add(Instant.now().toEpochMilli(), 1.0D, 2.0D, 3.0D, 4.0D, 5.0D).build();
 
         boolean received = sendAndSubscribe(testSeries).await(5, TimeUnit.SECONDS);
         assertTrue(received, "Should receive message within timeout");
@@ -271,12 +264,12 @@ public class NatsSubscriberTest {
         CountDownLatch latch1 = new CountDownLatch(1);
         CountDownLatch latch2 = new CountDownLatch(1);
         
-        natsSubscriber.toFifo().subscribe(data -> {
-            assertInstanceOf(SingleTimeSeries.class, data);
-            SingleTimeSeries temporalData = (SingleTimeSeries) data;
-            if ("topic1-series".equals(temporalData.id())) {
+        natsSubscriber.toFifo().subscribe(timeSeries -> {
+            assertInstanceOf(SingleTimeSeries.class, timeSeries);
+            SingleTimeSeries singleTimeSeries = (SingleTimeSeries) timeSeries;
+            if ("topic1-series".equals(singleTimeSeries.id())) {
                 latch1.countDown();
-            } else if ("topic2-series".equals(temporalData.id())) {
+            } else if ("topic2-series".equals(singleTimeSeries.id())) {
                 latch2.countDown();
             }
         });
@@ -286,15 +279,13 @@ public class NatsSubscriberTest {
         Headers headers = new Headers();
         headers.add("class", SingleTimeSeries.class.getSimpleName());
 
-        SingleTimeSeries series1 = new SingleTimeSeries("topic1-series", 
-            new SingleTimeSeries.Single[] { new SingleTimeSeries.Single(Instant.now().toEpochMilli(), 100.0) });
+        SingleTimeSeries series1 = new SingleTimeSeriesBuilder().setId("topic1-series").add(Instant.now().toEpochMilli(), 100.0).build();
         String series1Str = MAPPER.writeValueAsString(series1);
         log.error(series1Str);
 
         conn.publish("topic1", headers, series1Str.getBytes());
 
-        SingleTimeSeries series2 = new SingleTimeSeries("topic2-series", 
-            new SingleTimeSeries.Single[] { new SingleTimeSeries.Single(Instant.now().toEpochMilli(), 200.0) });
+        SingleTimeSeries series2 = new SingleTimeSeriesBuilder().setId("topic2-series").add(Instant.now().toEpochMilli(), 200.0).build();
 
         conn.publish("topic2", headers, MAPPER.writeValueAsString(series2).getBytes());
 
@@ -315,9 +306,9 @@ public class NatsSubscriberTest {
         CountDownLatch latch = new CountDownLatch(1);
         natsSubscriber.toFifo().subscribe(data -> {
             assertInstanceOf(testSeries.getClass(), data);
-            TimeSeries temporalData = testSeries.getClass().cast(data);
-            assertEquals("test-series", temporalData.id());
-            assertTrue(temporalData.timestamp() > 0);
+            TimeSeries timeSeries = testSeries.getClass().cast(data);
+            assertEquals("test-series", timeSeries.id());
+            assertTrue(timeSeries.timestamp() > 0);
             latch.countDown();
         });
 
@@ -328,7 +319,7 @@ public class NatsSubscriberTest {
         return latch;
     }
 
-    private CountDownLatch sendAndSubscribeNoTimeSeries(ITemporalData testSeries) throws IOException, InterruptedException {
+    private CountDownLatch sendAndSubscribeNoTimeSeries(TimeSeries testSeries) throws IOException, InterruptedException {
         String message = MAPPER.writeValueAsString(testSeries);
         Headers headers = new Headers();
         headers.add("class", testSeries.getClass().getSimpleName());
@@ -336,8 +327,8 @@ public class NatsSubscriberTest {
         CountDownLatch latch = new CountDownLatch(1);
         natsSubscriber.toFifo().subscribe(data -> {
             assertInstanceOf(testSeries.getClass(), data);
-            ITemporalData temporalData = testSeries.getClass().cast(data);
-            assertTrue(temporalData.timestamp() > 0);
+            TimeSeries timeSeries = testSeries.getClass().cast(data);
+            assertTrue(timeSeries.timestamp() > 0);
             latch.countDown();
         });
 

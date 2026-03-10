@@ -17,6 +17,7 @@ package com.fibonsai.cryptomeria.xtratej.event.series.impl;
 import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 
+@Deprecated(forRemoval = true)
 public final class BandTimeSeries extends TimeSeries {
 
     private double[] uppers;

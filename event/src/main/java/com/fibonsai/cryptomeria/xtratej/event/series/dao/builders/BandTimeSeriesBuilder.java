@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BandTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
@@ -62,12 +62,20 @@ public class BandTimeSeriesBuilder extends TimeSeriesBuilder<BandTimeSeriesBuild
     }
 
     @Override
-    public BandTimeSeriesBuilder from(ITemporalData temporalData) {
-        if (temporalData instanceof BandTimeSeries(String id1, long[] timestamps, double[] u, double[] m, double[] l)) {
+    public BandTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof BandTimeSeries(String id1, long[] timestamps, double[] u, double[] m, double[] l)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], u[x], m[x], l[x]);
                 setId(id1);
             }
+        }
+        return this;
+    }
+
+    @Override
+    public BandTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+        for (var timeSeries: timeSeriesArray) {
+            from(timeSeries);
         }
         return this;
     }

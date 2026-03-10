@@ -23,6 +23,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = BooleanSingleTimeSeriesSerializer.class)
 @JsonDeserialize(using = BooleanSingleTimeSeriesDeserializer.class)
+@Deprecated(forRemoval = true)
 public class BooleanSingleTimeSeries extends TimeSeries {
 
     private boolean[] values;

@@ -15,11 +15,11 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,79 +51,79 @@ class AndRuleTest {
         }
     }
 
-    private BooleanSingleTimeSeries createBooleanSeries(String name, long timestamp, boolean... values) {
-        BooleanSingle[] singles = new BooleanSingle[values.length];
+    private BooleanTimeSeries createBooleanSeries(String name, long timestamp, boolean... values) {
+        BooleanTimeSeriesBuilder builder = new BooleanTimeSeriesBuilder().setId(name);
         for (int i = 0; i < values.length; i++) {
-            singles[i] = new BooleanSingle(timestamp + i, values[i]);
+            builder.add(timestamp + i, values[i]);
         }
-        return new BooleanSingleTimeSeries(name, singles);
+        return builder.build();
     }
 
     @Test
     void predicate_withAllTrue_shouldReturnTrue() {
         // Arrange
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true, true);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, true);
-        ITemporalData[] input = {series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true, true);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, true);
+        TimeSeries[] input = {series1, series2};
 
         // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = andRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
+        Function<TimeSeries[], BooleanTimeSeries[]> predicate = andRule.predicate();
+        BooleanTimeSeries[] result = predicate.apply(input);
 
         // Assert
         assertEquals(1, result.length);
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
         assertEquals(101L, result[0].timestamp());
     }
 
     @Test
     void predicate_withOneFalse_shouldReturnFalse() {
         // Arrange
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true, true);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, false);
-        ITemporalData[] input = {series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true, true);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, false);
+        TimeSeries[] input = {series1, series2};
 
         // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = andRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
+        Function<TimeSeries[], BooleanTimeSeries[]> predicate = andRule.predicate();
+        BooleanTimeSeries[] result = predicate.apply(input);
 
         // Assert
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
         assertEquals(101L, result[0].timestamp());
     }
 
     @Test
     void predicate_withAllFalse_shouldReturnFalse() {
         // Arrange
-        ITemporalData series1 = createBooleanSeries("s1", 100L, false);
-        ITemporalData series2 = createBooleanSeries("s2", 101L, false);
-        ITemporalData[] input = {series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, false);
+        TimeSeries series2 = createBooleanSeries("s2", 101L, false);
+        TimeSeries[] input = {series1, series2};
 
         // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = andRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
+        Function<TimeSeries[], BooleanTimeSeries[]> predicate = andRule.predicate();
+        BooleanTimeSeries[] result = predicate.apply(input);
 
         // Assert
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
         assertEquals(101L, result[0].timestamp());
     }
 
     @Test
-    void predicate_shouldIgnoreNonBooleanITemporalData() {
+    void predicate_shouldIgnoreNonBooleanTimeSeries() {
         // Arrange
-        ITemporalData series1 = createBooleanSeries("s1", 100L, true);
-        ITemporalData series2 = new SingleTimeSeries("s2", new SingleTimeSeries.Single[]{new SingleTimeSeries.Single(101L, 1.0)});
-        ITemporalData[] input = {series1, series2};
+        TimeSeries series1 = createBooleanSeries("s1", 100L, true);
+        TimeSeries series2 = new SingleTimeSeriesBuilder().setId("s2").add(101L, 1.0).build();
+        TimeSeries[] input = {series1, series2};
 
         // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = andRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
+        Function<TimeSeries[], BooleanTimeSeries[]> predicate = andRule.predicate();
+        BooleanTimeSeries[] result = predicate.apply(input);
 
         // Assert
         assertEquals(1, result.length);
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
         assertEquals(100L, result[0].timestamp());
     }
 }

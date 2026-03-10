@@ -22,15 +22,15 @@ public class MinMax {
 
     private MinMax() {}
 
-    public static MinMaxResult from(ITemporalData temporalData) {
-        if (temporalData.timestamps().length == 0) {
+    public static MinMaxResult from(TimeSeries timeSeries) {
+        if (timeSeries.size() == 0) {
             return new MinMaxResult(Double.NaN, Double.NaN);
         }
 
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
 
-        switch (temporalData) {
+        switch (timeSeries) {
             case SingleTimeSeries ts -> {
                 for (var value : ts.values()) {
                     if (Double.isNaN(value)) continue;
@@ -43,7 +43,7 @@ public class MinMax {
                 }
             }
             case CorrelatedTimeSeries ts -> {
-                for (int x = 0; x < ts.timestamps().length; x++) {
+                for (int x = 0; x < ts.size(); x++) {
                     double value = ts.values()[x];
                     double value2 = ts.values2()[x];
                     if (Double.isNaN(value) || Double.isNaN(value2)) {
@@ -60,7 +60,7 @@ public class MinMax {
                 }
             }
             case BandTimeSeries ts -> {
-                for (int x = 0; x < ts.timestamps().length; x++) {
+                for (int x = 0; x < ts.size(); x++) {
                     double _upper = ts.uppers()[x];
                     double _lower = ts.lowers()[x];
                     if (Double.isNaN(_upper) || Double.isNaN(_lower)) {

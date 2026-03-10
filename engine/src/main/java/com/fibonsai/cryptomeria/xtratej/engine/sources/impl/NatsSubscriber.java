@@ -16,10 +16,10 @@ package com.fibonsai.cryptomeria.xtratej.engine.sources.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.WithParams;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BarTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;
 import org.jspecify.annotations.Nullable;
@@ -41,7 +41,7 @@ import static com.fibonsai.cryptomeria.xtratej.engine.sources.impl.NatsSubscribe
 
 public class NatsSubscriber extends Subscriber implements WithParams {
 
-    public static final List<Class<? extends ITemporalData>> CLASSES_SUPPORTED = List.of(SingleTimeSeries.class, SingleTimeSeries.Single.class, BarTimeSeries.class, BarTimeSeries.Bar.class, BooleanSingleTimeSeries.class, BooleanSingleTimeSeries.BooleanSingle.class);
+    public static final List<Class<? extends TimeSeries>> CLASSES_SUPPORTED = List.of(SingleTimeSeries.class, BarTimeSeries.class, BooleanTimeSeries.class);
 
     public enum NatsKey {
         NATS_CREDS("nats-creds"),
@@ -119,20 +119,20 @@ public class NatsSubscriber extends Subscriber implements WithParams {
                 String msg = new String(raw.getData(), StandardCharsets.UTF_8);
                 Headers headers = raw.getHeaders();
                 String className = headers != null ? headers.getFirst("class") : Object.class.getSimpleName();
-                ITemporalData temporalData = null;
+                TimeSeries timeSeries = null;
 
                 if (className != null) {
                     for (var clazz: CLASSES_SUPPORTED) {
                         if (clazz.getSimpleName().equals(className)) {
-                            temporalData = MAPPER.readValue(msg, clazz);
+                            timeSeries = MAPPER.readValue(msg, clazz);
                             break;
                         }
                     }
-                    if (temporalData != null) {
+                    if (timeSeries != null) {
                         if (log.isDebugEnabled()) {
-                            log.debug(">>>>>>> [{}] SEND {}", temporalData.timestamp(), temporalData);
+                            log.debug(">>>>>>> [{}] SEND {}", timeSeries.timestamp(), timeSeries);
                         }
-                        toFifo().emitNext(temporalData);
+                        toFifo().emitNext(timeSeries);
                     } else {
                         log.warn("header `class` NOT defined or its value IS NOT supported");
                     }

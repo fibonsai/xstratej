@@ -15,9 +15,10 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.tools.MinMax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -47,17 +48,17 @@ public class CrossedRule extends RuleStream {
     }
 
     @Override
-    protected Function<ITemporalData[], BooleanSingle[]> predicate() {
-        return temporalDatas -> {
+    protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
+        return timeSeriesArray -> {
             if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
-                return new BooleanSingle[0];
+                return new BooleanTimeSeries[0];
             }
 
             TimeSeries timeSeriesComparator = null;
             if (!sourceId.isBlank()) {
-                for (var temporalData : temporalDatas) {
-                    if (temporalData instanceof TimeSeries timeSeries && Objects.equals(timeSeries.id(), sourceId)) {
+                for (var timeSeries : timeSeriesArray) {
+                    if (Objects.equals(timeSeries.id(), sourceId)) {
                         timeSeriesComparator = timeSeries;
                         break;
                     }
@@ -66,13 +67,13 @@ public class CrossedRule extends RuleStream {
 
             Boolean allresult = null;
             long lastTimestamp = 0;
-            for (var temporalData: temporalDatas) {
-                if (temporalData instanceof TimeSeries timeSeries && timeSeries.size() > 0) {
-                    lastTimestamp = temporalData.timestamp();
+            for (var timeSeries: timeSeriesArray) {
+                if (timeSeries.size() > 0) {
+                    lastTimestamp = timeSeries.timestamp();
                     boolean result;
                     if (!Double.isNaN(threshold)) {
                         result = isCrossed(timeSeries);
-                    } else if (timeSeriesComparator != null && temporalDatas.length > 1) {
+                    } else if (timeSeriesComparator != null && timeSeriesArray.length > 1) {
                         if (Objects.equals(timeSeriesComparator.id(), timeSeries.id())) {
                             continue;
                         }
@@ -84,7 +85,7 @@ public class CrossedRule extends RuleStream {
                 }
             }
             if (allresult == null) allresult = false;
-            return new BooleanSingle[] { new BooleanSingle(lastTimestamp, allresult) };
+            return new BooleanTimeSeries[] { new BooleanTimeSeriesBuilder().add(lastTimestamp, allresult).build() };
         };
     }
 
@@ -100,21 +101,21 @@ public class CrossedRule extends RuleStream {
 
     private boolean isCrossed(TimeSeries series) {
         if (threshold > Double.NEGATIVE_INFINITY) {
-            double[] minmax = series.minmax();
-            double min = minmax[0];
-            double max = minmax[1];
+            MinMax.MinMaxResult minMaxResult = MinMax.from(series);
+            double min = minMaxResult.min();
+            double max = minMaxResult.max();
             return min < threshold && max > threshold;
         }
         return false;
     }
 
     private boolean isCrossed(TimeSeries series1, TimeSeries series2) {
-        double[] minmax1 = series1.minmax();
-        double min1 = minmax1[0];
-        double max1 = minmax1[1];
-        double[] minmax2 = series2.minmax();
-        double min2 = minmax2[0];
-        double max2 = minmax2[1];
+        MinMax.MinMaxResult minMaxResult1 = MinMax.from(series1);
+        MinMax.MinMaxResult minMaxResult2 = MinMax.from(series2);
+        double min1 = minMaxResult1.min();
+        double max1 = minMaxResult1.max();
+        double min2 = minMaxResult2.min();
+        double max2 = minMaxResult2.max();
         return (min1 > min2 && max1 < max2) || (min1 < min2 && max1 > max2);
     }
 }

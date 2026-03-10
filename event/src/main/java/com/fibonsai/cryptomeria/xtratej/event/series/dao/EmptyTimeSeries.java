@@ -14,9 +14,9 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
-public record EmptyTimeSeries() implements ITemporalData {
+public record EmptyTimeSeries() implements TimeSeries {
 
-    public static final ITemporalData INSTANCE = new EmptyTimeSeries();
+    public static final TimeSeries INSTANCE = new EmptyTimeSeries();
 
     @Override
     public String id() {
@@ -35,7 +35,7 @@ public record EmptyTimeSeries() implements ITemporalData {
 
     @SuppressWarnings("ComparatorMethodParameterNotUsed")
     @Override
-    public int compareTo(ITemporalData o) {
+    public int compareTo(TimeSeries o) {
         return -1;
     }
 }

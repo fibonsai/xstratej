@@ -14,7 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -27,7 +27,7 @@ public abstract class TimeSeriesBuilder<T extends TimeSeriesBuilder<?>> {
 
     protected @Nullable String id = null;
 
-    protected int maxSize = 1;
+    protected int maxSize = Integer.MAX_VALUE;
 
     @SuppressWarnings("unchecked")
     public T setMaxSize(int maxSize) {
@@ -41,7 +41,7 @@ public abstract class TimeSeriesBuilder<T extends TimeSeriesBuilder<?>> {
     }
 
     @SuppressWarnings("unchecked")
-    public T setId(String id) {
+    public T setId(@Nullable String id) {
         writeLock.lock();
         try {
             this.id = id;
@@ -51,6 +51,7 @@ public abstract class TimeSeriesBuilder<T extends TimeSeriesBuilder<?>> {
         return (T) this;
     }
 
-    public abstract ITemporalData build();
-    public abstract TimeSeriesBuilder<T> from(ITemporalData temporalData);
+    public abstract TimeSeries build();
+    public abstract TimeSeriesBuilder<T> from(TimeSeries timeSeries);
+    public abstract TimeSeriesBuilder<T> merge(TimeSeries... timeSeriesArray);
 }

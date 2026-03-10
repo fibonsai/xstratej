@@ -15,9 +15,9 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class RandomRuleTest {
     private AutoCloseable closeable;
 
     @Mock
-    private ITemporalData mockTimeSeries;
+    private TimeSeries mockTimeSeries;
 
     private RandomRule randomRule;
 
@@ -61,11 +61,11 @@ class RandomRuleTest {
         long expectedTimestamp = 123456789L;
         when(mockTimeSeries.timestamp()).thenReturn(expectedTimestamp);
 
-        ITemporalData[] input = {mockTimeSeries};
+        TimeSeries[] input = {mockTimeSeries};
 
         // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = randomRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
+        Function<TimeSeries[], BooleanTimeSeries[]> predicate = randomRule.predicate();
+        BooleanTimeSeries[] result = predicate.apply(input);
 
         // Assert
         assertNotNull(result);
@@ -77,11 +77,11 @@ class RandomRuleTest {
     void predicate_whenNoSources_shouldReturnEmptyArray() {
         // Arrange
         randomRule = new RandomRule();
-        ITemporalData[] input = {mockTimeSeries};
+        TimeSeries[] input = {mockTimeSeries};
 
         // Act
-        Function<ITemporalData[], BooleanSingle[]> predicate = randomRule.predicate();
-        BooleanSingle[] result = predicate.apply(input);
+        Function<TimeSeries[], BooleanTimeSeries[]> predicate = randomRule.predicate();
+        BooleanTimeSeries[] result = predicate.apply(input);
 
         // Assert
         assertNotNull(result);

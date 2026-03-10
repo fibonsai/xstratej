@@ -15,9 +15,9 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +28,17 @@ public class AndRule extends RuleStream {
     private static final Logger log = LoggerFactory.getLogger(AndRule.class);
 
     @Override
-    protected Function<ITemporalData[], BooleanSingle[]> predicate() {
-        return temporalDatas -> {
+    protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
+        return timeSeriesArray -> {
             if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
-                return new BooleanSingle[0];
+                return new BooleanTimeSeries[0];
             }
 
             Boolean result = null;
             long timestamp = 0L;
-            for (var ts: temporalDatas) {
-                if (ts instanceof BooleanSingleTimeSeries series && series.size() > 0) {
+            for (var ts: timeSeriesArray) {
+                if (ts instanceof BooleanTimeSeries series && series.size() > 0) {
                     if (series.timestamp() > timestamp) timestamp = series.timestamp();
                     for (boolean bool: series.values()) {
                         result = (result == null) ? bool : result && bool;
@@ -46,7 +46,7 @@ public class AndRule extends RuleStream {
                 }
             }
 
-            return new BooleanSingle[] { new BooleanSingle(timestamp, result != null && result) };
+            return new BooleanTimeSeries[] { new BooleanTimeSeriesBuilder().add(timestamp, result != null && result).build() };
         };
     }
 }

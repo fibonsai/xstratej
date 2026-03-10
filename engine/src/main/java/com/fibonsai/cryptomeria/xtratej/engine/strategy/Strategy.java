@@ -20,7 +20,7 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.FalseRule;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.WithParams;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -116,7 +116,7 @@ public class Strategy implements IStrategy {
     }
 
     @Override
-    public IStrategy subscribe(Consumer<ITemporalData> consumer) {
+    public IStrategy subscribe(Consumer<TimeSeries> consumer) {
         aggregator.results().onSubscribe(onSubscribe).subscribe(consumer);
         return this;
     }

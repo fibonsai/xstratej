@@ -22,6 +22,7 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
+@Deprecated(forRemoval = true)
 public class SingleTimeSeriesSerializer extends StdSerializer<SingleTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(SingleTimeSeriesSerializer.class);

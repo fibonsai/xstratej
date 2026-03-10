@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.CorrelatedTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
@@ -57,12 +57,20 @@ public class CorrelatedTimeSeriesBuilder extends TimeSeriesBuilder<CorrelatedTim
     }
 
     @Override
-    public CorrelatedTimeSeriesBuilder from(ITemporalData temporalData) {
-        if (temporalData instanceof CorrelatedTimeSeries(String id1, long[] timestamps, double[] values, double[] values2)) {
+    public CorrelatedTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof CorrelatedTimeSeries(String id1, long[] timestamps, double[] values, double[] values2)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], values[x], values2[x]);
                 setId(id1);
             }
+        }
+        return this;
+    }
+
+    @Override
+    public CorrelatedTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+        for (var timeSeries: timeSeriesArray) {
+            from(timeSeries);
         }
         return this;
     }

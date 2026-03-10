@@ -18,6 +18,7 @@ import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+@Deprecated(forRemoval = true)
 public abstract class TimeSeries implements ITemporalData {
 
     protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

@@ -16,6 +16,7 @@ package com.fibonsai.cryptomeria.xtratej.event.series.impl;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.TimeSeries;
 
+@Deprecated(forRemoval = true)
 public class EmptyTimeSeries extends TimeSeries {
     public static final TimeSeries INSTANCE = new EmptyTimeSeries();
 

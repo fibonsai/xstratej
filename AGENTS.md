@@ -38,7 +38,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 ## Architectural Patterns
 
 *   **Reactive First**: This is a reactive application. Use `Fifo` class for data streams. Avoid blocking operations in the event loop.
-*   **Immutability**: Prefer immutable data structures for event payloads (`ITemporalData` implementations).
+*   **Immutability**: Prefer immutable data structures for event payloads (`TimeSeries` implementations).
 *   **Rule Composition**: Complex logic should be composed of smaller, reusable `RuleStream` implementations rather than monolithic blocks.
 *   **Injected data from external datasources**: Implements support to connect and subscribe external market data providers (`Subscriber` implementations)
 *   **Enum Builder**: Prefer create new instances using Enum Builders, as RuleType, and SourceType.
@@ -46,8 +46,8 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 ## Architectural Decisions
 
 * Wiring Mechanism: The `Loader` class is responsible for wiring. It parses a JSON definition where sources are defined first. Rules then specify their inputs which can be names of these sources or nested rule definitions.
-* Reactive Data Flow: Connection is achieved using `Fifo<ITemporalData>`. `Loader.parseRule` collects the FIFOs from the named sources (via `strategy.getSources().get(inputName).toFifo()`), zips them using `Fifo.zip()`, and passes the resulting zipped FIFO to `RuleStream.watch()`.
-* LimitRule Logic: `LimitRule` specifically looks for `upperSourceId` and `lowerSourceId` in its params. In its predicate function, it iterates through the provided `ITemporalData[]` array (produced by the zipped FIFO) and matches TimeSeries IDs against these params to determine dynamic boundaries. If no dynamic boundaries are found, it falls back to fixed min/max values.
+* Reactive Data Flow: Connection is achieved using `Fifo<TimeSeries>`. `Loader.parseRule` collects the FIFOs from the named sources (via `strategy.getSources().get(inputName).toFifo()`), zips them using `Fifo.zip()`, and passes the resulting zipped FIFO to `RuleStream.watch()`.
+* LimitRule Logic: `LimitRule` specifically looks for `upperSourceId` and `lowerSourceId` in its params. In its predicate function, it iterates through the provided `TimeSeries[]` array (produced by the zipped FIFO) and matches TimeSeries IDs against these params to determine dynamic boundaries. If no dynamic boundaries are found, it falls back to fixed min/max values.
 * Strategy Integration: `Strategy` acts as a container. `StrategyManager` runs strategies by subscribing to the root rule's (aggregator) result FIFO. When the rule evaluates to true, a `TradingSignal` is emitted.
 
 ## Exploring the code

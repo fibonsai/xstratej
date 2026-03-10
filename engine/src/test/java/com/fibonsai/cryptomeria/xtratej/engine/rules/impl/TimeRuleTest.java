@@ -16,9 +16,9 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -39,7 +39,7 @@ class TimeRuleTest {
     private AutoCloseable closeable;
 
     @Mock
-    private ITemporalData mockTimeSeries;
+    private TimeSeries mockTimeSeries;
 
     private ObjectNode params;
 
@@ -71,10 +71,10 @@ class TimeRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
-        BooleanSingle[] result = rule.predicate().apply(input);
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
@@ -88,10 +88,10 @@ class TimeRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
-        BooleanSingle[] result = rule.predicate().apply(input);
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Test
@@ -106,10 +106,10 @@ class TimeRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
-        BooleanSingle[] result = rule.predicate().apply(input);
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Disabled
@@ -127,10 +127,10 @@ class TimeRuleTest {
 
         rule.setInvert(true);
 
-        ITemporalData[] input = new ITemporalData[]{mockTimeSeries};
-        BooleanSingle[] result = rule.predicate().apply(input);
+        TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
@@ -140,9 +140,9 @@ class TimeRuleTest {
             default -> throw new RuntimeException();
         };
 
-        ITemporalData[] input = new ITemporalData[]{};
+        TimeSeries[] input = new TimeSeries[]{};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(0, result.length);
     }

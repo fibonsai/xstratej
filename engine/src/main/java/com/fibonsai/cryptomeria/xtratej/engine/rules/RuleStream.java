@@ -14,10 +14,10 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import tools.jackson.databind.JsonNode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,7 +25,7 @@ import java.util.function.Function;
 
 public abstract class RuleStream {
 
-    private final Fifo<ITemporalData> results = new Fifo<>();
+    private final Fifo<TimeSeries> results = new Fifo<>();
     private final AtomicBoolean activated = new AtomicBoolean(false);
 
     private String description = "";
@@ -34,10 +34,11 @@ public abstract class RuleStream {
         return this;
     }
 
-    public void watch(Fifo<ITemporalData[]> inputs) {
-        inputs.onSubscribe(() -> activated.set(true)).subscribe(temporalDatas -> {
-            BooleanSingle[] booleanSingles = predicate().apply(temporalDatas);
-            BooleanSingleTimeSeries resultSeries = new BooleanSingleTimeSeries(toString(), booleanSingles);
+    public void watch(Fifo<TimeSeries[]> inputs) {
+        inputs.onSubscribe(() -> activated.set(true)).subscribe(timeSeriesArray -> {
+            BooleanTimeSeries[] booleanTimeSeries = predicate().apply(timeSeriesArray);
+            BooleanTimeSeriesBuilder builder = new BooleanTimeSeriesBuilder().setId(toString());
+            BooleanTimeSeries resultSeries = builder.merge(booleanTimeSeries).build();
             results.emitNext(resultSeries);
         });
     }
@@ -46,9 +47,9 @@ public abstract class RuleStream {
         return activated.get();
     }
 
-    protected abstract Function<ITemporalData[], BooleanSingle[]> predicate();
+    protected abstract Function<TimeSeries[], BooleanTimeSeries[]> predicate();
 
-    public Fifo<ITemporalData> results() {
+    public Fifo<TimeSeries> results() {
         return results;
     }
 

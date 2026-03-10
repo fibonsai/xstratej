@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 fibonsai.com
+ *  Copyright (c) 2026 fibonsai.com
  *  All rights reserved.
  *
  *  This source is subject to the Apache License, Version 2.0.
@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Deprecated(forRemoval = true)
 public interface ITemporalData extends Comparable<ITemporalData>, Serializable {
     long timestamp();
 

@@ -16,11 +16,11 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,11 +52,11 @@ class CrossedRuleTest {
     }
 
     private SingleTimeSeries createSingleTimeSeries(String name, long[] timestamps, double[] values) {
-        Single[] singles = new Single[values.length];
+        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId(name);
         for (int i = 0; i < values.length; i++) {
-            singles[i] = new Single(timestamps[i], values[i]);
+            builder.add(timestamps[i], values[i]);
         }
-        return new SingleTimeSeries(name, singles);
+        return builder.build();
     }
 
     @Test
@@ -78,13 +78,13 @@ class CrossedRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
-        ITemporalData[] input = new ITemporalData[]{series};
+        TimeSeries series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
@@ -96,13 +96,13 @@ class CrossedRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
-        ITemporalData[] input = new ITemporalData[]{series};
+        TimeSeries series = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries[] input = new TimeSeries[]{series};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Test
@@ -115,14 +115,14 @@ class CrossedRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
-        ITemporalData series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{50.0, 50.0});
-        ITemporalData[] input = new ITemporalData[]{series1, series2};
+        TimeSeries series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{50.0, 50.0});
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
@@ -135,14 +135,14 @@ class CrossedRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
-        ITemporalData series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{70.0, 80.0});
-        ITemporalData[] input = new ITemporalData[]{series1, series2};
+        TimeSeries series1 = createSingleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
+        TimeSeries series2 = createSingleTimeSeries("s2", new long[]{1L, 2L}, new double[]{70.0, 80.0});
+        TimeSeries[] input = new TimeSeries[]{series1, series2};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(1, result.length);
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Test
@@ -152,9 +152,9 @@ class CrossedRuleTest {
             default -> throw new RuntimeException();
         };
 
-        ITemporalData[] input = new ITemporalData[]{};
+        TimeSeries[] input = new TimeSeries[]{};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(0, result.length);
     }

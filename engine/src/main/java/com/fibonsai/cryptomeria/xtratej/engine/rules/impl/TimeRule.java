@@ -15,8 +15,9 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleStream;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
@@ -54,11 +55,11 @@ public class TimeRule extends RuleStream {
     }
 
     @Override
-    protected Function<ITemporalData[], BooleanSingle[]> predicate() {
-        return temporalDatas -> {
+    protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
+        return timeSeriesArray -> {
             if (!isActivated()) {
                 log.warn("No sources. Ignoring rule.");
-                return new BooleanSingle[0];
+                return new BooleanTimeSeries[0];
             }
 
             DateTimeFormatter formatter;
@@ -70,13 +71,13 @@ public class TimeRule extends RuleStream {
             boolean result = isOnTime(formatter);
 
             long timestamp = 0L;
-            for (var ts: temporalDatas) {
+            for (var ts: timeSeriesArray) {
                 if (ts.timestamp() > timestamp) {
                     timestamp = ts.timestamp();
                 }
             }
 
-            return new BooleanSingle[] { new BooleanSingle(timestamp, result) };
+            return new BooleanTimeSeries[] { new BooleanTimeSeriesBuilder().add(timestamp, result).build() };
         };
     }
 

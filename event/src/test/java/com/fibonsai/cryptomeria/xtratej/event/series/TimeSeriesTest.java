@@ -123,7 +123,7 @@ public class TimeSeriesTest {
         timeSeries.add(singles[0]);
         timeSeries.add(singles[1]);
 
-        Assertions.assertNotEquals(singles.length, timeSeries.timestamps().length);
+        Assertions.assertNotEquals(singles.length, timeSeries.size());
     }
 
     @Test

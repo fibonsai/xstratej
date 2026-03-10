@@ -14,13 +14,13 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.sources;
 
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 public abstract class Subscriber {
     private final String name;
     private final String publisher;
-    private Fifo<ITemporalData> fifo = new Fifo<>();
+    private final Fifo<TimeSeries> fifo = new Fifo<>();
 
     public Subscriber(String name, String publisher) {
         this.name = name;
@@ -35,7 +35,7 @@ public abstract class Subscriber {
         return publisher;
     }
 
-    public Fifo<ITemporalData> toFifo() {
+    public Fifo<TimeSeries> toFifo() {
         return this.fifo;
     }
 

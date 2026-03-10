@@ -16,7 +16,7 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record BandTimeSeries(@Nullable String id, long[] timestamps, double[] uppers, double[] middles, double[] lowers) implements ITemporalData {
+public record BandTimeSeries(@Nullable String id, long[] timestamps, double[] uppers, double[] middles, double[] lowers) implements TimeSeries {
 
     public BandTimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");

@@ -16,11 +16,11 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.ITemporalData;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.BooleanSingleTimeSeries.BooleanSingle;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.impl.SingleTimeSeries.Single;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.SingleTimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.SingleTimeSeriesBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,11 +52,11 @@ class LimitRuleTest {
     }
 
     private SingleTimeSeries createSingleTimeSeries(String name, long[] timestamps, double[] values) {
-        Single[] singles = new Single[values.length];
+        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId(name);
         for (int i = 0; i < values.length; i++) {
-            singles[i] = new Single(timestamps[i], values[i]);
+            builder.add(timestamps[i], values[i]);
         }
-        return new SingleTimeSeries(name, singles);
+        return builder.build();
     }
 
     @Test
@@ -69,12 +69,12 @@ class LimitRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
-        ITemporalData[] input = new ITemporalData[]{series};
+        TimeSeries series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
+        TimeSeries[] input = new TimeSeries[]{series};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
@@ -87,12 +87,12 @@ class LimitRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
-        ITemporalData[] input = new ITemporalData[]{series};
+        TimeSeries series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
+        TimeSeries[] input = new TimeSeries[]{series};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
 
     @Test
@@ -106,14 +106,14 @@ class LimitRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
-        ITemporalData lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
-        ITemporalData top = createSingleTimeSeries("top", new long[]{1L}, new double[]{20.0});
-        ITemporalData[] input = new ITemporalData[]{series, lower, top};
+        TimeSeries series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
+        TimeSeries lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
+        TimeSeries top = createSingleTimeSeries("top", new long[]{1L}, new double[]{20.0});
+        TimeSeries[] input = new TimeSeries[]{series, lower, top};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertTrue(result[0].value());
+        assertTrue(result[0].values()[0]);
     }
 
     @Test
@@ -127,14 +127,14 @@ class LimitRuleTest {
         };
         rule.watch(new Fifo<>());
 
-        ITemporalData series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{25.0});
-        ITemporalData lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
-        ITemporalData top = createSingleTimeSeries("top", new long[]{1L}, new double[]{20.0});
-        ITemporalData[] input = new ITemporalData[]{series, lower, top};
+        TimeSeries series = createSingleTimeSeries("s1", new long[]{1L}, new double[]{25.0});
+        TimeSeries lower = createSingleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
+        TimeSeries top = createSingleTimeSeries("top", new long[]{1L}, new double[]{20.0});
+        TimeSeries[] input = new TimeSeries[]{series, lower, top};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
-        assertFalse(result[0].value());
+        assertFalse(result[0].values()[0]);
     }
     
     @Test
@@ -144,9 +144,9 @@ class LimitRuleTest {
             default -> throw new RuntimeException();
         };
 
-        ITemporalData[] input = new ITemporalData[]{};
+        TimeSeries[] input = new TimeSeries[]{};
 
-        BooleanSingle[] result = rule.predicate().apply(input);
+        BooleanTimeSeries[] result = rule.predicate().apply(input);
 
         assertEquals(0, result.length);
     }

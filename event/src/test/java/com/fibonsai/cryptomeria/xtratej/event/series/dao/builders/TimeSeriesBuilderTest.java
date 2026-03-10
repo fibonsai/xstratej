@@ -128,14 +128,14 @@ public class TimeSeriesBuilderTest {
     }
 
     @Test
-    public void testDefaultMaxSize() {
-        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x");
+    public void testMaxSizeOne() {
+        SingleTimeSeriesBuilder builder = new SingleTimeSeriesBuilder().setId("x").setMaxSize(1);
         SingleTimeSeries timeSeries = builder
                 .add(1000L, 1.0D)
                 .add(2000L, 1.0D)
                 .build();
 
-        assertNotEquals(2, timeSeries.timestamps().length);
+        assertNotEquals(2, timeSeries.size());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class TimeSeriesBuilderTest {
                 .add(2000L, 1.0D)
                 .build();
 
-        assertEquals(2, timeSeries.timestamps().length);
+        assertEquals(2, timeSeries.size());
 
         long[] expectedTimestamps = {1000L, 2000L};
         assertArrayEquals(timeSeries.timestamps(), expectedTimestamps);
@@ -190,7 +190,7 @@ public class TimeSeriesBuilderTest {
     public void testEmptySingleTimeSeries() {
         SingleTimeSeries timeSeries = new SingleTimeSeriesBuilder().build();
 
-        assertEquals(0, timeSeries.timestamps().length);
+        assertEquals(0, timeSeries.size());
         assertEquals(0, timeSeries.values().length);
     }
 
@@ -221,7 +221,7 @@ public class TimeSeriesBuilderTest {
 
         SingleTimeSeries timeSeries = builder.build();
 
-        Assertions.assertTrue(timeSeries.timestamps().length > 0);
+        Assertions.assertTrue(timeSeries.size() > 0);
         long[] ts = timeSeries.timestamps();
         for (int i = 1; i < ts.length; i++) {
             Assertions.assertTrue(ts[i - 1] <= ts[i]);
@@ -236,7 +236,7 @@ public class TimeSeriesBuilderTest {
         builder.add(Long.MAX_VALUE - 3000, 3.0D);
         SingleTimeSeries timeSeries = builder.build();
 
-        assertEquals(3, timeSeries.timestamps().length);
+        assertEquals(3, timeSeries.size());
         long[] timestamps = timeSeries.timestamps();
         assertEquals(Long.MAX_VALUE - 3000, timestamps[0]);
         assertEquals(Long.MAX_VALUE - 2000, timestamps[1]);
@@ -266,7 +266,7 @@ public class TimeSeriesBuilderTest {
                 .add(4000L, 1.0D)
                 .build();
 
-        assertEquals(3, timeSeries.timestamps().length);
+        assertEquals(3, timeSeries.size());
 
         long[] timestamps = timeSeries.timestamps();
         assertEquals(2000L, timestamps[0], "First timestamp should be 2000 (skipped 1000)");

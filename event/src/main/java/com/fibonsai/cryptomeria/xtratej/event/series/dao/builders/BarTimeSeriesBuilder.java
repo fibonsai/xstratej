@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.ITemporalData;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.TreeMap;
 
@@ -74,12 +74,20 @@ public class BarTimeSeriesBuilder extends TimeSeriesBuilder<BarTimeSeriesBuilder
     }
 
     @Override
-    public BarTimeSeriesBuilder from(ITemporalData temporalData) {
-        if (temporalData instanceof BarTimeSeries(String id1, long[] timestamps, double[] o, double[] h, double[] l, double[] c, double[] v)) {
+    public BarTimeSeriesBuilder from(TimeSeries timeSeries) {
+        if (timeSeries instanceof BarTimeSeries(String id1, long[] timestamps, double[] o, double[] h, double[] l, double[] c, double[] v)) {
             for (int x = 0; x < timestamps.length; x++) {
                 add(timestamps[x], o[x], h[x], l[x], c[x], v[x]);
                 setId(id1);
             }
+        }
+        return this;
+    }
+
+    @Override
+    public BarTimeSeriesBuilder merge(TimeSeries... timeSeriesArray) {
+        for (var timeSeries: timeSeriesArray) {
+            from(timeSeries);
         }
         return this;
     }

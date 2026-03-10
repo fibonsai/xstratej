@@ -16,7 +16,7 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao;
 
 import org.jspecify.annotations.Nullable;
 
-public record CorrelatedTimeSeries(@Nullable String id, long[] timestamps, double[] values, double[] values2) implements ITemporalData {
+public record CorrelatedTimeSeries(@Nullable String id, long[] timestamps, double[] values, double[] values2) implements TimeSeries {
 
     public CorrelatedTimeSeries {
         if (timestamps.length > 1 && id == null) throw new RuntimeException("ID is mandatory if there is more than one value");
