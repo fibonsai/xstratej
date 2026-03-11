@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
-public class XOrRule extends RuleStream {
+public class XOrRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(XOrRule.class);
 

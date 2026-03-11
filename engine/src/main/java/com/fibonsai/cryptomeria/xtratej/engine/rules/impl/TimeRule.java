@@ -26,7 +26,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 
-public class TimeRule extends RuleStream {
+public class TimeRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(TimeRule.class);
 
@@ -36,7 +36,7 @@ public class TimeRule extends RuleStream {
     private boolean invert = false;
 
     @Override
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<BooleanTimeSeries> setParams(JsonNode params) {
         for (var e: params.properties()) {
             if ("begin".equals(e.getKey()) && e.getValue().isString()) {
                 begin = e.getValue().asString();

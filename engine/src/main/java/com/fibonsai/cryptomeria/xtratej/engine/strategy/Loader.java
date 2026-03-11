@@ -111,7 +111,7 @@ public class Loader {
                 // rule (recursive structure)
                 if (strategyJson.hasNonNull(RULE.key())) {
                     JsonNode ruleAggregatorJson = strategyJson.get(RULE.key());
-                    RuleStream ruleAggregator = parseRule(ruleAggregatorJson, strategy);
+                    RuleStream<?> ruleAggregator = parseRule(ruleAggregatorJson, strategy);
                     strategy.setAggregatorRule(ruleAggregator);
                 }
 
@@ -121,7 +121,7 @@ public class Loader {
         return strategiesMap;
     }
 
-    private static RuleStream parseRule(JsonNode ruleJson, IStrategy strategy) {
+    private static RuleStream<?> parseRule(JsonNode ruleJson, IStrategy strategy) {
         RuleType ruleType = RuleType.False;
         JsonNode ruleParams = EMPTY_PARAMS;
         String description = "";
@@ -140,7 +140,7 @@ public class Loader {
             inputs = ruleJson.get(INPUTS.key()).asArray();
         }
 
-        RuleStream ruleInstance = ruleType.build()
+        RuleStream<?> ruleInstance = ruleType.build()
                 .setParams(ruleParams)
                 .setDescription(description);
 
@@ -155,7 +155,7 @@ public class Loader {
                 }
             } else {
                 for (var input : inputs) {
-                    RuleStream subRule = parseRule(input, strategy);
+                    RuleStream<?> subRule = parseRule(input, strategy);
                     fifos[counter++] = subRule.results();
                 }
             }

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
-public class OrRule extends RuleStream {
+public class OrRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(OrRule.class);
 

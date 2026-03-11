@@ -50,7 +50,7 @@ public interface IStrategy {
 
     IStrategy addSource(SourceType sourceType, String name, String published, JsonNode params);
 
-    IStrategy setAggregatorRule(RuleStream aggregator);
+    IStrategy setAggregatorRule(RuleStream<? extends TimeSeries> aggregator);
 
     String name();
 

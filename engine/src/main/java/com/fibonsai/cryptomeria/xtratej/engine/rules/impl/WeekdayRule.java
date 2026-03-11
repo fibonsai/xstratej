@@ -27,14 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class WeekdayRule extends RuleStream {
+public class WeekdayRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(WeekdayRule.class);
 
     private final List<String> weekdays = new ArrayList<>();
 
     @Override
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<BooleanTimeSeries> setParams(JsonNode params) {
         for (var e: params.properties()) {
             if ("weekdays".equals(e.getKey()) && e.getValue().isArray()) {
                 for (var element: e.getValue()) {

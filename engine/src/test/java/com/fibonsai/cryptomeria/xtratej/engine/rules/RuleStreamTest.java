@@ -36,10 +36,10 @@ class RuleStreamTest {
     private final JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
     // Concrete implementation for testing abstract RuleStream
-    static class TestRuleStream extends RuleStream {
+    static class TestBooleanRuleStream extends RuleStream<BooleanTimeSeries> {
         private Function<TimeSeries[], BooleanTimeSeries[]> predicateFunction;
 
-        protected TestRuleStream(JsonNode params) {
+        protected TestBooleanRuleStream(JsonNode params) {
             this.predicateFunction = _ -> new BooleanTimeSeries[0]; // Default empty
             setParams(params);
         }
@@ -57,7 +57,7 @@ class RuleStreamTest {
     @Test
     void execute_emitsResult() throws InterruptedException {
         JsonNode params = nodeFactory.objectNode();
-        TestRuleStream ruleStream = new TestRuleStream(params);
+        TestBooleanRuleStream ruleStream = new TestBooleanRuleStream(params);
 
         long timestamp = System.currentTimeMillis();
         BooleanTimeSeries[] expectedBooleanTimeSeriesArray = { new BooleanTimeSeriesBuilder().add(timestamp, true).build() };

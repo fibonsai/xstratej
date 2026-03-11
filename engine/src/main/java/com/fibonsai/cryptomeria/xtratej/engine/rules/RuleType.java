@@ -15,6 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.*;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 import java.util.function.Supplier;
 
@@ -34,9 +35,9 @@ public enum RuleType {
     XOr(XOrRule::new)
     ;
 
-    private final Supplier<? extends RuleStream> supplier;
+    private final Supplier<? extends RuleStream<? extends TimeSeries>> supplier;
 
-    RuleType(Supplier<? extends RuleStream> supplier) {
+    RuleType(Supplier<? extends RuleStream<? extends TimeSeries>> supplier) {
         this.supplier = supplier;
     }
 
@@ -49,7 +50,7 @@ public enum RuleType {
         return False;
     }
 
-    public RuleStream build() {
+    public RuleStream<? extends TimeSeries> build() {
         return supplier.get();
     }
 }

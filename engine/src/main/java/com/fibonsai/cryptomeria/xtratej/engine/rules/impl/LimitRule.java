@@ -27,7 +27,7 @@ import tools.jackson.databind.JsonNode;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class LimitRule extends RuleStream {
+public class LimitRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(LimitRule.class);
 
@@ -37,7 +37,7 @@ public class LimitRule extends RuleStream {
     private String lowerSourceId = "";
 
     @Override
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<BooleanTimeSeries> setParams(JsonNode params) {
         for (var e: params.properties()) {
             if ("min".equals(e.getKey()) && e.getValue().isDouble()) min = e.getValue().asDouble();
             if ("max".equals(e.getKey()) && e.getValue().isDouble()) max = e.getValue().asDouble();

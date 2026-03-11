@@ -26,7 +26,7 @@ import tools.jackson.databind.JsonNode;
 
 import java.util.function.Function;
 
-public class InSlopeRule extends RuleStream {
+public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(InSlopeRule.class);
 
@@ -36,7 +36,7 @@ public class InSlopeRule extends RuleStream {
     private double maxSlope = Double.NaN;
 
     @Override
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<BooleanTimeSeries> setParams(JsonNode params) {
         for (var e: params.properties()) {
             if ("minSlope".equals(e.getKey()) && e.getValue().isDouble()) minSlope = e.getValue().asDouble();
             if ("maxSlope".equals(e.getKey()) && e.getValue().isDouble()) maxSlope = e.getValue().asDouble();

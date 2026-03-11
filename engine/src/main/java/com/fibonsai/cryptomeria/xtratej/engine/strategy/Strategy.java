@@ -39,7 +39,7 @@ public class Strategy implements IStrategy {
     private final String symbol;
     private final StrategyType strategyType;
 
-    private RuleStream aggregator = RuleType.False.build();
+    private RuleStream<? extends TimeSeries> aggregator = RuleType.False.build();
     private Runnable onSubscribe = () -> {};
 
     private final Map<String, Subscriber> sources = new HashMap<>();
@@ -101,7 +101,7 @@ public class Strategy implements IStrategy {
     }
 
     @Override
-    public IStrategy setAggregatorRule(RuleStream aggregator) {
+    public IStrategy setAggregatorRule(RuleStream<? extends TimeSeries> aggregator) {
         if (!isActivated()) {
             this.aggregator = aggregator;
             log.info("{} strategy: Aggregator rule {} registered", name(), aggregator.getDescription());

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 
-public class AndRule extends RuleStream {
+public class AndRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(AndRule.class);
 

@@ -28,7 +28,7 @@ import tools.jackson.databind.JsonNode;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class TrendRule extends RuleStream {
+public class TrendRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(TrendRule.class);
     private final SimpleRegression regression = new SimpleRegression();
@@ -37,7 +37,7 @@ public class TrendRule extends RuleStream {
     private boolean isRising = true;
 
     @Override
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<BooleanTimeSeries> setParams(JsonNode params) {
         for (var e : params.properties()) {
             if ("sourceId".equals(e.getKey()) && e.getValue().isString()) {
                 sourceId = e.getValue().asString();

@@ -26,7 +26,7 @@ import tools.jackson.databind.JsonNode;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class CrossedRule extends RuleStream {
+public class CrossedRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(CrossedRule.class);
 
@@ -34,7 +34,7 @@ public class CrossedRule extends RuleStream {
     private String sourceId = "";
 
     @Override
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<BooleanTimeSeries> setParams(JsonNode params) {
         for (var e : params.properties()) {
             if ("threshold".equals(e.getKey())) {
                 final JsonNode value = e.getValue();

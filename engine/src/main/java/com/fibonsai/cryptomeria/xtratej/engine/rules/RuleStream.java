@@ -16,31 +16,48 @@ package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
-import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.*;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.*;
 import tools.jackson.databind.JsonNode;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-public abstract class RuleStream {
+public abstract class RuleStream<T extends TimeSeries> {
 
     private final Fifo<TimeSeries> results = new Fifo<>();
     private final AtomicBoolean activated = new AtomicBoolean(false);
 
     private String description = "";
 
-    public RuleStream setParams(JsonNode params) {
+    public RuleStream<T> setParams(JsonNode params) {
         return this;
     }
 
     public void watch(Fifo<TimeSeries[]> inputs) {
-        inputs.onSubscribe(() -> activated.set(true)).subscribe(timeSeriesArray -> {
-            BooleanTimeSeries[] booleanTimeSeries = predicate().apply(timeSeriesArray);
-            BooleanTimeSeriesBuilder builder = new BooleanTimeSeriesBuilder().setId(toString());
-            BooleanTimeSeries resultSeries = builder.merge(booleanTimeSeries).build();
-            results.emitNext(resultSeries);
+        inputs.onSubscribe(() -> activated.set(true)).subscribe(inputTimeSeriesArray -> {
+            T[] resultTimeSeriesArray = predicate().apply(inputTimeSeriesArray);
+            if (resultTimeSeriesArray.length == 0) {
+                results.emitNext(EmptyTimeSeries.INSTANCE);
+            } else if (resultTimeSeriesArray.length == 1) {
+                results.emitNext(resultTimeSeriesArray[0]);
+            } else {
+                var ids = new LinkedHashSet<String>();
+                List.of(resultTimeSeriesArray).forEach(ts -> ids.add(ts.id()));
+                String newId = String.join("#", ids);
+                var builder = switch (resultTimeSeriesArray[0]) {
+                    case BooleanTimeSeries _ -> new BooleanTimeSeriesBuilder();
+                    case DoubleTimeSeries  _ -> new DoubleTimeSeriesBuilder();
+                    case Double2TimeSeries _ -> new Double2TimeSeriesBuilder();
+                    case BarTimeSeries _ -> new BarTimeSeriesBuilder();
+                    case BandTimeSeries _ -> new BandTimeSeriesBuilder();
+                    default -> throw new UnsupportedOperationException("not supported");
+                };
+                TimeSeries merged = builder.setId(newId).merge(resultTimeSeriesArray).build();
+                results.emitNext(merged);
+            }
         });
     }
 
@@ -54,7 +71,8 @@ public abstract class RuleStream {
         watch(inputs);
     }
 
-    public void watch(RuleStream... rules) {
+    @SafeVarargs
+    public final void watch(RuleStream<T>... rules) {
         Fifo<TimeSeries>[] arrayOfFifo = Fifo.createArray(rules.length);
         int count = 0;
         for (var rule: rules) {
@@ -68,7 +86,7 @@ public abstract class RuleStream {
         return activated.get();
     }
 
-    protected abstract Function<TimeSeries[], BooleanTimeSeries[]> predicate();
+    protected abstract Function<TimeSeries[], T[]> predicate();
 
     public Fifo<TimeSeries> results() {
         return results;
@@ -78,7 +96,7 @@ public abstract class RuleStream {
         return description;
     }
 
-    public RuleStream setDescription(String description) {
+    public RuleStream<T> setDescription(String description) {
         this.description = description;
         return this;
     }

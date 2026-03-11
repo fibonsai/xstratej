@@ -15,6 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.*;
+import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
@@ -25,7 +26,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildAndRule() {
-        RuleStream rule = RuleType.And
+        RuleStream<? extends TimeSeries> rule = RuleType.And
                 .build()
                 .setDescription("test-and");
         assertNotNull(rule);
@@ -35,7 +36,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildCrossedRule() {
-        RuleStream rule = RuleType.Crossed
+        RuleStream<? extends TimeSeries> rule = RuleType.Crossed
                 .build()
                 .setDescription("test-crossed");
         assertNotNull(rule);
@@ -45,7 +46,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildDateTimeRule() {
-        RuleStream rule = RuleType.DateTime
+        RuleStream<? extends TimeSeries> rule = RuleType.DateTime
                 .build()
                 .setDescription("test-datetime");
         assertNotNull(rule);
@@ -55,7 +56,7 @@ class RuleTypeTest {
     
     @Test
     void testBuildInSlopeRule() {
-        RuleStream rule = RuleType.InSlope
+        RuleStream<? extends TimeSeries> rule = RuleType.InSlope
                 .build()
                 .setDescription("test-inslope");
         assertNotNull(rule);
@@ -65,7 +66,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildLimitRule() {
-        RuleStream rule = RuleType.Limit
+        RuleStream<? extends TimeSeries> rule = RuleType.Limit
                 .build()
                 .setDescription("test-limit");
         assertNotNull(rule);
@@ -75,7 +76,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildNotRule() {
-        RuleStream rule = RuleType.Not
+        RuleStream<? extends TimeSeries> rule = RuleType.Not
                 .build()
                 .setDescription("test-not");
         assertNotNull(rule);
@@ -85,7 +86,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildOrRule() {
-        RuleStream rule = RuleType.Or
+        RuleStream<? extends TimeSeries> rule = RuleType.Or
                 .build()
                 .setDescription("test-or");
         assertNotNull(rule);
@@ -95,7 +96,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildRandomRule() {
-        RuleStream rule = RuleType.Random
+        RuleStream<? extends TimeSeries> rule = RuleType.Random
                 .build()
                 .setDescription("test-random");
         assertNotNull(rule);
@@ -105,7 +106,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildTimeRule() {
-        RuleStream rule = RuleType.Time
+        RuleStream<? extends TimeSeries> rule = RuleType.Time
                 .build()
                 .setDescription("test-time");
         assertNotNull(rule);
@@ -115,7 +116,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildTrendRule() {
-        RuleStream rule = RuleType.Trend
+        RuleStream<? extends TimeSeries> rule = RuleType.Trend
                 .build()
                 .setDescription("test-trend");
         assertNotNull(rule);
@@ -125,7 +126,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildWeekdayRule() {
-        RuleStream rule = RuleType.Weekday
+        RuleStream<? extends TimeSeries> rule = RuleType.Weekday
                 .build()
                 .setDescription("test-weekday");
         assertNotNull(rule);
@@ -135,7 +136,7 @@ class RuleTypeTest {
 
     @Test
     void testBuildXOrRule() {
-        RuleStream rule = RuleType.XOr
+        RuleStream<? extends TimeSeries> rule = RuleType.XOr
                 .build()
                 .setDescription("test-xor");
         assertNotNull(rule);
@@ -148,7 +149,7 @@ class RuleTypeTest {
         ObjectNode params = JsonNodeFactory.instance.objectNode();
         params.put("testProp", "testValue");
 
-        RuleStream rule = RuleType.And.build()
+        RuleStream<? extends TimeSeries> rule = RuleType.And.build()
                 .setParams(params)
                 .setDescription("test-props");
 

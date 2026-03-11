@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
-public class RandomRule extends RuleStream {
+public class RandomRule extends RuleStream<BooleanTimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(RandomRule.class);
 
