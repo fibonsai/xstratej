@@ -17,23 +17,30 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class BooleanTimeSeriesBuilder extends TimeSeriesBuilder<BooleanTimeSeriesBuilder> {
 
-    private final TreeMap<Long, Boolean> booleans = new TreeMap<>();
+    private record Element(long timestamp, boolean value) {}
+
+    private Element[] elements = new Element[0];
 
     public BooleanTimeSeriesBuilder add(long timestamp, boolean value) {
         writeLock.lock();
         try {
-            while (booleans.size() >= maxSize) {
-                booleans.remove(booleans.firstKey());
+            if (elements.length >= maxSize) {
+                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+                this.elements[0] = new Element(timestamp, value);
+            } else {
+                Element[] _elements = new Element[elements.length + 1];
+                System.arraycopy(elements, 0, _elements, 0, elements.length);
+                _elements[elements.length] = new Element(timestamp, value);
+                this.elements = _elements;
             }
-            booleans.put(timestamp, value);
         } finally {
             writeLock.unlock();
         }
-
         return this;
     }
 
@@ -41,13 +48,16 @@ public class BooleanTimeSeriesBuilder extends TimeSeriesBuilder<BooleanTimeSerie
     public BooleanTimeSeries build() {
         readLock.lock();
         try {
-            long[] _timestamps = booleans.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
-            boolean[] _booleans = new boolean[_timestamps.length];
-            var iter = booleans.sequencedValues().iterator();
-            for (int x = 0; x < _timestamps.length; x++) {
-                _booleans[x] = iter.next();
+            long[] _timestamps = new long[elements.length];
+            boolean[] _values = new boolean[elements.length];
+            Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+            int count = 0;
+            for (var element: elements) {
+                _timestamps[count] = element.timestamp();
+                _values[count] = element.value();
+                count++;
             }
-            return new BooleanTimeSeries(id, _timestamps, _booleans);
+            return new BooleanTimeSeries(id, _timestamps, _values);
         } finally {
             readLock.unlock();
         }

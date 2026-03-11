@@ -17,40 +17,49 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.Double2TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class Double2TimeSeriesBuilder extends TimeSeriesBuilder<Double2TimeSeriesBuilder> {
 
-    private final TreeMap<Long, Double> doubles = new TreeMap<>();
-    private final TreeMap<Long, Double> doubles2 = new TreeMap<>();
+    private record Element(long timestamp, double value, double value2) {}
+
+    private Element[] elements = new Element[0];
 
     public Double2TimeSeriesBuilder add(long timestamp, double value, double value2) {
         writeLock.lock();
         try {
-            while (doubles.size() >= maxSize) {
-                doubles.remove(doubles.firstKey());
+            if (elements.length >= maxSize) {
+                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+                this.elements[0] = new Element(timestamp, value, value2);
+            } else {
+                Element[] _elements = new Element[elements.length + 1];
+                System.arraycopy(elements, 0, _elements, 0, elements.length);
+                _elements[elements.length] = new Element(timestamp, value, value2);
+                this.elements = _elements;
             }
-            while (doubles2.size() >= maxSize) {
-                doubles2.remove(doubles2.firstKey());
-            }
-            doubles.put(timestamp, value);
-            doubles2.put(timestamp, value2);
         } finally {
             writeLock.unlock();
         }
-
         return this;
     }
-
 
     @Override
     public Double2TimeSeries build() {
         readLock.lock();
         try {
-            long[] _timestamps = doubles.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
-            double[] _doubles = doubles.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _doubles2 = doubles2.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            return new Double2TimeSeries(id, _timestamps, _doubles, _doubles2);
+            long[] _timestamps = new long[elements.length];
+            double[] _values = new double[elements.length];
+            double[] _values2 = new double[elements.length];
+            Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+            int count = 0;
+            for (var element: elements) {
+                _timestamps[count] = element.timestamp();
+                _values[count] = element.value();
+                _values2[count] = element.value2();
+                count++;
+            }
+            return new Double2TimeSeries(id, _timestamps, _values, _values2);
         } finally {
             readLock.unlock();
         }

@@ -20,7 +20,9 @@ public interface TimeSeries extends Comparable<TimeSeries>, Serializable {
     String id();
     long[] timestamps();
 
-    long timestamp();
+    default long timestamp() {
+        return timestamps().length > 0 ? timestamps()[timestamps().length - 1] : 0L;
+    }
 
     default int size() {
         return timestamps().length;

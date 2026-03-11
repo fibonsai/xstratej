@@ -25,9 +25,4 @@ public record BandTimeSeries(@Nullable String id, long[] timestamps, double[] up
     public BandTimeSeries(long[] timestamps, double[] uppers, double[] middles, double[] lowers) {
         this(null, timestamps, uppers, middles, lowers);
     }
-
-    @Override
-    public long timestamp() {
-        return timestamps.length > 0 ? timestamps[timestamps.length - 1] : 0L;
-    }
 }

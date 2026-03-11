@@ -17,33 +17,30 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BandTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class BandTimeSeriesBuilder extends TimeSeriesBuilder<BandTimeSeriesBuilder> {
 
-    private final TreeMap<Long, Double> uppers = new TreeMap<>();
-    private final TreeMap<Long, Double> middles = new TreeMap<>();
-    private final TreeMap<Long, Double> lowers = new TreeMap<>();
+    private record Element(long timestamp, double upper, double middle, double lower) {}
+
+    private Element[] elements = new Element[0];
 
     public BandTimeSeriesBuilder add(long timestamp, double upper, double middle, double lower) {
         writeLock.lock();
         try {
-            while (uppers.size() >= maxSize) {
-                uppers.remove(uppers.firstKey());
+            if (elements.length >= maxSize) {
+                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+                this.elements[0] = new Element(timestamp, upper, middle, lower);
+            } else {
+                Element[] newElements = new Element[elements.length + 1];
+                System.arraycopy(elements, 0, newElements, 0, elements.length);
+                newElements[elements.length] = new Element(timestamp, upper, middle, lower);
+                this.elements = newElements;
             }
-            while (middles.size() >= maxSize) {
-                middles.remove(middles.firstKey());
-            }
-            while (lowers.size() >= maxSize) {
-                lowers.remove(lowers.firstKey());
-            }
-            uppers.put(timestamp, upper);
-            middles.put(timestamp, middle);
-            lowers.put(timestamp, lower);
         } finally {
             writeLock.unlock();
         }
-
         return this;
     }
 
@@ -51,10 +48,19 @@ public class BandTimeSeriesBuilder extends TimeSeriesBuilder<BandTimeSeriesBuild
     public BandTimeSeries build() {
         readLock.lock();
         try {
-            long[] _timestamps = uppers.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
-            double[] _uppers = uppers.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _middles = middles.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _lowers = lowers.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
+            long[] _timestamps = new long[elements.length];
+            double[] _uppers = new double[elements.length];
+            double[] _middles = new double[elements.length];
+            double[] _lowers = new double[elements.length];
+            Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+            int count = 0;
+            for (var element: elements) {
+                _timestamps[count] = element.timestamp();
+                _uppers[count] = element.upper();
+                _middles[count] = element.middle();
+                _lowers[count] = element.lower();
+                count++;
+            }
             return new BandTimeSeries(id, _timestamps, _uppers, _middles, _lowers);
         } finally {
             readLock.unlock();

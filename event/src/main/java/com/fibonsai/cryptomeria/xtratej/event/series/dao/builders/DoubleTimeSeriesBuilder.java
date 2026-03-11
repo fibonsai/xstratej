@@ -17,23 +17,30 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class DoubleTimeSeriesBuilder extends TimeSeriesBuilder<DoubleTimeSeriesBuilder> {
 
-    private final TreeMap<Long, Double> doubles = new TreeMap<>();
+    private record Element(long timestamp, double value) {}
+
+    private Element[] elements = new Element[0];
 
     public DoubleTimeSeriesBuilder add(long timestamp, double value) {
         writeLock.lock();
         try {
-            while (doubles.size() >= maxSize) {
-                doubles.remove(doubles.firstKey());
+            if (elements.length >= maxSize) {
+                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+                this.elements[0] = new Element(timestamp, value);
+            } else {
+                Element[] newElements = new Element[elements.length + 1];
+                System.arraycopy(elements, 0, newElements, 0, elements.length);
+                newElements[elements.length] = new Element(timestamp, value);
+                this.elements = newElements;
             }
-            doubles.put(timestamp, value);
         } finally {
             writeLock.unlock();
         }
-
         return this;
     }
 
@@ -41,9 +48,16 @@ public class DoubleTimeSeriesBuilder extends TimeSeriesBuilder<DoubleTimeSeriesB
     public DoubleTimeSeries build() {
         readLock.lock();
         try {
-            long[] _timestamps = doubles.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
-            double[] _doubles = doubles.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            return new DoubleTimeSeries(id, _timestamps, _doubles);
+            long[] _timestamps = new long[elements.length];
+            double[] _values = new double[elements.length];
+            Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+            int count = 0;
+            for (var element: elements) {
+                _timestamps[count] = element.timestamp();
+                _values[count] = element.value();
+                count++;
+            }
+            return new DoubleTimeSeries(id, _timestamps, _values);
         } finally {
             readLock.unlock();
         }

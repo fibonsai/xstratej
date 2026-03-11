@@ -25,9 +25,4 @@ public record BarTimeSeries(@Nullable String id, long[] timestamps, double[] ope
     public BarTimeSeries(long[] timestamps, double[] opens, double[] highs, double[] lows, double[] closes, double[] volumes) {
         this(null, timestamps, opens, highs, lows, closes, volumes);
     }
-
-    @Override
-    public long timestamp() {
-        return timestamps.length > 0 ? timestamps[timestamps.length - 1] : 0L;
-    }
 }

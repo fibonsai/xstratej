@@ -25,9 +25,4 @@ public record Double2TimeSeries(@Nullable String id, long[] timestamps, double[]
     public Double2TimeSeries(long[] timestamps, double[] values, double[] values2) {
         this(null, timestamps, values, values2);
     }
-
-    @Override
-    public long timestamp() {
-        return timestamps.length > 0 ? timestamps[timestamps.length - 1] : 0L;
-    }
 }

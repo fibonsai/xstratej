@@ -25,9 +25,4 @@ public record BooleanTimeSeries(@Nullable String id, long[] timestamps, boolean[
     public BooleanTimeSeries(long[] timestamps, boolean[] values) {
         this(null, timestamps, values);
     }
-
-    @Override
-    public long timestamp() {
-        return timestamps.length > 0 ? timestamps[timestamps.length - 1] : 0L;
-    }
 }

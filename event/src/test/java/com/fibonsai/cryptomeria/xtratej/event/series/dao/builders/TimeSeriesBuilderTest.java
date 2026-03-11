@@ -236,7 +236,7 @@ public class TimeSeriesBuilderTest {
         DoubleTimeSeries timeSeries = builder.build();
 
         double[] values = timeSeries.values();
-        double[] expected = { 3.0D };
+        double[] expected = { 1.0D, 2.0D, 3.0D };
         assertArrayEquals(expected, values);
     }
 

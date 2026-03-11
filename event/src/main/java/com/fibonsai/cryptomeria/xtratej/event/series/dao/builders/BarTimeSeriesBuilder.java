@@ -17,43 +17,30 @@ package com.fibonsai.cryptomeria.xtratej.event.series.dao.builders;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class BarTimeSeriesBuilder extends TimeSeriesBuilder<BarTimeSeriesBuilder> {
 
-    private final TreeMap<Long, Double> opens = new TreeMap<>();
-    private final TreeMap<Long, Double> highs = new TreeMap<>();
-    private final TreeMap<Long, Double> lows = new TreeMap<>();
-    private final TreeMap<Long, Double> closes = new TreeMap<>();
-    private final TreeMap<Long, Double> volumes = new TreeMap<>();
+    private record Element(long timestamp, double open, double high, double low, double close, double volume) {}
+
+    private Element[] elements = new Element[0];
 
     public BarTimeSeriesBuilder add(long timestamp, double open, double high, double low, double close, double volume) {
         writeLock.lock();
         try {
-            while (opens.size() >= maxSize) {
-                opens.remove(opens.firstKey());
+            if (elements.length >= maxSize) {
+                Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+                this.elements[0] = new Element(timestamp, open, high, low, close, volume);
+            } else {
+                Element[] _elements = new Element[elements.length + 1];
+                System.arraycopy(elements, 0, _elements, 0, elements.length);
+                _elements[elements.length] = new Element(timestamp, open, high, low, close, volume);
+                this.elements = _elements;
             }
-            while (highs.size() >= maxSize) {
-                highs.remove(highs.firstKey());
-            }
-            while (lows.size() >= maxSize) {
-                lows.remove(lows.firstKey());
-            }
-            while (closes.size() >= maxSize) {
-                closes.remove(closes.firstKey());
-            }
-            while (volumes.size() >= maxSize) {
-                volumes.remove(volumes.firstKey());
-            }
-            opens.put(timestamp, open);
-            highs.put(timestamp, high);
-            lows.put(timestamp, low);
-            closes.put(timestamp, close);
-            volumes.put(timestamp, volume);
         } finally {
             writeLock.unlock();
         }
-
         return this;
     }
 
@@ -61,12 +48,23 @@ public class BarTimeSeriesBuilder extends TimeSeriesBuilder<BarTimeSeriesBuilder
     public BarTimeSeries build() {
         readLock.lock();
         try {
-            long[] _timestamps = opens.sequencedKeySet().stream().mapToLong(Long::longValue).toArray();
-            double[] _opens = opens.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _highs = highs.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _lows = lows.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _closes = closes.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
-            double[] _volumes = volumes.sequencedValues().stream().mapToDouble(Double::doubleValue).toArray();
+            long[] _timestamps = new long[elements.length];
+            double[] _opens = new double[elements.length];
+            double[] _highs = new double[elements.length];
+            double[] _lows = new double[elements.length];
+            double[] _closes = new double[elements.length];
+            double[] _volumes = new double[elements.length];
+            Arrays.sort(elements, Comparator.comparingLong(Element::timestamp));
+            int count = 0;
+            for (var element: elements) {
+                _timestamps[count] = element.timestamp();
+                _opens[count] = element.open();
+                _highs[count] = element.high();
+                _lows[count] = element.low();
+                _closes[count] = element.close();
+                _volumes[count] = element.volume();
+                count++;
+            }
             return new BarTimeSeries(id, _timestamps, _opens, _highs, _lows, _closes, _volumes);
         } finally {
             readLock.unlock();
