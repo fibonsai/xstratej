@@ -21,6 +21,8 @@ import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.strategy.IStrategy.StrategyType;
 import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.JsonNodeFactory;
@@ -37,6 +39,8 @@ import static com.fibonsai.cryptomeria.xtratej.engine.strategy.Loader.SchemaKey.
  * Strategy loader V2
  */
 public class Loader {
+
+    private static final Logger log = LoggerFactory.getLogger(Loader.class);
 
     public enum SchemaKey {
         STRATEGIES("strategies"),
@@ -128,7 +132,11 @@ public class Loader {
         JsonNode inputs = EMPTY_ARRAY;
 
         if (ruleJson.hasNonNull(TYPE.key()) && ruleJson.get(TYPE.key()).isString()) {
-            ruleType = RuleType.fromName(ruleJson.get(TYPE.key()).asString());
+            try {
+                ruleType = RuleType.fromName(ruleJson.get(TYPE.key()).asString());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
         }
         if (ruleJson.hasNonNull(PARAMS.key())) {
             ruleParams = ruleJson.get(PARAMS.key());

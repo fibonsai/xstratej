@@ -47,7 +47,7 @@ public enum RuleType {
                 return value;
             }
         }
-        return False;
+        throw new RuntimeException("%s not exist".formatted(name));
     }
 
     public RuleStream<? extends TimeSeries> build() {
