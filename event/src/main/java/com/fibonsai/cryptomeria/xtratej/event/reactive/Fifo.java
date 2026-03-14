@@ -34,10 +34,13 @@ public class Fifo<T> {
     private static final Duration DEFAULT_ZIP_TOLERANCE = Duration.ofSeconds(10);
 
     private final List<Consumer<T>> consumers = new ArrayList<>();
+    private final List<Consumer<Throwable>> consumersError = new ArrayList<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     protected final ReentrantReadWriteLock.ReadLock  readLock  = readWriteLock.readLock();
     protected final ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
     private Runnable onSubscribe = () -> {};
+    private long timeout = 10;
+    private TimeUnit timeoutUnit = TimeUnit.SECONDS;
 
     public Fifo<T> onSubscribe(Runnable onSubscribe) {
         writeLock.lock();
@@ -46,6 +49,13 @@ public class Fifo<T> {
         } finally {
             writeLock.unlock();
         }
+        return this;
+    }
+
+    public Fifo<T> setTimeout(long timeout, TimeUnit timeUnit) {
+        this.timeout = timeout;
+        this.timeoutUnit = timeUnit;
+
         return this;
     }
 
@@ -59,7 +69,18 @@ public class Fifo<T> {
         }
     }
 
-    public void emitNext(T event) {
+    public void subscribe(Consumer<T> consumer, Consumer<Throwable> consumerError) {
+        writeLock.lock();
+        try {
+            consumers.add(consumer);
+            consumersError.add(consumerError);
+            onSubscribe.run();
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    public boolean emitNext(T event) {
         readLock.lock();
         try {
             CountDownLatch latch = new CountDownLatch(consumers.size());
@@ -69,13 +90,32 @@ public class Fifo<T> {
                     latch.countDown();
                 });
             }
-            //noinspection ResultOfMethodCallIgnored
-            latch.await(10, TimeUnit.SECONDS);
+            return latch.await(timeout, timeoutUnit);
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
         } finally {
             readLock.unlock();
         }
+        return false;
+    }
+
+    public boolean emitError(Throwable throwable) {
+        readLock.lock();
+        try {
+            CountDownLatch latch = new CountDownLatch(consumersError.size());
+            for (var consumerError : consumersError) {
+                Thread.startVirtualThread(() -> {
+                    consumerError.accept(throwable);
+                    latch.countDown();
+                });
+            }
+            return latch.await(timeout, timeoutUnit);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            readLock.unlock();
+        }
+        return false;
     }
 
     public static <T> Fifo<T> empty() {
@@ -88,10 +128,19 @@ public class Fifo<T> {
             }
 
             @Override
-            public void emitNext(Object event) {
+            public boolean emitNext(Object event) {
                 if (log.isDebugEnabled()) {
                     log.debug("emit object to EMPTY {}", this.getClass().getSimpleName());
                 }
+                return true;
+            }
+
+            @Override
+            public boolean emitError(Throwable throwable) {
+                if (log.isDebugEnabled()) {
+                    log.debug("emit error to EMPTY {}", this.getClass().getSimpleName());
+                }
+                return true;
             }
         };
     }
