@@ -22,6 +22,7 @@
     <modules>
         <module>event</module>
         <module>engine</module>
+        <module>benchmarks</module>
     </modules>
 
     <artifactId>xtratej</artifactId>
