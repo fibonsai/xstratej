@@ -47,7 +47,7 @@ public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
     @Override
     protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
         return timeSeriesArray -> {
-            if (!isActivated()) {
+            if (!isActivated() || timeSeriesArray.length == 0) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanTimeSeries[0];
             }
@@ -63,7 +63,7 @@ public class InSlopeRule extends RuleStream<BooleanTimeSeries> {
                     if (Double.isNaN(minSlope) && Double.isNaN(maxSlope)) {
                         result = false;
                     } else {
-                        result = (Double.isNaN(minSlope) || slope > minSlope) && ((Double.isNaN(maxSlope) || slope < maxSlope));
+                        result = (Double.isNaN(minSlope) || slope >= minSlope) && ((Double.isNaN(maxSlope) || slope <= maxSlope));
                     }
                     allresult = allresult == null ? result : allresult && result;
                 }

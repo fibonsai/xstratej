@@ -50,7 +50,7 @@ public class LimitRule extends RuleStream<BooleanTimeSeries> {
     @Override
     protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
         return timeSeriesArray -> {
-            if (!isActivated()) {
+            if (!isActivated() || timeSeriesArray.length == 0) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanTimeSeries[0];
             }
@@ -63,6 +63,13 @@ public class LimitRule extends RuleStream<BooleanTimeSeries> {
             for (var timeSeries : timeSeriesArray) {
                 if (timeSeries instanceof DoubleTimeSeries && Objects.equals(timeSeries.id(), upperSourceId)) tsUpper = timeSeries;
                 if (timeSeries instanceof DoubleTimeSeries && Objects.equals(timeSeries.id(), lowerSourceId)) tsLower = timeSeries;
+            }
+            if (min == Double.NEGATIVE_INFINITY && max == Double.POSITIVE_INFINITY && (tsUpper instanceof EmptyTimeSeries || tsLower instanceof EmptyTimeSeries)) {
+                for (var ts: timeSeriesArray) {
+                    long max = ts.timestamp();
+                    if (max > lastTimestamp) lastTimestamp = max;
+                }
+                return new BooleanTimeSeries[]{ new BooleanTimeSeriesBuilder().add(lastTimestamp, false).build() };
             }
 
             loop1:

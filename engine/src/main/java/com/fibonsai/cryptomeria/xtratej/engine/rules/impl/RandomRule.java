@@ -33,7 +33,7 @@ public class RandomRule extends RuleStream<BooleanTimeSeries> {
     @Override
     protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
         return timeSeriesArray -> {
-            if (!isActivated()) {
+            if (!isActivated() || timeSeriesArray.length == 0) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanTimeSeries[0];
             }

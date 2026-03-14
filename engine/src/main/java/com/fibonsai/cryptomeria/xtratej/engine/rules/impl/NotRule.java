@@ -30,7 +30,7 @@ public class NotRule extends RuleStream<BooleanTimeSeries> {
     @Override
     protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
         return timeSeriesArray -> {
-            if (!isActivated()) {
+            if (!isActivated() || timeSeriesArray.length == 0) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanTimeSeries[0];
             }
@@ -41,7 +41,7 @@ public class NotRule extends RuleStream<BooleanTimeSeries> {
             }
 
             var ts = timeSeriesArray[0];
-            if (ts instanceof BooleanTimeSeries series) {
+            if (ts instanceof BooleanTimeSeries series && series.size() > 0) {
                 int endIndex = series.size() - 1;
                 boolean lastValue = series.values()[endIndex];
                 long lastTimestamp = series.timestamp();

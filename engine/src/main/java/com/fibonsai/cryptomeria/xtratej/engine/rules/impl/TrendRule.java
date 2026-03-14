@@ -52,11 +52,12 @@ public class TrendRule extends RuleStream<BooleanTimeSeries> {
     @Override
     protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
         return timeSeriesArray -> {
-            if (!isActivated()) {
+            if (!isActivated() || timeSeriesArray.length == 0) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanTimeSeries[0];
             }
 
+            long lastTimestamp = 0;
             TimeSeries timeSeriesComparator = EmptyTimeSeries.INSTANCE;
             if (!sourceId.isBlank()) {
                 for (var timeSeries : timeSeriesArray) {
@@ -64,10 +65,17 @@ public class TrendRule extends RuleStream<BooleanTimeSeries> {
                 }
             }
 
-            double slopeComparable = (timeSeriesComparator != EmptyTimeSeries.INSTANCE) && timeSeriesComparator instanceof DoubleTimeSeries ts ? getSlope(ts) : 0.0D;
+            if (timeSeriesComparator instanceof EmptyTimeSeries && !sourceId.isBlank()) {
+                for (var ts: timeSeriesArray) {
+                    long max = ts.timestamp();
+                    if (max > lastTimestamp) lastTimestamp = max;
+                }
+                return new BooleanTimeSeries[]{ new BooleanTimeSeriesBuilder().add(lastTimestamp, false).build() };
+            }
+
+            double slopeComparable = timeSeriesComparator instanceof DoubleTimeSeries ts ? getSlope(ts) : 0.0D;
 
             Boolean allresult = null;
-            long lastTimestamp = 0;
             for (var timeSeries: timeSeriesArray) {
                 if (timeSeries instanceof DoubleTimeSeries doubleTimeSeries && doubleTimeSeries.size() > 0) {
                     if (Objects.equals(timeSeriesComparator.id(), doubleTimeSeries.id())) {

@@ -50,7 +50,7 @@ public class CrossedRule extends RuleStream<BooleanTimeSeries> {
     @Override
     protected Function<TimeSeries[], BooleanTimeSeries[]> predicate() {
         return timeSeriesArray -> {
-            if (!isActivated()) {
+            if (!isActivated() || timeSeriesArray.length == 0) {
                 log.warn("No sources. Ignoring rule.");
                 return new BooleanTimeSeries[0];
             }
@@ -100,13 +100,10 @@ public class CrossedRule extends RuleStream<BooleanTimeSeries> {
     }
 
     private boolean isCrossed(TimeSeries series) {
-        if (threshold > Double.NEGATIVE_INFINITY) {
-            MinMax.MinMaxResult minMaxResult = MinMax.from(series);
-            double min = minMaxResult.min();
-            double max = minMaxResult.max();
-            return min < threshold && max > threshold;
-        }
-        return false;
+        MinMax.MinMaxResult minMaxResult = MinMax.from(series);
+        double min = minMaxResult.min();
+        double max = minMaxResult.max();
+        return min < threshold && max > threshold;
     }
 
     private boolean isCrossed(TimeSeries series1, TimeSeries series2) {
