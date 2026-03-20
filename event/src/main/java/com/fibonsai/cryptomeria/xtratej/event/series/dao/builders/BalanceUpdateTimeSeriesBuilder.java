@@ -51,6 +51,10 @@ public class BalanceUpdateTimeSeriesBuilder extends TimeSeriesBuilder<BalanceUpd
               double depositing,
               int scale) {
 
+        if (total < 0.0 || available < 0.0 || frozen < 0.0 || borrowed < 0.0 || loaned < 0.0 || withdrawing < 0.0 || depositing < 0.0) {
+            throw new RuntimeException("negative value is not allowed.");
+        }
+
         writeLock.lock();
         try {
             Element element = new Element(timestamp, symbol, owner, updateCause, total, available, frozen, borrowed, loaned, withdrawing, depositing, scale);

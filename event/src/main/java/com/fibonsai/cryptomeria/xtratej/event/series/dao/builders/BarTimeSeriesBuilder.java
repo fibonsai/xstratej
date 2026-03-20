@@ -29,6 +29,11 @@ public class BarTimeSeriesBuilder extends TimeSeriesBuilder<BarTimeSeriesBuilder
     private Element[] elements = new Element[0];
 
     public BarTimeSeriesBuilder add(long timestamp, double open, double high, double low, double close, double volume) {
+
+        if (open < 0.0 || high < 0.0 || low < 0.0 || close < 0.0 || volume < 0.0) {
+            throw new RuntimeException("negative value is not allowed.");
+        }
+
         writeLock.lock();
         try {
             Element element = new Element(timestamp, open, high, low, close, volume);

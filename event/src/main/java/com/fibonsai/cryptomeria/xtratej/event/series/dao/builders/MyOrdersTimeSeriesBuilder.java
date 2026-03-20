@@ -84,6 +84,10 @@ public class MyOrdersTimeSeriesBuilder extends TimeSeriesBuilder<MyOrdersTimeSer
                                          @Nullable OrderCondition orderCondition,
                                          @Nullable String orderConditionRule) {
 
+        if (fee < 0.0 || price < 0.0 || limitPrice < 0.0 || stopPrice < 0.0 || takeProfitPrice < 0.0 || trailingPrice < 0.0 || initialAmount < 0.0 || executedAmount < 0.0) {
+            throw new RuntimeException("negative value is not allowed.");
+        }
+
         writeLock.lock();
         try {
             Element element = new Element(timestamp, orderId, symbol, side, owner, tradeState, orderType,
