@@ -42,6 +42,10 @@ public class OrderBookUpdateTimeSeriesBuilder extends TimeSeriesBuilder<OrderBoo
                                                 double askAmount,
                                                 double spread) {
 
+        if (bidPrice < 0.0 || askPrice < 0.0 || bidAmount < 0.0 || askAmount < 0.0 || spread < 0.0) {
+            throw new RuntimeException("negative value is not allowed.");
+        }
+
         writeLock.lock();
         try {
             Element element = new Element(timestamp, bidOrderId, askOrderId, bidPrice, askPrice, bidAmount, askAmount, spread);
