@@ -6,10 +6,12 @@ This document provides instructions and context for AI agents working on the `xt
 
 It's a maven project with two modules/subprojects:
 
+* **directflux**: Lightweight nearby real-time reactive engine, avoids external dependecies, complexity and heavy APIs.
 * **event**: data flow containers implementations supported by a simple, but "real-time" reactive approach.
 * **engine**: Rule/Strategy engine with external sources connectors.
+* **benchmarks**: JMH (Java Microbenchmark Harness) benchmarks for critical paths in the xtratej codebase.
 
-IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
+IMPORTANT: **engine** module/subproject depends on **event** module/subproject. **event** depends on **directflux** module/subproject.
 
 ### `event` structure
 
@@ -37,7 +39,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 
 ## Architectural Patterns
 
-*   **Reactive First**: This is a reactive application. Use `Fifo` class for data streams. Avoid blocking operations in the event loop.
+*   **Reactive First**: This is a reactive application. Use `DirectFlux` class for data streams. Avoid blocking operations in the event loop.
 *   **Immutability**: Prefer immutable data structures for event payloads (`TimeSeries` implementations).
 *   **Rule Composition**: Complex logic should be composed of smaller, reusable `RuleStream` implementations rather than monolithic blocks.
 *   **Injected data from external datasources**: Implements support to connect and subscribe external market data providers (`Subscriber` implementations)
@@ -46,7 +48,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 ## Architectural Decisions
 
 * Wiring Mechanism: The `Loader` class is responsible for wiring. It parses a JSON definition where sources are defined first. Rules then specify their inputs which can be names of these sources or nested rule definitions.
-* Reactive Data Flow: Connection is achieved using `Fifo<TimeSeries>`. `Loader.parseRule` collects the FIFOs from the named sources (via `strategy.getSources().get(inputName).toFifo()`), zips them using `Fifo.zip()`, and passes the resulting zipped FIFO to `RuleStream.watch()`.
+* Reactive Data Flow: Connection is achieved using `DirectFlux<TimeSeries>`. `Loader.parseRule` collects the FIFOs from the named sources (via `strategy.getSources().get(inputName).toDirectFlux()`), zips them using `DirectFlux.zip()`, and passes the resulting zipped FIFO to `RuleStream.watch()`.
 * LimitRule Logic: `LimitRule` specifically looks for `upperSourceId` and `lowerSourceId` in its params. In its predicate function, it iterates through the provided `TimeSeries[]` array (produced by the zipped FIFO) and matches TimeSeries IDs against these params to determine dynamic boundaries. If no dynamic boundaries are found, it falls back to fixed min/max values.
 * Strategy Integration: `Strategy` acts as a container. `StrategyManager` runs strategies by subscribing to the root rule's (aggregator) result FIFO. When the rule evaluates to true, a `TradingSignal` is emitted.
 
@@ -54,10 +56,10 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'.
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using Fifo.
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using DirectFlux.
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Strategy.java` and @src/main/java/com/fibonsai/cryptomeria/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
 * "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/StrategyManager.java` to see how strategies are executed and how results are handled.
-* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Loader.java` to understand how the JSON configuration is parsed and how rules are wired to sources using Fifo.zip.
+* "Read `engine/src/main/java/com/fibonsai/cryptomeria/xtratej/engine/strategy/Loader.java` to understand how the JSON configuration is parsed and how rules are wired to sources using DirectFlux.zip.
 * "Read `engine/src/test/java/com/fibonsai/cryptomeria/xtratej/engine/rules/impl/LimitRule.java` to see example usage and testing patterns for rules.
 
 ## Testing
@@ -80,7 +82,7 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject.
 
 ### Debugging
 *   Check `pom.xml` for dependency versions if you encounter build issues.
-*   Ensure that the `Fifo` streams are properly subscribed to; otherwise, events will not flow.
+*   Ensure that the `DirectFlux` streams are properly subscribed to; otherwise, events will not flow.
 
 ### Testing
 * Always check the code quality running all tests

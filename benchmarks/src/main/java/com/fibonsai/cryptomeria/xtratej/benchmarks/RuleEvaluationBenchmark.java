@@ -14,11 +14,11 @@
 
 package com.fibonsai.cryptomeria.xtratej.benchmarks;
 
+import com.fibonsai.cryptomeria.directflux.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.CrossedRule;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.LimitRule;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.TrendRule;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;

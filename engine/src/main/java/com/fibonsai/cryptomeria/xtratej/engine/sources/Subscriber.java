@@ -14,7 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.sources;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
+import com.fibonsai.cryptomeria.directflux.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 
 public abstract class Subscriber {

@@ -14,7 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.benchmarks;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
+import com.fibonsai.cryptomeria.directflux.DirectFlux;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.concurrent.CompletableFuture;

@@ -12,7 +12,7 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.cryptomeria.xtratej.event.reactive;
+package com.fibonsai.cryptomeria.directflux;
 
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;

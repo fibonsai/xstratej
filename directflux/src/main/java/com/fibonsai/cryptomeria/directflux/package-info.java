@@ -13,6 +13,6 @@
  */
 
 @NullMarked
-package com.fibonsai.cryptomeria.xtratej.event.reactive;
+package com.fibonsai.cryptomeria.directflux;
 
 import org.jspecify.annotations.NullMarked;

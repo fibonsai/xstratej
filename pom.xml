@@ -20,6 +20,7 @@
 
     <name>xtratej</name>
     <modules>
+        <module>directflux</module>
         <module>event</module>
         <module>engine</module>
         <module>benchmarks</module>
