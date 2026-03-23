@@ -14,8 +14,8 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
+import com.fibonsai.cryptomeria.directflux.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.*;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.*;
 import org.slf4j.Logger;

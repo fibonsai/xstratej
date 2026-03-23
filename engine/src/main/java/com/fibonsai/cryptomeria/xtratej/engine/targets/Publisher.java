@@ -14,7 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.targets;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
+import com.fibonsai.cryptomeria.directflux.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
 
 public abstract class Publisher extends DirectFlux<TradingSignal> {

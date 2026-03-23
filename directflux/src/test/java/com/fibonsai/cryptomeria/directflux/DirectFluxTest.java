@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.cryptomeria.xtratej.event.reactive;
+package com.fibonsai.cryptomeria.directflux;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -24,10 +24,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.fibonsai.cryptomeria.directflux.DirectFlux.createArray;
+import static com.fibonsai.cryptomeria.directflux.DirectFlux.zip;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for {@link DirectFlux} – focusing on the {@code zip()} method.
+ * Unit tests for {@link com.fibonsai.cryptomeria.directflux.DirectFlux} – focusing on the {@code zip()} method.
  *
  * <p>All tests that wait for asynchronous events use a generous but finite
  * {@code @Timeout} so the suite never hangs indefinitely.
@@ -49,7 +51,7 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void singleSubscriberReceivesEvent() throws InterruptedException {
-        DirectFlux<String> reactor = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> reactor = new DirectFlux<>();
         CountDownLatch latch = new CountDownLatch(1);
         List<String> received = new CopyOnWriteArrayList<>();
 
@@ -64,7 +66,7 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void multipleSubscribersAllReceiveEvent() throws InterruptedException {
-        DirectFlux<Integer> reactor = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<Integer> reactor = new DirectFlux<>();
         int subscriberCount = 5;
         CountDownLatch latch = new CountDownLatch(subscriberCount);
         List<Integer> received = new CopyOnWriteArrayList<>();
@@ -87,10 +89,10 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void zipTwoSourcesEqualLength() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r2 = new DirectFlux<>();
 
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1, r2);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(2);
@@ -117,11 +119,11 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void zipThreeSourcesUnequalLength() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String> r2 = new DirectFlux<>();
-        DirectFlux<String> r3 = new DirectFlux<>();   // only 1 event
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r3 = new DirectFlux<>();   // only 1 event
 
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2, r3);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1, r2, r3);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         // We expect exactly ONE tuple because r3 emits only once.
@@ -151,10 +153,10 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void zipPreservesEventOrder() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r2 = new DirectFlux<>();
 
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1, r2);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(3);
@@ -178,8 +180,8 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void zipSingleSourceWrapsEventsInArrays() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(2);
@@ -202,9 +204,9 @@ class DirectFluxTest {
     @Timeout(10)
     void zipConcurrentEmissionsAreThreadSafe() throws InterruptedException {
         final int eventCount = 200;
-        DirectFlux<Integer> r1 = new DirectFlux<>();
-        DirectFlux<Integer> r2 = new DirectFlux<>();
-        DirectFlux<Integer[]> zipped = DirectFlux.zip(r1, r2);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<Integer> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<Integer> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<Integer[]> zipped = zip(r1, r2);
 
         List<Integer[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(eventCount);
@@ -240,9 +242,9 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void zipResultSupportsMultipleConsumers() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String> r2 = new DirectFlux<>();
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1, r2);
 
         int consumers = 3;
         CountDownLatch latch = new CountDownLatch(consumers); // 1 tuple × 3 consumers
@@ -282,9 +284,9 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void zipRecoversAfterPartialSlotIsAbandoned() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String> r2 = new DirectFlux<>();
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1, r2);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -321,9 +323,9 @@ class DirectFluxTest {
     @Test
     @Timeout(3)
     void zipEmitsNothingWithNoEvents() throws InterruptedException {
-        DirectFlux<String> r1 = new DirectFlux<>();
-        DirectFlux<String> r2 = new DirectFlux<>();
-        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r1 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> r2 = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(r1, r2);
 
         AtomicInteger counter = new AtomicInteger(0);
         zipped.subscribe(_ -> counter.incrementAndGet());
@@ -341,10 +343,10 @@ class DirectFluxTest {
     @Timeout(5)
     void zipResultArrayLengthMatchesSourceCount() throws InterruptedException {
         int sourceCount = 5;
-        DirectFlux<String>[] sources = DirectFlux.createArray(sourceCount);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String>[] sources = createArray(sourceCount);
         for (int i = 0; i < sourceCount; i++) sources[i] = new DirectFlux<>();
 
-        DirectFlux<String[]> zipped = DirectFlux.zip(sources);
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String[]> zipped = zip(sources);
 
         CountDownLatch latch = new CountDownLatch(1);
         List<Integer> lengths = new CopyOnWriteArrayList<>();
@@ -363,7 +365,7 @@ class DirectFluxTest {
     @Test
     @Timeout(5)
     void concurrentSubscriptionsAreSafe() throws InterruptedException {
-        DirectFlux<String> reactor = new DirectFlux<>();
+        com.fibonsai.cryptomeria.directflux.DirectFlux<String> reactor = new DirectFlux<>();
         int threads = 50;
         CountDownLatch subscribeLatch = new CountDownLatch(threads);
         CountDownLatch receiveLatch   = new CountDownLatch(threads);

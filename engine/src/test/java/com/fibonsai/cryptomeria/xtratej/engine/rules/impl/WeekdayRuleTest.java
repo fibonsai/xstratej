@@ -15,8 +15,8 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
+import com.fibonsai.cryptomeria.directflux.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.AfterEach;
