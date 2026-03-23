@@ -18,7 +18,7 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.CrossedRule;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.LimitRule;
 import com.fibonsai.cryptomeria.xtratej.engine.rules.impl.TrendRule;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;
@@ -39,7 +39,7 @@ public class RuleEvaluationBenchmark {
     private CrossedRule crossedRule;
     private LimitRule limitRule;
     private TrendRule trendRule;
-    private Fifo<TimeSeries[]> inputFifo;
+    private DirectFlux<TimeSeries[]> inputDirectFlux;
     private TimeSeries[] crossedInput;
     private TimeSeries[] limitInput;
     private TimeSeries[] trendInput;
@@ -47,26 +47,26 @@ public class RuleEvaluationBenchmark {
     @Setup
     public void setup() {
         // Setup input FIFO
-        inputFifo = new Fifo<>();
+        inputDirectFlux = new DirectFlux<>();
 
         // Setup CrossedRule
         ObjectNode crossedParams = JsonNodeFactory.instance.objectNode();
         crossedParams.put("threshold", 50.0);
         crossedRule = (CrossedRule) RuleType.Crossed.build().setParams(crossedParams);
-        crossedRule.watch(inputFifo);
+        crossedRule.watch(inputDirectFlux);
 
         // Setup LimitRule
         ObjectNode limitParams = JsonNodeFactory.instance.objectNode();
         limitParams.put("min", 10.0);
         limitParams.put("max", 90.0);
         limitRule = (LimitRule) RuleType.Limit.build().setParams(limitParams);
-        limitRule.watch(inputFifo);
+        limitRule.watch(inputDirectFlux);
 
         // Setup TrendRule
         ObjectNode trendParams = JsonNodeFactory.instance.objectNode();
         trendParams.put("isRising", true);
         trendRule = (TrendRule) RuleType.Trend.build().setParams(trendParams);
-        trendRule.watch(inputFifo);
+        trendRule.watch(inputDirectFlux);
 
         // Prepare input data
         DoubleTimeSeries crossedSeries = createDoubleTimeSeries("crossed", new long[]{1L, 2L}, new double[]{40.0, 60.0});
@@ -90,7 +90,7 @@ public class RuleEvaluationBenchmark {
     @Benchmark
     public void benchmarkCrossedRuleEvaluation() throws InterruptedException {
         // Emit input to trigger rule evaluation
-        inputFifo.emitNext(crossedInput);
+        inputDirectFlux.emitNext(crossedInput);
         // Wait briefly for processing
         Thread.sleep(1);
     }
@@ -98,7 +98,7 @@ public class RuleEvaluationBenchmark {
     @Benchmark
     public void benchmarkLimitRuleEvaluation() throws InterruptedException {
         // Emit input to trigger rule evaluation
-        inputFifo.emitNext(limitInput);
+        inputDirectFlux.emitNext(limitInput);
         // Wait briefly for processing
         Thread.sleep(1);
     }
@@ -106,7 +106,7 @@ public class RuleEvaluationBenchmark {
     @Benchmark
     public void benchmarkTrendRuleEvaluation() throws InterruptedException {
         // Emit input to trigger rule evaluation
-        inputFifo.emitNext(trendInput);
+        inputDirectFlux.emitNext(trendInput);
         // Wait briefly for processing
         Thread.sleep(1);
     }
@@ -114,8 +114,8 @@ public class RuleEvaluationBenchmark {
     @Benchmark
     public void benchmarkComplexRuleChain() throws InterruptedException {
         // Simulate a complex rule chain evaluation
-        inputFifo.emitNext(crossedInput);
-        inputFifo.emitNext(limitInput);
+        inputDirectFlux.emitNext(crossedInput);
+        inputDirectFlux.emitNext(limitInput);
         // Wait briefly for processing
         Thread.sleep(1);
     }

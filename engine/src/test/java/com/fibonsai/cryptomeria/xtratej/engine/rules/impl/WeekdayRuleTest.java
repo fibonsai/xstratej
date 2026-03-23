@@ -16,7 +16,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.AfterEach;
@@ -66,7 +66,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -82,7 +82,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -97,7 +97,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -130,7 +130,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -152,7 +152,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -168,7 +168,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -184,7 +184,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -202,7 +202,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -217,7 +217,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -247,7 +247,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -264,7 +264,7 @@ class WeekdayRuleTest {
             case WeekdayRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);

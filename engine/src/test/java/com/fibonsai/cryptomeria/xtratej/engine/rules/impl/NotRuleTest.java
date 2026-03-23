@@ -15,7 +15,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
@@ -37,7 +37,7 @@ class NotRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         notRule = new NotRule();
-        notRule.watch(new Fifo<>());
+        notRule.watch(new DirectFlux<>());
     }
 
     @AfterEach

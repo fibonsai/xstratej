@@ -16,7 +16,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
@@ -77,7 +77,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -94,7 +94,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -111,7 +111,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -142,7 +142,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -159,7 +159,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -176,7 +176,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Slope = -1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -194,7 +194,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Slope = -1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -212,7 +212,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{50.0, 50.0, 50.0}); // Slope = 0.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -229,7 +229,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{0.0, 0.001, 0.002}); // Slope = 0.001
         TimeSeries[] input = new TimeSeries[]{series};
@@ -247,7 +247,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -265,7 +265,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope = 1.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -282,7 +282,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -300,7 +300,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{-1, 0, 1}); // Slope = 0.5
         TimeSeries[] input = new TimeSeries[]{series};
@@ -318,7 +318,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1}, new double[]{50.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -338,7 +338,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2}, new double[]{10.0, 20.0}); // Slope = 10.0
         TimeSeries[] input = new TimeSeries[]{series};
@@ -356,7 +356,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries booleanSeries = new BooleanTimeSeriesBuilder().setId("s1").add(1, true).build();
         TimeSeries[] input = new TimeSeries[]{booleanSeries};
@@ -375,7 +375,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{}, new double[]{});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -394,7 +394,7 @@ class InSlopeRuleTest {
             case InSlopeRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         // Values with slope ~1.0
         DoubleTimeSeries series = createDoubleTimeSeries("s1",

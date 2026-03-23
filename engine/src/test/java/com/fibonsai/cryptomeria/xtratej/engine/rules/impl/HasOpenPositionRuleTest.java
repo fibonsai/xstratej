@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries;
@@ -63,7 +63,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -85,7 +85,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -110,7 +110,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -130,7 +130,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -150,7 +150,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -173,7 +173,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -196,7 +196,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -218,7 +218,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -235,7 +235,7 @@ class HasOpenPositionRuleTest {
         MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id").build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -259,7 +259,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -285,7 +285,7 @@ class HasOpenPositionRuleTest {
                 .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -301,7 +301,7 @@ class HasOpenPositionRuleTest {
     @Test
     void predicate_emptySeriesArray() {
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -321,7 +321,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -343,7 +343,7 @@ class HasOpenPositionRuleTest {
             .build();
 
         HasOpenPositionRule rule = (HasOpenPositionRule) RuleType.HasOpenPosition.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);

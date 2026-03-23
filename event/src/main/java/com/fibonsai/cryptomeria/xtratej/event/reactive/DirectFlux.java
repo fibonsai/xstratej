@@ -27,9 +27,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
-public class Fifo<T> {
+public class DirectFlux<T> {
 
-    private static final Logger log = LoggerFactory.getLogger(Fifo.class);
+    private static final Logger log = LoggerFactory.getLogger(DirectFlux.class);
 
     private static final Duration DEFAULT_ZIP_TOLERANCE = Duration.ofSeconds(10);
 
@@ -42,7 +42,7 @@ public class Fifo<T> {
     private long timeout = 10;
     private TimeUnit timeoutUnit = TimeUnit.SECONDS;
 
-    public Fifo<T> onSubscribe(Runnable onSubscribe) {
+    public DirectFlux<T> onSubscribe(Runnable onSubscribe) {
         writeLock.lock();
         try {
             this.onSubscribe = onSubscribe;
@@ -52,7 +52,7 @@ public class Fifo<T> {
         return this;
     }
 
-    public Fifo<T> setTimeout(long timeout, TimeUnit timeUnit) {
+    public DirectFlux<T> setTimeout(long timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeoutUnit = timeUnit;
 
@@ -118,8 +118,8 @@ public class Fifo<T> {
         return false;
     }
 
-    public static <T> Fifo<T> empty() {
-        return new Fifo<>() {
+    public static <T> DirectFlux<T> empty() {
+        return new DirectFlux<>() {
             @Override
             public void subscribe(Consumer<T> consumer) {
                 if (log.isDebugEnabled()) {
@@ -146,8 +146,8 @@ public class Fifo<T> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Fifo<T>[] createArray(int size) {
-        return (Fifo<T>[]) new Fifo[size];
+    public static <T> DirectFlux<T>[] createArray(int size) {
+        return (DirectFlux<T>[]) new DirectFlux[size];
     }
 
     /**
@@ -167,8 +167,8 @@ public class Fifo<T> {
      * </ul>
      */
     @SafeVarargs
-    public static <T> Fifo<T[]> zip(Fifo<T>... fifos) {
-        return zip(DEFAULT_ZIP_TOLERANCE, fifos);
+    public static <T> DirectFlux<T[]> zip(DirectFlux<T>... directFluxes) {
+        return zip(DEFAULT_ZIP_TOLERANCE, directFluxes);
     }
 
     /**
@@ -188,10 +188,10 @@ public class Fifo<T> {
      * </ul>
      */
     @SafeVarargs
-    public static <T> Fifo<T[]> zip(Duration delayToleration, Fifo<T>... fifos) {
+    public static <T> DirectFlux<T[]> zip(Duration delayToleration, DirectFlux<T>... directFluxes) {
 
-        final int n = fifos.length;
-        final Fifo<T[]> result = new Fifo<>();
+        final int n = directFluxes.length;
+        final DirectFlux<T[]> result = new DirectFlux<>();
 
         // Per-source FIFO queues – populated by each source's virtual-thread callbacks.
         @SuppressWarnings("unchecked")
@@ -215,7 +215,7 @@ public class Fifo<T> {
         // Subscribe to every source reactor.
         for (int i = 0; i < n; i++) {
             final int sourceIndex = i;
-            fifos[sourceIndex].subscribe(event -> {
+            directFluxes[sourceIndex].subscribe(event -> {
                 queues[sourceIndex].offer(event);
                 coordinator.tryAdvance();
             });
@@ -231,7 +231,7 @@ public class Fifo<T> {
 
         private final int n;
         private final ConcurrentLinkedQueue<Z>[] queues;
-        private final Fifo<Z[]> downstream;
+        private final DirectFlux<Z[]> downstream;
         private final ScheduledExecutorService scheduler;
         private final Duration delayToleration;
         private final ExecutorService dispatchExecutor;
@@ -247,7 +247,7 @@ public class Fifo<T> {
 
         ZipCoordinator(int n,
                        ConcurrentLinkedQueue<Z>[] queues,
-                       Fifo<Z[]> downstream,
+                       DirectFlux<Z[]> downstream,
                        ScheduledExecutorService scheduler,
                        Duration delayToleration) {
             this.n          = n;

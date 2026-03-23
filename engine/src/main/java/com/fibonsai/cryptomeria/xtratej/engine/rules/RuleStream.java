@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.*;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.*;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public abstract class RuleStream<T extends TimeSeries> {
 
     private static final Logger log = LoggerFactory.getLogger(RuleStream.class);
 
-    private final Fifo<TimeSeries> results = new Fifo<>();
+    private final DirectFlux<TimeSeries> results = new DirectFlux<>();
     private final AtomicBoolean activated = new AtomicBoolean(false);
 
     private String description = "";
@@ -40,7 +40,7 @@ public abstract class RuleStream<T extends TimeSeries> {
         return this;
     }
 
-    public void watch(Fifo<TimeSeries[]> inputs) {
+    public void watch(DirectFlux<TimeSeries[]> inputs) {
         inputs.onSubscribe(() -> activated.set(true)).subscribe(inputTimeSeriesArray -> {
             try {
                 T[] resultTimeSeriesArray = predicate().apply(inputTimeSeriesArray);
@@ -71,23 +71,23 @@ public abstract class RuleStream<T extends TimeSeries> {
     }
 
     public void watch(Subscriber... subscribers) {
-        Fifo<TimeSeries>[] arrayOfFifo = Fifo.createArray(subscribers.length);
+        DirectFlux<TimeSeries>[] arrayOfFluxes = DirectFlux.createArray(subscribers.length);
         int count = 0;
         for (var subscribe: subscribers) {
-            arrayOfFifo[count++] = subscribe.toFifo();
+            arrayOfFluxes[count++] = subscribe.toDirectFlux();
         }
-        Fifo<TimeSeries[]> inputs = Fifo.zip(arrayOfFifo);
+        DirectFlux<TimeSeries[]> inputs = DirectFlux.zip(arrayOfFluxes);
         watch(inputs);
     }
 
     @SafeVarargs
     public final void watch(RuleStream<T>... rules) {
-        Fifo<TimeSeries>[] arrayOfFifo = Fifo.createArray(rules.length);
+        DirectFlux<TimeSeries>[] arrayOfFluxes = DirectFlux.createArray(rules.length);
         int count = 0;
         for (var rule: rules) {
-            arrayOfFifo[count++] = rule.results();
+            arrayOfFluxes[count++] = rule.results();
         }
-        Fifo<TimeSeries[]> inputs = Fifo.zip(arrayOfFifo);
+        DirectFlux<TimeSeries[]> inputs = DirectFlux.zip(arrayOfFluxes);
         watch(inputs);
     }
 
@@ -97,7 +97,7 @@ public abstract class RuleStream<T extends TimeSeries> {
 
     protected abstract Function<TimeSeries[], T[]> predicate();
 
-    public Fifo<TimeSeries> results() {
+    public DirectFlux<TimeSeries> results() {
         return results;
     }
 

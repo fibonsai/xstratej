@@ -19,7 +19,7 @@ import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.SourceType;
 import com.fibonsai.cryptomeria.xtratej.engine.sources.Subscriber;
 import com.fibonsai.cryptomeria.xtratej.engine.strategy.IStrategy.StrategyType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,20 +154,20 @@ public class Loader {
 
         if (!inputs.isEmpty()) {
             JsonNode firstInput = inputs.get(0);
-            Fifo<TimeSeries>[] fifos = Fifo.createArray(inputs.size());
+            DirectFlux<TimeSeries>[] arrayOfFluxes = DirectFlux.createArray(inputs.size());
             int counter = 0;
             if (firstInput != null && firstInput.isString()) {
                 for (var input : inputs) {
                     Subscriber subscriber = strategy.getSources().get(input.asString());
-                    fifos[counter++] = subscriber != null ? subscriber.toFifo() : Fifo.empty();
+                    arrayOfFluxes[counter++] = subscriber != null ? subscriber.toDirectFlux() : DirectFlux.empty();
                 }
             } else {
                 for (var input : inputs) {
                     RuleStream<?> subRule = parseRule(input, strategy);
-                    fifos[counter++] = subRule.results();
+                    arrayOfFluxes[counter++] = subRule.results();
                 }
             }
-            ruleInstance.watch(Fifo.zip(fifos));
+            ruleInstance.watch(DirectFlux.zip(arrayOfFluxes));
         }
         return ruleInstance;
     }

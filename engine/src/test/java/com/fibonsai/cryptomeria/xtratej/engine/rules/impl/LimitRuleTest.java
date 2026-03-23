@@ -16,7 +16,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
@@ -68,7 +68,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -86,7 +86,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -105,7 +105,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         TimeSeries lower = createDoubleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
@@ -126,7 +126,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{25.0});
         TimeSeries lower = createDoubleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
@@ -160,7 +160,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{10.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -178,7 +178,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{20.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -197,7 +197,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
         TimeSeries lower = createDoubleTimeSeries("lower", new long[]{1L}, new double[]{10.0});
@@ -216,7 +216,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -233,7 +233,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{5.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -250,7 +250,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -267,7 +267,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{25.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -285,7 +285,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{-5.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -303,7 +303,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{-15.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -321,7 +321,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{1_500_000.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -340,7 +340,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{15.0});
         TimeSeries top = createDoubleTimeSeries("top", new long[]{1L}, new double[]{20.0});
@@ -375,7 +375,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{}, new double[]{});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -394,7 +394,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{Double.NaN});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -412,7 +412,7 @@ class LimitRuleTest {
             case LimitRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         DoubleTimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L, 3L}, new double[]{15.0, 18.0, 12.0});
         TimeSeries[] input = new TimeSeries[]{series};

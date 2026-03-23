@@ -16,7 +16,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import org.junit.jupiter.api.AfterEach;
@@ -75,7 +75,7 @@ class DateTimeRuleTest {
         params.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -88,7 +88,7 @@ class DateTimeRuleTest {
         params.put("begin", now.minusDays(15).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.plusDays(15).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -102,7 +102,7 @@ class DateTimeRuleTest {
         params.put("begin", nowTime.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("end", nowTime.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -115,7 +115,7 @@ class DateTimeRuleTest {
         params.put("begin", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.plusHours(2).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -137,7 +137,7 @@ class DateTimeRuleTest {
         params.put("begin", now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -150,7 +150,7 @@ class DateTimeRuleTest {
         params.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.plusSeconds(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -162,7 +162,7 @@ class DateTimeRuleTest {
     void predicate_emptyBegin_shouldEvaluateOnlyEnd() {
         params.put("end", now.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -174,7 +174,7 @@ class DateTimeRuleTest {
     void predicate_emptyEnd_shouldEvaluateOnlyBegin() {
         params.put("begin", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -185,7 +185,7 @@ class DateTimeRuleTest {
     @Test
     void predicate_bothEmpty_shouldReturnTrue() {
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -199,7 +199,7 @@ class DateTimeRuleTest {
         params.put("begin", now.minusHours(2).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -214,7 +214,7 @@ class DateTimeRuleTest {
         params.put("begin", now.plusDays(365).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         params.put("end", now.plusDays(366).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -237,7 +237,7 @@ class DateTimeRuleTest {
         params.put("begin", nowLocalTime.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("end", nowLocalTime.plusHours(2).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -252,7 +252,7 @@ class DateTimeRuleTest {
         params.put("begin", nowLocalTime.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("end", nowLocalTime.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -267,7 +267,7 @@ class DateTimeRuleTest {
         params.put("begin", nowLocalTime.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("end", nowLocalTime.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         rule.setBetween(false);
 
@@ -285,7 +285,7 @@ class DateTimeRuleTest {
         params.put("end", nowLocalTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("tolerance", tolerance);
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -301,7 +301,7 @@ class DateTimeRuleTest {
         params.put("end", nowLocalTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("tolerance", tolerance);
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -317,7 +317,7 @@ class DateTimeRuleTest {
         params.put("begin", midnightBoundaryBegin.minusSeconds(30).format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("end", midnightBoundaryBegin.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -333,7 +333,7 @@ class DateTimeRuleTest {
         params.put("begin", midnightBoundaryEnd.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         params.put("end", midnightBoundaryEnd.plusSeconds(30).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -346,7 +346,7 @@ class DateTimeRuleTest {
         LocalTime nowTime = now.toLocalTime();
         params.put("end", nowTime.plusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -359,7 +359,7 @@ class DateTimeRuleTest {
         LocalTime nowTime = now.toLocalTime();
         params.put("begin", nowTime.minusHours(1).format(DateTimeFormatter.ISO_LOCAL_TIME));
         rule.setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{mockTimeSeries};
         BooleanTimeSeries[] result = rule.predicate().apply(input);

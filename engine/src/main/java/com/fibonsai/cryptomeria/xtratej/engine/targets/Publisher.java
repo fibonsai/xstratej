@@ -14,10 +14,10 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.targets;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TradingSignal;
 
-public abstract class Publisher extends Fifo<TradingSignal> {
+public abstract class Publisher extends DirectFlux<TradingSignal> {
 
     private final String name;
 

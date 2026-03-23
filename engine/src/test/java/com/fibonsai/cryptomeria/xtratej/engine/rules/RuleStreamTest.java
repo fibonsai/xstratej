@@ -14,7 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.EmptyTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
@@ -64,7 +64,7 @@ class RuleStreamTest {
         ruleStream.setPredicateFunction(_ -> expectedBooleanTimeSeriesArray);
 
         TimeSeries[] timeSeriesArray = { new DoubleTimeSeriesBuilder().add(0, 0.0).build() } ;
-        var inputStream = new Fifo<TimeSeries[]>();
+        var inputStream = new DirectFlux<TimeSeries[]>();
         ruleStream.watch(inputStream);
         AtomicReference<TimeSeries> result = new AtomicReference<>(EmptyTimeSeries.INSTANCE);
         CountDownLatch latch = new CountDownLatch(1);

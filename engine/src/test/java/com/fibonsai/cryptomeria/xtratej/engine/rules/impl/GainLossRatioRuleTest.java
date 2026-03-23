@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries;
@@ -56,7 +56,7 @@ class GainLossRatioRuleTest {
             .build();
 
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -77,7 +77,7 @@ class GainLossRatioRuleTest {
             .build();
 
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -102,7 +102,7 @@ class GainLossRatioRuleTest {
             .build();
 
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -132,7 +132,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 100.0);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -161,7 +161,7 @@ class GainLossRatioRuleTest {
 
         params.put("ratioMin", 0.5);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -190,7 +190,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", 0.5);
         params.put("ratioMax", 2.0);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -217,7 +217,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", 1.0);
         params.put("ratioMax", 100.0);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -241,7 +241,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 100.0);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -257,7 +257,7 @@ class GainLossRatioRuleTest {
     @Test
     void predicate_emptySeriesArray() {
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -279,7 +279,7 @@ class GainLossRatioRuleTest {
                 .build();
 
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -313,7 +313,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 100.0);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{builder.build()};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -331,7 +331,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", Double.POSITIVE_INFINITY);
         params.put("ratioMax", Double.POSITIVE_INFINITY);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id")
             .add(1000L, "order1", BID, TradeState.FILLED, 100.0, 1.0, 1.0)
@@ -363,7 +363,7 @@ class GainLossRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 100.0);
         GainLossRatioRule rule = (GainLossRatioRule) RuleType.GainLossRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);

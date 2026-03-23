@@ -146,7 +146,7 @@ public class StrategyTest {
             long timestamp = Instant.now().toEpochMilli();
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
-                source1.toFifo()
+                source1.toDirectFlux()
                         .emitNext(new DoubleTimeSeriesBuilder().setId("flux1").add(timestamp, value).build()));
         }
 
@@ -154,7 +154,7 @@ public class StrategyTest {
             long timestamp = Instant.now().toEpochMilli();
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
-                source2.toFifo()
+                source2.toDirectFlux()
                         .emitNext(new DoubleTimeSeriesBuilder().setId("flux2").add(timestamp, value).build()));
         }
 
@@ -162,7 +162,7 @@ public class StrategyTest {
             long timestamp = Instant.now().toEpochMilli();
             double value = random.nextDouble(0.0, n);
             Thread.startVirtualThread(() ->
-                source3.toFifo()
+                source3.toDirectFlux()
                         .emitNext(new DoubleTimeSeriesBuilder().setId("flux3").add(timestamp, value).build()));
         }
 
@@ -217,7 +217,7 @@ public class StrategyTest {
                         long timestamp = Instant.now().toEpochMilli();
                         double value = x * 1.0D;
                         Thread.startVirtualThread(() ->
-                                source.toFifo()
+                                source.toDirectFlux()
                                         .emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 } else if (sourceName.equals("flux2") || sourceName.equals("flux5")) {
@@ -225,7 +225,7 @@ public class StrategyTest {
                         long timestamp = Instant.now().toEpochMilli();
                         double value = x * 1.0D;
                         Thread.startVirtualThread(() ->
-                                source.toFifo()
+                                source.toDirectFlux()
                                         .emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 } else {
@@ -233,7 +233,7 @@ public class StrategyTest {
                         long timestamp = Instant.now().toEpochMilli();
                         double value = random.nextDouble(0.0, n);
                         Thread.startVirtualThread(() ->
-                                source.toFifo()
+                                source.toDirectFlux()
                                         .emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 }

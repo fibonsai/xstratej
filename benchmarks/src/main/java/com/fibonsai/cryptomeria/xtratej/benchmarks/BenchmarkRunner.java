@@ -23,7 +23,7 @@ public class BenchmarkRunner {
     public static void main(String[] args) throws Exception {
         Options opt = new OptionsBuilder()
                 .include(RuleEvaluationBenchmark.class.getSimpleName())
-                .include(FifoZipBenchmark.class.getSimpleName())
+                .include(DirectFluxZipBenchmark.class.getSimpleName())
                 .include(TimeSeriesBenchmark.class.getSimpleName())
                 .include(StrategyExecutionBenchmark.class.getSimpleName())
                 .forks(1)

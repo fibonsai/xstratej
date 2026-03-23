@@ -15,7 +15,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.builders.BooleanTimeSeriesBuilder;
@@ -39,7 +39,7 @@ class AndRuleTest {
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
         andRule = new AndRule();
-        andRule.watch(new Fifo<>());
+        andRule.watch(new DirectFlux<>());
     }
 
     @AfterEach

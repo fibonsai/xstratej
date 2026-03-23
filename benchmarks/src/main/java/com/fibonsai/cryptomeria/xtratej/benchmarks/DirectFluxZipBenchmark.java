@@ -14,7 +14,7 @@
 
 package com.fibonsai.cryptomeria.xtratej.benchmarks;
 
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.concurrent.CompletableFuture;
@@ -26,41 +26,41 @@ import java.util.concurrent.TimeUnit;
 @Fork(value = 1, jvmArgs = {"-Xms2G", "-Xmx2G"})
 @Warmup(iterations = 3, time = 2)
 @Measurement(iterations = 5, time = 2)
-public class FifoZipBenchmark {
+public class DirectFluxZipBenchmark {
 
     @Benchmark
-    public Fifo<String[]> benchmarkZipTwoSources() {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
+    public DirectFlux<String[]> benchmarkZipTwoSources() {
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
 
-        return Fifo.zip(r1, r2);
+        return DirectFlux.zip(r1, r2);
     }
 
     @Benchmark
-    public Fifo<String[]> benchmarkZipThreeSources() {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
-        Fifo<String> r3 = new Fifo<>();
+    public DirectFlux<String[]> benchmarkZipThreeSources() {
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
+        DirectFlux<String> r3 = new DirectFlux<>();
 
-        return Fifo.zip(r1, r2, r3);
+        return DirectFlux.zip(r1, r2, r3);
     }
 
     @Benchmark
-    public Fifo<Integer[]> benchmarkZipFiveSources() {
-        Fifo<Integer> r1 = new Fifo<>();
-        Fifo<Integer> r2 = new Fifo<>();
-        Fifo<Integer> r3 = new Fifo<>();
-        Fifo<Integer> r4 = new Fifo<>();
-        Fifo<Integer> r5 = new Fifo<>();
+    public DirectFlux<Integer[]> benchmarkZipFiveSources() {
+        DirectFlux<Integer> r1 = new DirectFlux<>();
+        DirectFlux<Integer> r2 = new DirectFlux<>();
+        DirectFlux<Integer> r3 = new DirectFlux<>();
+        DirectFlux<Integer> r4 = new DirectFlux<>();
+        DirectFlux<Integer> r5 = new DirectFlux<>();
 
-        return Fifo.zip(r1, r2, r3, r4, r5);
+        return DirectFlux.zip(r1, r2, r3, r4, r5);
     }
 
     @Benchmark
     public void benchmarkZipWithEmission() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
-        Fifo<String[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
 
         // Subscribe to consume the zipped output
         CompletableFuture<String[]> resultFuture = new CompletableFuture<>();
@@ -76,9 +76,9 @@ public class FifoZipBenchmark {
 
     @Benchmark
     public void benchmarkZipHighThroughput() throws InterruptedException {
-        Fifo<Integer> r1 = new Fifo<>();
-        Fifo<Integer> r2 = new Fifo<>();
-        Fifo<Integer[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<Integer> r1 = new DirectFlux<>();
+        DirectFlux<Integer> r2 = new DirectFlux<>();
+        DirectFlux<Integer[]> zipped = DirectFlux.zip(r1, r2);
 
         // Subscribe to consume the zipped output
         zipped.subscribe(arr -> {});

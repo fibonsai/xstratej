@@ -16,7 +16,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
@@ -77,7 +77,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -95,7 +95,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -114,7 +114,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series1 = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries series2 = createDoubleTimeSeries("s2", new long[]{1L, 2L}, new double[]{50.0, 50.0});
@@ -134,7 +134,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series1 = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries series2 = createDoubleTimeSeries("s2", new long[]{1L, 2L}, new double[]{70.0, 80.0});
@@ -167,7 +167,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -184,7 +184,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -202,7 +202,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -221,7 +221,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -238,7 +238,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -255,7 +255,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L}, new double[]{60.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -272,7 +272,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{-60.0, -40.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -290,7 +290,7 @@ class CrossedRuleTest {
             case CrossedRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1L, 2L}, new double[]{40.0, 60.0});
         TimeSeries[] input = new TimeSeries[]{series};

@@ -27,12 +27,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for {@link Fifo} – focusing on the {@code zip()} method.
+ * Unit tests for {@link DirectFlux} – focusing on the {@code zip()} method.
  *
  * <p>All tests that wait for asynchronous events use a generous but finite
  * {@code @Timeout} so the suite never hangs indefinitely.
  */
-class FifoTest {
+class DirectFluxTest {
 
     // ── helpers ───────────────────────────────────────────────────────────────
 
@@ -49,7 +49,7 @@ class FifoTest {
     @Test
     @Timeout(5)
     void singleSubscriberReceivesEvent() throws InterruptedException {
-        Fifo<String> reactor = new Fifo<>();
+        DirectFlux<String> reactor = new DirectFlux<>();
         CountDownLatch latch = new CountDownLatch(1);
         List<String> received = new CopyOnWriteArrayList<>();
 
@@ -64,7 +64,7 @@ class FifoTest {
     @Test
     @Timeout(5)
     void multipleSubscribersAllReceiveEvent() throws InterruptedException {
-        Fifo<Integer> reactor = new Fifo<>();
+        DirectFlux<Integer> reactor = new DirectFlux<>();
         int subscriberCount = 5;
         CountDownLatch latch = new CountDownLatch(subscriberCount);
         List<Integer> received = new CopyOnWriteArrayList<>();
@@ -87,10 +87,10 @@ class FifoTest {
     @Test
     @Timeout(5)
     void zipTwoSourcesEqualLength() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
 
-        Fifo<String[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(2);
@@ -117,11 +117,11 @@ class FifoTest {
     @Test
     @Timeout(5)
     void zipThreeSourcesUnequalLength() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
-        Fifo<String> r3 = new Fifo<>();   // only 1 event
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
+        DirectFlux<String> r3 = new DirectFlux<>();   // only 1 event
 
-        Fifo<String[]> zipped = Fifo.zip(r1, r2, r3);
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2, r3);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         // We expect exactly ONE tuple because r3 emits only once.
@@ -151,10 +151,10 @@ class FifoTest {
     @Test
     @Timeout(5)
     void zipPreservesEventOrder() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
 
-        Fifo<String[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(3);
@@ -178,8 +178,8 @@ class FifoTest {
     @Test
     @Timeout(5)
     void zipSingleSourceWrapsEventsInArrays() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String[]> zipped = Fifo.zip(r1);
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(2);
@@ -202,9 +202,9 @@ class FifoTest {
     @Timeout(10)
     void zipConcurrentEmissionsAreThreadSafe() throws InterruptedException {
         final int eventCount = 200;
-        Fifo<Integer> r1 = new Fifo<>();
-        Fifo<Integer> r2 = new Fifo<>();
-        Fifo<Integer[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<Integer> r1 = new DirectFlux<>();
+        DirectFlux<Integer> r2 = new DirectFlux<>();
+        DirectFlux<Integer[]> zipped = DirectFlux.zip(r1, r2);
 
         List<Integer[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(eventCount);
@@ -240,9 +240,9 @@ class FifoTest {
     @Test
     @Timeout(5)
     void zipResultSupportsMultipleConsumers() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
-        Fifo<String[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
 
         int consumers = 3;
         CountDownLatch latch = new CountDownLatch(consumers); // 1 tuple × 3 consumers
@@ -282,9 +282,9 @@ class FifoTest {
     @Test
     @Timeout(5)
     void zipRecoversAfterPartialSlotIsAbandoned() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
-        Fifo<String[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
 
         List<String[]> results = new CopyOnWriteArrayList<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -321,9 +321,9 @@ class FifoTest {
     @Test
     @Timeout(3)
     void zipEmitsNothingWithNoEvents() throws InterruptedException {
-        Fifo<String> r1 = new Fifo<>();
-        Fifo<String> r2 = new Fifo<>();
-        Fifo<String[]> zipped = Fifo.zip(r1, r2);
+        DirectFlux<String> r1 = new DirectFlux<>();
+        DirectFlux<String> r2 = new DirectFlux<>();
+        DirectFlux<String[]> zipped = DirectFlux.zip(r1, r2);
 
         AtomicInteger counter = new AtomicInteger(0);
         zipped.subscribe(_ -> counter.incrementAndGet());
@@ -341,10 +341,10 @@ class FifoTest {
     @Timeout(5)
     void zipResultArrayLengthMatchesSourceCount() throws InterruptedException {
         int sourceCount = 5;
-        Fifo<String>[] sources = Fifo.createArray(sourceCount);
-        for (int i = 0; i < sourceCount; i++) sources[i] = new Fifo<>();
+        DirectFlux<String>[] sources = DirectFlux.createArray(sourceCount);
+        for (int i = 0; i < sourceCount; i++) sources[i] = new DirectFlux<>();
 
-        Fifo<String[]> zipped = Fifo.zip(sources);
+        DirectFlux<String[]> zipped = DirectFlux.zip(sources);
 
         CountDownLatch latch = new CountDownLatch(1);
         List<Integer> lengths = new CopyOnWriteArrayList<>();
@@ -363,7 +363,7 @@ class FifoTest {
     @Test
     @Timeout(5)
     void concurrentSubscriptionsAreSafe() throws InterruptedException {
-        Fifo<String> reactor = new Fifo<>();
+        DirectFlux<String> reactor = new DirectFlux<>();
         int threads = 50;
         CountDownLatch subscribeLatch = new CountDownLatch(threads);
         CountDownLatch receiveLatch   = new CountDownLatch(threads);

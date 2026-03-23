@@ -132,7 +132,7 @@ public class NatsSubscriber extends Subscriber implements WithParams {
                         if (log.isDebugEnabled()) {
                             log.debug(">>>>>>> [{}] SEND {}", timeSeries.timestamp(), timeSeries);
                         }
-                        toFifo().emitNext(timeSeries);
+                        toDirectFlux().emitNext(timeSeries);
                     } else {
                         log.warn("header `class` NOT defined or its value IS NOT supported");
                     }

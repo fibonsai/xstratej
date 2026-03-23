@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries;
@@ -65,7 +65,7 @@ class ActiveOrderRuleTest {
         params.put("min", 1);
         params.put("max", 5);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -87,7 +87,7 @@ class ActiveOrderRuleTest {
 
         params.put("min", 1);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -110,7 +110,7 @@ class ActiveOrderRuleTest {
         params.put("min", 3);
         params.put("max", 5);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -136,7 +136,7 @@ class ActiveOrderRuleTest {
         params.put("min", 1);
         params.put("max", 3);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -159,7 +159,7 @@ class ActiveOrderRuleTest {
 
         params.put("min", 3);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -184,7 +184,7 @@ class ActiveOrderRuleTest {
 
         params.put("max", 5);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -211,7 +211,7 @@ class ActiveOrderRuleTest {
         params.put("min", 1);
         params.put("max", 5);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -239,7 +239,7 @@ class ActiveOrderRuleTest {
         params.put("min", 5);
         params.put("max", 10);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -264,7 +264,7 @@ class ActiveOrderRuleTest {
 
         params.put("min", 1);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -281,7 +281,7 @@ class ActiveOrderRuleTest {
         MyOrdersTimeSeries series = new MyOrdersTimeSeriesBuilder().setId("id").build();
 
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -301,7 +301,7 @@ class ActiveOrderRuleTest {
         .build();
 
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -327,7 +327,7 @@ class ActiveOrderRuleTest {
         params.put("min", 1);
         params.put("max", 5);
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -353,7 +353,7 @@ class ActiveOrderRuleTest {
                 .build();
 
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -369,7 +369,7 @@ class ActiveOrderRuleTest {
     @Test
     void predicate_emptySeriesArray() {
         ActiveOrderRule rule = (ActiveOrderRule) RuleType.ActiveOrder.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{};
         BooleanTimeSeries[] result = rule.predicate().apply(input);

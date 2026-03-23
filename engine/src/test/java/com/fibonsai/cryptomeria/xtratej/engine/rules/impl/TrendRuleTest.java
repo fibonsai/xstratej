@@ -16,7 +16,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.TimeSeries;
@@ -76,7 +76,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Rising
         TimeSeries[] input = new TimeSeries[]{series};
@@ -93,7 +93,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
         TimeSeries[] input = new TimeSeries[]{series};
@@ -110,7 +110,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1}); // Falling
         TimeSeries[] input = new TimeSeries[]{series};
@@ -129,7 +129,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries s1 = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Slope 1.0
         TimeSeries s2 = createDoubleTimeSeries("s2", new long[]{1, 2, 3}, new double[]{1, 1.5, 2}); // Slope 0.5
@@ -162,7 +162,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -180,7 +180,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries emptySeries = createDoubleTimeSeries("s1", new long[]{}, new double[]{});
         TimeSeries[] input = new TimeSeries[]{emptySeries};
@@ -198,7 +198,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1}, new double[]{50.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -216,7 +216,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3, 4}, new double[]{50.0, 50.0, 50.0, 50.0});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -235,7 +235,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{3, 2, 1});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -254,7 +254,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries s1 = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{1, 2, 3}); // Rising
         TimeSeries s2 = createDoubleTimeSeries("s2", new long[]{1, 2, 3}, new double[]{1, 1.5, 2}); // Rising but lower
@@ -274,7 +274,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{-3, -2, -1});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -292,7 +292,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries series = createDoubleTimeSeries("s1", new long[]{1, 2, 3}, new double[]{0.0, 0.000001, 0.000002});
         TimeSeries[] input = new TimeSeries[]{series};
@@ -310,7 +310,7 @@ class TrendRuleTest {
             case TrendRule r -> r;
             default -> throw new RuntimeException();
         };
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         // Boolean series should be ignored
         TimeSeries booleanSeries = new BooleanTimeSeriesBuilder().setId("s1").add(1, true).add(2, false).build();

@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BarTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
@@ -67,7 +67,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -95,7 +95,7 @@ class MaxDrawdownRuleTest {
         // maxDrawdown = 1.0 - ((100 - 120) / 120) = 1.0 + 20/120 = 1.167
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -120,7 +120,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -147,7 +147,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 1.3);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -175,7 +175,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -202,7 +202,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -234,7 +234,7 @@ class MaxDrawdownRuleTest {
         // maxDrawdown = 1.0 - ((101 - 103) / 103) = 1.0 + 2/103 = 1.019
         params.put("max", 1.01);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -259,7 +259,7 @@ class MaxDrawdownRuleTest {
         // maxDrawdown = 1.0 - ((80 - 120) / 120) = 1.0 + 40/120 = 1.333
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -289,7 +289,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -318,7 +318,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -340,7 +340,7 @@ class MaxDrawdownRuleTest {
             .build();
 
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -363,7 +363,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 2.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -389,7 +389,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 100.0);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -413,7 +413,7 @@ class MaxDrawdownRuleTest {
             .build();
 
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -442,7 +442,7 @@ class MaxDrawdownRuleTest {
         // maxDrawdown = 1.0 - ((90 - 150) / 150) = 1.0 + 60/150 = 1.4
         params.put("max", 1.4);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -473,7 +473,7 @@ class MaxDrawdownRuleTest {
 
         params.put("max", 1.25);
         MaxDrawdownRule rule = (MaxDrawdownRule) RuleType.MaxDrawdown.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);

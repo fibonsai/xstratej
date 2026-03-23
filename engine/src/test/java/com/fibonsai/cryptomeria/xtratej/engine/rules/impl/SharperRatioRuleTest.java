@@ -15,7 +15,7 @@
 package com.fibonsai.cryptomeria.xtratej.engine.rules.impl;
 
 import com.fibonsai.cryptomeria.xtratej.engine.rules.RuleType;
-import com.fibonsai.cryptomeria.xtratej.event.reactive.Fifo;
+import com.fibonsai.cryptomeria.xtratej.event.reactive.DirectFlux;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.DoubleTimeSeries;
 import com.fibonsai.cryptomeria.xtratej.event.series.dao.MyOrdersTimeSeries;
@@ -66,7 +66,7 @@ class SharperRatioRuleTest {
             .build();
 
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -88,7 +88,7 @@ class SharperRatioRuleTest {
             .build();
 
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -113,7 +113,7 @@ class SharperRatioRuleTest {
             .build();
 
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -145,7 +145,7 @@ class SharperRatioRuleTest {
         params.put("ratioMin", -1.0);
         params.put("ratioMax", 1.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -179,7 +179,7 @@ class SharperRatioRuleTest {
         // Sharpe ≈ 2.45, min = 2.0
         params.put("ratioMin", 2.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -213,7 +213,7 @@ class SharperRatioRuleTest {
         // Sharpe ≈ -2.45, max = -1.0
         params.put("ratioMax", -1.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -238,7 +238,7 @@ class SharperRatioRuleTest {
             .build();
 
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -267,7 +267,7 @@ class SharperRatioRuleTest {
         params.put("riskFreeRate", 5.0);
         params.put("ratioMin", 10.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -296,7 +296,7 @@ class SharperRatioRuleTest {
         // Sharpe ≈ -2.45, should be below ratioMin of 0
         params.put("ratioMin", 0.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -330,7 +330,7 @@ class SharperRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 1.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -357,7 +357,7 @@ class SharperRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 100.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -383,7 +383,7 @@ class SharperRatioRuleTest {
                 .build();
 
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -399,7 +399,7 @@ class SharperRatioRuleTest {
     @Test
     void predicate_emptySeriesArray() {
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
@@ -430,7 +430,7 @@ class SharperRatioRuleTest {
         params.put("ratioMin", 0.0);
         params.put("ratioMax", 100.0);
         SharperRatioRule rule = (SharperRatioRule) RuleType.SharperRatio.build().setParams(params);
-        rule.watch(new Fifo<>());
+        rule.watch(new DirectFlux<>());
 
         TimeSeries[] input = new TimeSeries[]{series1, series2};
         BooleanTimeSeries[] result = rule.predicate().apply(input);
