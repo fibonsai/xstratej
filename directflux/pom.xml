@@ -20,7 +20,7 @@
 
     <groupId>com.fibonsai.cryptomeria</groupId>
     <artifactId>directflux</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <packaging>jar</packaging>
 
     <properties>

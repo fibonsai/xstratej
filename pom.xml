@@ -28,7 +28,7 @@
 
     <artifactId>xtratej</artifactId>
     <groupId>com.fibonsai.cryptomeria</groupId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
     <description>Strategy engine from Fibonsai</description>
     <url>https://github.com/fibonsai/xtratej</url>
