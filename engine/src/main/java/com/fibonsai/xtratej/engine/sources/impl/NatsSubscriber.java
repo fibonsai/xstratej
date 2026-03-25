@@ -14,8 +14,8 @@
 
 package com.fibonsai.xtratej.engine.sources.impl;
 
+import com.fibonsai.xtratej.engine.WithParams;
 import com.fibonsai.xtratej.engine.sources.Subscriber;
-import com.fibonsai.xtratej.engine.sources.WithParams;
 import com.fibonsai.xtratej.event.series.dao.*;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;

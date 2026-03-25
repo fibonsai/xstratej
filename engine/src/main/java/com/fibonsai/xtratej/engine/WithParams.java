@@ -12,9 +12,8 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.engine.targets;
+package com.fibonsai.xtratej.engine;
 
-import com.fibonsai.xtratej.engine.Adapter;
 import tools.jackson.databind.JsonNode;
 
 public interface WithParams {

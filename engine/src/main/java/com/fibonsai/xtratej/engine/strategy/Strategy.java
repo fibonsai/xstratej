@@ -14,12 +14,12 @@
 
 package com.fibonsai.xtratej.engine.strategy;
 
+import com.fibonsai.xtratej.engine.WithParams;
 import com.fibonsai.xtratej.engine.rules.RuleStream;
 import com.fibonsai.xtratej.engine.rules.RuleType;
 import com.fibonsai.xtratej.engine.rules.impl.FalseRule;
 import com.fibonsai.xtratej.engine.sources.SourceType;
 import com.fibonsai.xtratej.engine.sources.Subscriber;
-import com.fibonsai.xtratej.engine.sources.WithParams;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

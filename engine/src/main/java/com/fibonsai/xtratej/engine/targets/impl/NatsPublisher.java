@@ -14,8 +14,8 @@
 
 package com.fibonsai.xtratej.engine.targets.impl;
 
+import com.fibonsai.xtratej.engine.WithParams;
 import com.fibonsai.xtratej.engine.targets.Publisher;
-import com.fibonsai.xtratej.engine.targets.WithParams;
 import com.fibonsai.xtratej.event.series.dao.TradingSignal;
 import io.nats.client.AuthHandler;
 import io.nats.client.Connection;
