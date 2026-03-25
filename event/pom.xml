@@ -36,7 +36,6 @@
         <dependency>
             <groupId>com.fibonsai</groupId>
             <artifactId>directflux</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
