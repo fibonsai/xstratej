@@ -180,8 +180,8 @@ class StrategyManagerTest {
         strategyManager.registerStrategy(strategy2);
 
         boolean result = strategyManager.run();
-        source1.toDirectFlux().emitNext(EmptyTimeSeries.INSTANCE);
-        source2.toDirectFlux().emitNext(EmptyTimeSeries.INSTANCE);
+        source1.emitNext(EmptyTimeSeries.INSTANCE);
+        source2.emitNext(EmptyTimeSeries.INSTANCE);
 
         assertTrue(result);
     }
@@ -221,7 +221,7 @@ class StrategyManagerTest {
         }
 
         boolean result = strategyManager.run();
-        sources.forEach(s -> s.toDirectFlux().emitNext(EmptyTimeSeries.INSTANCE));
+        sources.forEach(s -> s.emitNext(EmptyTimeSeries.INSTANCE));
 
         assertTrue(result);
     }
@@ -254,8 +254,8 @@ class StrategyManagerTest {
         strategyManager.registerStrategy(workingStrategy);
 
         boolean result = strategyManager.run();
-        source1.toDirectFlux().emitNext(EmptyTimeSeries.INSTANCE);
-        source2.toDirectFlux().emitNext(EmptyTimeSeries.INSTANCE);
+        source1.emitNext(EmptyTimeSeries.INSTANCE);
+        source2.emitNext(EmptyTimeSeries.INSTANCE);
 
         assertTrue(result);
     }
@@ -287,7 +287,7 @@ class StrategyManagerTest {
         strategyManager.registerStrategy(slowStrategy);
 
         boolean result = strategyManager.run();
-        source.toDirectFlux().emitNext(EmptyTimeSeries.INSTANCE);
+        source.emitNext(EmptyTimeSeries.INSTANCE);
 
         assertTrue(result);
     }

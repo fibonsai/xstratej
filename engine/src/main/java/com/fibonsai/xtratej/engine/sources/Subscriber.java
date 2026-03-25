@@ -17,10 +17,9 @@ package com.fibonsai.xtratej.engine.sources;
 import com.fibonsai.directflux.DirectFlux;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 
-public abstract class Subscriber {
+public abstract class Subscriber extends DirectFlux<TimeSeries> {
     private final String name;
     private final String publisher;
-    private final DirectFlux<TimeSeries> directFlux = new DirectFlux<>();
 
     public Subscriber(String name, String publisher) {
         this.name = name;
@@ -33,10 +32,6 @@ public abstract class Subscriber {
 
     public String publisher() {
         return publisher;
-    }
-
-    public DirectFlux<TimeSeries> toDirectFlux() {
-        return this.directFlux;
     }
 
     public abstract boolean connect();

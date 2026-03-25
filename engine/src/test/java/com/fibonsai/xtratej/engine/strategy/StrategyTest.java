@@ -146,24 +146,21 @@ public class StrategyTest {
             long timestamp = Instant.now().toEpochMilli();
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
-                source1.toDirectFlux()
-                        .emitNext(new DoubleTimeSeriesBuilder().setId("flux1").add(timestamp, value).build()));
+                source1.emitNext(new DoubleTimeSeriesBuilder().setId("flux1").add(timestamp, value).build()));
         }
 
         for (int x=n-1; x>=0; x--) {
             long timestamp = Instant.now().toEpochMilli();
             double value = x * 1.0D;
             Thread.startVirtualThread(() ->
-                source2.toDirectFlux()
-                        .emitNext(new DoubleTimeSeriesBuilder().setId("flux2").add(timestamp, value).build()));
+                source2.emitNext(new DoubleTimeSeriesBuilder().setId("flux2").add(timestamp, value).build()));
         }
 
         for (int x=0; x < n; x++) {
             long timestamp = Instant.now().toEpochMilli();
             double value = random.nextDouble(0.0, n);
             Thread.startVirtualThread(() ->
-                source3.toDirectFlux()
-                        .emitNext(new DoubleTimeSeriesBuilder().setId("flux3").add(timestamp, value).build()));
+                source3.emitNext(new DoubleTimeSeriesBuilder().setId("flux3").add(timestamp, value).build()));
         }
 
         assertDoesNotThrow(() -> enterLatch.await(2, TimeUnit.SECONDS));
@@ -217,24 +214,21 @@ public class StrategyTest {
                         long timestamp = Instant.now().toEpochMilli();
                         double value = x * 1.0D;
                         Thread.startVirtualThread(() ->
-                                source.toDirectFlux()
-                                        .emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
+                                source.emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 } else if (sourceName.equals("flux2") || sourceName.equals("flux5")) {
                     for (int x=n-1; x>=0; x--) {
                         long timestamp = Instant.now().toEpochMilli();
                         double value = x * 1.0D;
                         Thread.startVirtualThread(() ->
-                                source.toDirectFlux()
-                                        .emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
+                                source.emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 } else {
                     for (int x=0; x < n; x++) {
                         long timestamp = Instant.now().toEpochMilli();
                         double value = random.nextDouble(0.0, n);
                         Thread.startVirtualThread(() ->
-                                source.toDirectFlux()
-                                        .emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
+                                source.emitNext(new DoubleTimeSeriesBuilder().setId(sourceName).add(timestamp, value).build()));
                     }
                 }
             }

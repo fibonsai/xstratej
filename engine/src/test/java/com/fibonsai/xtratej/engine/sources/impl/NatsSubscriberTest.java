@@ -198,7 +198,7 @@ public class NatsSubscriberTest {
         CountDownLatch latch1 = new CountDownLatch(1);
         CountDownLatch latch2 = new CountDownLatch(1);
         
-        natsSubscriber.toDirectFlux().subscribe(timeSeries -> {
+        natsSubscriber.subscribe(timeSeries -> {
             assertInstanceOf(DoubleTimeSeries.class, timeSeries);
             DoubleTimeSeries doubleTimeSeries = (DoubleTimeSeries) timeSeries;
             if ("topic1-series".equals(doubleTimeSeries.id())) {
@@ -238,7 +238,7 @@ public class NatsSubscriberTest {
         headers.add("class", testSeries.getClass().getSimpleName());
 
         CountDownLatch latch = new CountDownLatch(1);
-        natsSubscriber.toDirectFlux().subscribe(data -> {
+        natsSubscriber.subscribe(data -> {
             assertInstanceOf(testSeries.getClass(), data);
             TimeSeries timeSeries = testSeries.getClass().cast(data);
             assertEquals("test-series", timeSeries.id());

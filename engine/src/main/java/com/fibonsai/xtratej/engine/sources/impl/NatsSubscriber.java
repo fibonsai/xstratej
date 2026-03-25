@@ -16,10 +16,7 @@ package com.fibonsai.xtratej.engine.sources.impl;
 
 import com.fibonsai.xtratej.engine.sources.Subscriber;
 import com.fibonsai.xtratej.engine.sources.WithParams;
-import com.fibonsai.xtratej.event.series.dao.BarTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.DoubleTimeSeries;
-import com.fibonsai.xtratej.event.series.dao.TimeSeries;
+import com.fibonsai.xtratej.event.series.dao.*;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;
 import org.jspecify.annotations.Nullable;
@@ -33,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -114,36 +112,55 @@ public class NatsSubscriber extends Subscriber implements WithParams {
     @Override
     public boolean connect() {
         try {
-            connection = Nats.connectReconnectOnConnect(natsOptions);
-            dispatcher = connection.createDispatcher(raw -> {
-                String msg = new String(raw.getData(), StandardCharsets.UTF_8);
-                Headers headers = raw.getHeaders();
-                String className = headers != null ? headers.getFirst("class") : Object.class.getSimpleName();
-                TimeSeries timeSeries = null;
-
-                if (className != null) {
-                    for (var clazz: CLASSES_SUPPORTED) {
-                        if (clazz.getSimpleName().equals(className)) {
-                            timeSeries = MAPPER.readValue(msg, clazz);
-                            break;
-                        }
-                    }
-                    if (timeSeries != null) {
-                        if (log.isDebugEnabled()) {
-                            log.debug(">>>>>>> [{}] SEND {}", timeSeries.timestamp(), timeSeries);
-                        }
-                        toDirectFlux().emitNext(timeSeries);
-                    } else {
-                        log.warn("header `class` NOT defined or its value IS NOT supported");
-                    }
-                }
-            });
+            connection = Objects.requireNonNull(Nats.connectReconnectOnConnect(natsOptions));
+            dispatcher = connection.createDispatcher(handler());
             boolean subscribed = topics.stream().map(dispatcher::subscribe).allMatch(Consumer::isActive);
             connected.set(connection.getStatus() == Connection.Status.CONNECTED && dispatcher.isActive() && subscribed);
         } catch (InterruptedException | IOException e) {
             log.error(e.getMessage(), e);
+        } catch (NullPointerException e) {
+            log.error("not connected. aborting.");
         }
         return connected.get();
+    }
+
+    private MessageHandler handler() {
+        return raw -> {
+            byte[] data = raw.getData();
+            Headers headers = raw.getHeaders();
+
+            TimeSeries timeSeries = decode(data, headers);
+
+            if (timeSeries != EmptyTimeSeries.INSTANCE) {
+                if (log.isDebugEnabled()) {
+                    log.debug(">>>>>>> [{}] SEND {}", timeSeries.timestamp(), timeSeries);
+                }
+                emitNext(timeSeries);
+            } else {
+                log.warn("header `class` NOT defined or its value IS NOT supported");
+            }
+        };
+    }
+
+    private static TimeSeries decode(byte[] data, @Nullable Headers headers) {
+        String msg = new String(data, StandardCharsets.UTF_8);
+        String className = headers != null ? headers.getFirst("class") : Object.class.getSimpleName();
+        TimeSeries timeSeries = null;
+
+        if (className != null) {
+            for (var clazz : CLASSES_SUPPORTED) {
+                if (clazz.getSimpleName().equals(className)) {
+                    timeSeries = decode(clazz, msg);
+                    break;
+                }
+            }
+        }
+
+        return timeSeries == null ? EmptyTimeSeries.INSTANCE : timeSeries;
+    }
+
+    private static TimeSeries decode(Class<? extends TimeSeries> clazz, String msg) {
+        return MAPPER.readValue(msg, clazz);
     }
 
     @Override

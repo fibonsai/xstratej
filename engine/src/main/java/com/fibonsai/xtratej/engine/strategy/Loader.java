@@ -159,7 +159,7 @@ public class Loader {
             if (firstInput != null && firstInput.isString()) {
                 for (var input : inputs) {
                     Subscriber subscriber = strategy.getSources().get(input.asString());
-                    arrayOfFluxes[counter++] = subscriber != null ? subscriber.toDirectFlux() : DirectFlux.empty();
+                    arrayOfFluxes[counter++] = subscriber != null ? subscriber : DirectFlux.empty();
                 }
             } else {
                 for (var input : inputs) {

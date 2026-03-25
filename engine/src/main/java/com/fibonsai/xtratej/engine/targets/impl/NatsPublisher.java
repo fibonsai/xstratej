@@ -30,6 +30,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static com.fibonsai.xtratej.engine.targets.impl.NatsPublisher.NatsKey.*;
 
@@ -97,7 +98,7 @@ public class NatsPublisher extends Publisher implements WithParams {
         return this;
     }
 
-    private java.util.function.Consumer<TradingSignal> publishToNats() {
+    private Consumer<TradingSignal> publishToNats() {
         return signal -> {
             if (connection != null && isConnected()) {
                 byte[] bytes = MAPPER.writeValueAsBytes(signal);

@@ -74,7 +74,7 @@ public abstract class RuleStream<T extends TimeSeries> {
         DirectFlux<TimeSeries>[] arrayOfFluxes = DirectFlux.createArray(subscribers.length);
         int count = 0;
         for (var subscribe: subscribers) {
-            arrayOfFluxes[count++] = subscribe.toDirectFlux();
+            arrayOfFluxes[count++] = subscribe;
         }
         DirectFlux<TimeSeries[]> inputs = DirectFlux.zip(arrayOfFluxes);
         watch(inputs);
