@@ -14,8 +14,9 @@
 
 package com.fibonsai.xtratej.engine.sources;
 
-import com.fibonsai.xtratej.engine.sources.impl.NatsSubscriber;
-import com.fibonsai.xtratej.engine.sources.impl.SimulatedSubscriber;
+import com.fibonsai.xtratej.adaptor.core.Subscriber;
+import com.fibonsai.xtratej.adaptor.nats.NatsSubscriber;
+import com.fibonsai.xtratej.adaptor.simulated.SimulatedSubscriber;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;

@@ -14,7 +14,7 @@
 
 package com.fibonsai.xtratej.engine.strategy;
 
-import com.fibonsai.xtratej.engine.targets.Publisher;
+import com.fibonsai.xtratej.adaptor.core.Publisher;
 import com.fibonsai.xtratej.engine.targets.TargetType;
 import com.fibonsai.xtratej.event.series.dao.BooleanTimeSeries;
 import com.fibonsai.xtratej.event.series.dao.TradingSignal;

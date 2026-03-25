@@ -17,50 +17,29 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>com.fibonsai</groupId>
-        <artifactId>xtratej</artifactId>
-        <version>1.2.2</version>
+        <groupId>com.fibonsai.xtratej</groupId>
+        <artifactId>adapter</artifactId>
+        <version>1.0.0</version>
     </parent>
 
-    <groupId>com.fibonsai.xtratej</groupId>
-    <artifactId>engine</artifactId>
+    <artifactId>adapter-simulated</artifactId>
 
     <properties>
+        <java.version>25</java.version>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <argLine/>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.fibonsai.xtratej</groupId>
-            <artifactId>event</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fibonsai.xtratej</groupId>
-            <artifactId>adapter-nats</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fibonsai.xtratej</groupId>
-            <artifactId>adapter-simulated</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hipparchus</groupId>
-            <artifactId>hipparchus-stat</artifactId>
+            <artifactId>adapter-core</artifactId>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>fibonsai</name>
-            <url>https://maven.pkg.github.com/fibonsai/xtratej</url>
-        </repository>
-    </distributionManagement>
 
 </project>

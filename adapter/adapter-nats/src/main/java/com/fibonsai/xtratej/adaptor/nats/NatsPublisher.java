@@ -12,10 +12,10 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.engine.targets.impl;
+package com.fibonsai.xtratej.adaptor.nats;
 
-import com.fibonsai.xtratej.engine.WithParams;
-import com.fibonsai.xtratej.engine.targets.Publisher;
+import com.fibonsai.xtratej.adaptor.core.Publisher;
+import com.fibonsai.xtratej.adaptor.core.WithParams;
 import com.fibonsai.xtratej.event.series.dao.TradingSignal;
 import io.nats.client.AuthHandler;
 import io.nats.client.Connection;
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static com.fibonsai.xtratej.engine.targets.impl.NatsPublisher.NatsKey.*;
+import static com.fibonsai.xtratej.adaptor.nats.NatsPublisher.NatsKey.*;
 
 public class NatsPublisher extends Publisher implements WithParams {
 

@@ -14,7 +14,8 @@
 
 package com.fibonsai.xtratej.engine.targets;
 
-import com.fibonsai.xtratej.engine.targets.impl.SimulatedPublisher;
+import com.fibonsai.xtratej.adaptor.core.Publisher;
+import com.fibonsai.xtratej.adaptor.simulated.SimulatedPublisher;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;

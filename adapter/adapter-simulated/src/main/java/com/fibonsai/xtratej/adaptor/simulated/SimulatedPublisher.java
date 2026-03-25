@@ -12,10 +12,28 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.engine;
+package com.fibonsai.xtratej.adaptor.simulated;
 
-import tools.jackson.databind.JsonNode;
+import com.fibonsai.xtratej.adaptor.core.Publisher;
 
-public interface WithParams {
-    Adapter setParams(JsonNode params);
+public class SimulatedPublisher extends Publisher {
+
+    public SimulatedPublisher(String name) {
+        super(name);
+    }
+
+    @Override
+    public boolean connect() {
+        return true;
+    }
+
+    @Override
+    public boolean disconnect() {
+        return true;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return true;
+    }
 }

@@ -12,7 +12,28 @@
  *  limitations under the License.
  */
 
-@NullMarked
-package com.fibonsai.xtratej.engine.targets.impl;
+package com.fibonsai.xtratej.adaptor.simulated;
 
-import org.jspecify.annotations.NullMarked;
+import com.fibonsai.xtratej.adaptor.core.Subscriber;
+
+public class SimulatedSubscriber extends Subscriber {
+
+    public SimulatedSubscriber(String name, String publisher) {
+        super(name, publisher);
+    }
+
+    @Override
+    public boolean connect() {
+        return true;
+    }
+
+    @Override
+    public boolean disconnect() {
+        return true;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return false;
+    }
+}

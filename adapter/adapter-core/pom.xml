@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright (c) 2026 fibonsai.com
+  ~  All rights reserved.
+  ~
+  ~  This source is subject to the Apache License, Version 2.0.
+  ~  Please see the LICENSE file for more information.
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.fibonsai.xtratej</groupId>
+        <artifactId>adapter</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>adapter-core</artifactId>
+
+    <description>Inflow market data and private data</description>
+    <url>https://github.com/fibonsai/xtratej</url>
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+        </license>
+    </licenses>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url>https://github.com/fibonsai/xtratej</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Marcelo Teixeira Monteiro (tuxmonteiro)</name>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/fibonsai/xtratej/issues</url>
+    </issueManagement>
+
+    <properties>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <argLine/>
+    </properties>
+
+</project>

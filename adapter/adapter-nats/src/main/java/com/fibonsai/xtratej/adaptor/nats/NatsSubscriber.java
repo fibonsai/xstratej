@@ -12,10 +12,10 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.engine.sources.impl;
+package com.fibonsai.xtratej.adaptor.nats;
 
-import com.fibonsai.xtratej.engine.WithParams;
-import com.fibonsai.xtratej.engine.sources.Subscriber;
+import com.fibonsai.xtratej.adaptor.core.Subscriber;
+import com.fibonsai.xtratej.adaptor.core.WithParams;
 import com.fibonsai.xtratej.event.series.dao.*;
 import io.nats.client.*;
 import io.nats.client.impl.Headers;
@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.fibonsai.xtratej.engine.sources.impl.NatsSubscriber.NatsKey.*;
+import static com.fibonsai.xtratej.adaptor.nats.NatsSubscriber.NatsKey.*;
 
 public class NatsSubscriber extends Subscriber implements WithParams {
 

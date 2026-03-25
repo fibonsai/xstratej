@@ -12,28 +12,11 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.engine.targets.impl;
+package com.fibonsai.xtratej.adaptor.core;
 
-import com.fibonsai.xtratej.engine.targets.Publisher;
-
-public class SimulatedPublisher extends Publisher {
-
-    public SimulatedPublisher(String name) {
-        super(name);
-    }
-
-    @Override
-    public boolean connect() {
-        return true;
-    }
-
-    @Override
-    public boolean disconnect() {
-        return true;
-    }
-
-    @Override
-    public boolean isConnected() {
-        return true;
-    }
+public interface Adapter {
+    String name();
+    boolean connect();
+    boolean disconnect();
+    boolean isConnected();
 }

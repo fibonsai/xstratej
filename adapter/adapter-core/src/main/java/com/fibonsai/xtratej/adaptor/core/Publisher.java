@@ -12,11 +12,24 @@
  *  limitations under the License.
  */
 
-package com.fibonsai.xtratej.engine;
+package com.fibonsai.xtratej.adaptor.core;
 
-public interface Adapter {
-    String name();
-    boolean connect();
-    boolean disconnect();
-    boolean isConnected();
+import com.fibonsai.directflux.DirectFlux;
+import com.fibonsai.xtratej.event.series.dao.TradingSignal;
+
+public abstract class Publisher extends DirectFlux<TradingSignal> implements Adapter {
+
+    private final String name;
+
+    public Publisher(String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public abstract boolean connect();
+    public abstract boolean disconnect();
+    public abstract boolean isConnected();
 }

@@ -14,15 +14,15 @@
 
 package com.fibonsai.xtratej.engine.strategy;
 
+import com.fibonsai.xtratej.adaptor.core.Publisher;
+import com.fibonsai.xtratej.adaptor.core.Subscriber;
 import com.fibonsai.xtratej.engine.rules.RuleType;
 import com.fibonsai.xtratej.engine.rules.impl.AndRule;
 import com.fibonsai.xtratej.engine.rules.impl.LimitRule;
 import com.fibonsai.xtratej.engine.rules.impl.NotRule;
 import com.fibonsai.xtratej.engine.rules.impl.OrRule;
 import com.fibonsai.xtratej.engine.sources.SourceType;
-import com.fibonsai.xtratej.engine.sources.Subscriber;
 import com.fibonsai.xtratej.engine.strategy.IStrategy.StrategyType;
-import com.fibonsai.xtratej.engine.targets.Publisher;
 import com.fibonsai.xtratej.engine.targets.TargetType;
 import com.fibonsai.xtratej.event.series.dao.TradingSignal;
 import com.fibonsai.xtratej.event.series.dao.builders.DoubleTimeSeriesBuilder;

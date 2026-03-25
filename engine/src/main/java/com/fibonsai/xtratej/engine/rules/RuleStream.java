@@ -15,7 +15,7 @@
 package com.fibonsai.xtratej.engine.rules;
 
 import com.fibonsai.directflux.DirectFlux;
-import com.fibonsai.xtratej.engine.sources.Subscriber;
+import com.fibonsai.xtratej.adaptor.core.Subscriber;
 import com.fibonsai.xtratej.event.series.dao.*;
 import com.fibonsai.xtratej.event.series.dao.builders.*;
 import org.slf4j.Logger;
