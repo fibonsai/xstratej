@@ -23,7 +23,7 @@
         <module>directflux</module>
         <module>event</module>
         <module>engine</module>
-        <module>inflow</module>
+        <module>adapter</module>
         <module>benchmarks</module>
     </modules>
 

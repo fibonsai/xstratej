@@ -25,7 +25,7 @@
     </parent>
 
     <groupId>com.fibonsai.xtratej</groupId>
-    <artifactId>inflow</artifactId>
+    <artifactId>adapter</artifactId>
     <version>1.0.0</version>
 
     <description>Inflow market data and private data</description>
@@ -66,6 +66,10 @@
         <dependency>
             <groupId>com.fibonsai.xtratej</groupId>
             <artifactId>event</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 
