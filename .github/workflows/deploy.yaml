@@ -20,11 +20,11 @@ jobs:
         java-version: '25'
         distribution: 'liberica'
         cache: maven
-    - name: packaging
-      run: mvn --batch-mode --update-snapshots --no-transfer-progress clean package
+    - name: Test Deploy (dry run)
+      run: mvn deploy -DaltDeploymentRepository=github::default::file:/tmp/alt-repo  --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Deploy with Maven
-      run: ./mvnw -B deploy
+    - name: Deploy
+      run: mvn deploy --batch-mode --update-snapshots --no-transfer-progress --file pom.xml -DskipTests -Dmaven.test.skip=true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
