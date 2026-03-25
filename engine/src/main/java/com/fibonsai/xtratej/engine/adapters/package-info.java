@@ -13,6 +13,6 @@
  */
 
 @NullMarked
-package com.fibonsai.xtratej.engine.sources;
+package com.fibonsai.xtratej.engine.adapters;
 
 import org.jspecify.annotations.NullMarked;

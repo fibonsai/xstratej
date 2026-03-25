@@ -1,25 +1,25 @@
 /*
- * Copyright (c) 2026 fibonsai.com
- * All rights reserved.
+ *  Copyright (c) 2026 fibonsai.com
+ *  All rights reserved.
  *
- * This source is subject to the Apache License, Version 2.0.
- * Please see the LICENSE file for more information.
+ *  This source is subject to the Apache License, Version 2.0.
+ *  Please see the LICENSE file for more information.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.fibonsai.xtratej.benchmarks;
 
+import com.fibonsai.xtratej.engine.adapters.SourceType;
+import com.fibonsai.xtratej.engine.adapters.TargetType;
 import com.fibonsai.xtratej.engine.rules.RuleType;
-import com.fibonsai.xtratej.engine.sources.SourceType;
 import com.fibonsai.xtratej.engine.strategy.IStrategy;
 import com.fibonsai.xtratej.engine.strategy.Strategy;
 import com.fibonsai.xtratej.engine.strategy.StrategyManager;
-import com.fibonsai.xtratej.engine.targets.TargetType;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.concurrent.TimeUnit;

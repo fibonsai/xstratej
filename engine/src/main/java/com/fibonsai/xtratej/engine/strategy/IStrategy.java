@@ -15,8 +15,8 @@
 package com.fibonsai.xtratej.engine.strategy;
 
 import com.fibonsai.xtratej.adaptor.core.Subscriber;
+import com.fibonsai.xtratej.engine.adapters.SourceType;
 import com.fibonsai.xtratej.engine.rules.RuleStream;
-import com.fibonsai.xtratej.engine.sources.SourceType;
 import com.fibonsai.xtratej.event.series.dao.TimeSeries;
 import tools.jackson.databind.JsonNode;
 
