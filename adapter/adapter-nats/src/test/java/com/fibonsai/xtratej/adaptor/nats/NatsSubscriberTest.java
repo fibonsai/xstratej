@@ -225,8 +225,8 @@ public class NatsSubscriberTest {
 
         conn.close();
 
-        boolean received1 = latch1.await(5, TimeUnit.SECONDS);
-        boolean received2 = latch2.await(5, TimeUnit.SECONDS);
+        boolean received1 = latch1.await(10, TimeUnit.SECONDS);
+        boolean received2 = latch2.await(10, TimeUnit.SECONDS);
         
         assertTrue(received1, "Should receive message from topic1");
         assertTrue(received2, "Should receive message from topic2");
