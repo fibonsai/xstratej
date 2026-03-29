@@ -69,13 +69,15 @@ IMPORTANT: **engine** module/subproject depends on **event** module/subproject. 
 
 ## Exploring the code
 
-* "Read `engine/src/main/java/com/fibonsai/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'.
+* "Read `directflux/src/main/java/com/fibonsai/directflux/Directflux.java` to understand how work the DirectFlux implementation.
+* "Read `adapter/adapter-simulated/src/main/java/com/fibonsai/xtratej/adapter/simulated/*.java` to understand how to create Adapters implementation.
+* "Read `event/src/main/java/com/fibonsai/xtratej/event/series/dao/builders/*.java` to understand how to create TimeSeries implementation. Never to create a TimeSeries using 'new'. Use builders located at "com.fibonsai.xtratej.event.series.dao.builders" package.
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/rules/impl/LimitRule.java` to understand its logic and params (min, max, upperSourceId, lowerSourceId).
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/rules/RuleStream.java` to understand the base rule class and the watch mechanism using DirectFlux.
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/Strategy.java` and @src/main/java/com/fibonsai/xtratej/strategy/IStrategy.java to see how strategies manage sources and the aggregator rule.
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/StrategyManager.java` to see how strategies are executed and how results are handled.
 * "Read `engine/src/main/java/com/fibonsai/xtratej/engine/strategy/Loader.java` to understand how the JSON configuration is parsed and how rules are wired to sources using DirectFlux.zip.
-* "Read `engine/src/test/java/com/fibonsai/xtratej/engine/rules/impl/LimitRule.java` to see example usage and testing patterns for rules.
+* "Read `engine/src/test/java/com/fibonsai/xtratej/engine/rules/impl/LimitRuleTest.java` to see an example usage and testing patterns for rules.
 
 ## Testing
 
