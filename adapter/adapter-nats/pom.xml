@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.fibonsai.xtratej</groupId>
         <artifactId>adapter</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>adapter-nats</artifactId>
