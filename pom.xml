@@ -29,7 +29,7 @@
 
     <artifactId>xtratej</artifactId>
     <groupId>com.fibonsai</groupId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
 
     <description>Strategy engine from Fibonsai</description>
     <url>https://github.com/fibonsai/xtratej</url>
@@ -75,27 +75,27 @@
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>event</artifactId>
-                <version>1.2.3</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter-core</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter-nats</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fibonsai.xtratej</groupId>
                 <artifactId>adapter-simulated</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
