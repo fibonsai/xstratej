@@ -19,47 +19,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.fibonsai</groupId>
-        <artifactId>xtratej</artifactId>
-        <version>1.2.4</version>
+        <groupId>com.fibonsai.xtratej</groupId>
+        <artifactId>adapter</artifactId>
+        <version>1.0.1</version>
     </parent>
 
-    <groupId>com.fibonsai.xtratej</groupId>
-    <artifactId>adapter</artifactId>
-    <version>1.0.1</version>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>adapter-core</module>
-        <module>adapter-nats</module>
-        <module>adapter-duckdb</module>
-        <module>adapter-simulated</module>
-    </modules>
-
-    <description>Inflow market data and private data</description>
-    <url>https://github.com/fibonsai/xtratej</url>
-    <licenses>
-        <license>
-            <name>Apache 2.0</name>
-        </license>
-    </licenses>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url>https://github.com/fibonsai/xtratej</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <name>Marcelo Teixeira Monteiro (tuxmonteiro)</name>
-        </developer>
-    </developers>
-
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/fibonsai/xtratej/issues</url>
-    </issueManagement>
+    <artifactId>adapter-duckdb</artifactId>
 
     <properties>
         <java.version>25</java.version>
@@ -73,12 +38,25 @@
     <dependencies>
         <dependency>
             <groupId>com.fibonsai.xtratej</groupId>
-            <artifactId>event</artifactId>
+            <artifactId>adapter-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-minio</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
