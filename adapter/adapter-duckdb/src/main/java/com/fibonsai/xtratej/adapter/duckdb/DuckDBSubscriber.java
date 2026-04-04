@@ -34,7 +34,10 @@ public class DuckDBSubscriber extends Subscriber implements WithParams {
 
     @Override
     public boolean connect() {
-        return client.connect();
+        if (client.connect()) {
+            client.subscribe();
+        }
+        return client.isSubscribed();
     }
 
     @Override
@@ -45,5 +48,9 @@ public class DuckDBSubscriber extends Subscriber implements WithParams {
     @Override
     public boolean isConnected() {
         return client.isConnected();
+    }
+
+    public void onConnect(Runnable runnable) {
+        client.onConnect(runnable);
     }
 }

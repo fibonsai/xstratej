@@ -132,6 +132,11 @@
                 <artifactId>testcontainers-minio</artifactId>
                 <version>2.0.1</version>
             </dependency>
+            <dependency>
+                <groupId>org.duckdb</groupId>
+                <artifactId>duckdb_jdbc</artifactId>
+                <version>1.5.1.0</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -167,6 +172,12 @@
                 <groupId>io.github.amadeusitgroup.testcontainers</groupId>
                 <artifactId>nats</artifactId>
                 <version>1.0.12</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>2.42.27</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
